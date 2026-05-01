@@ -128,15 +128,7 @@ export default function LegalPage() {
           </div>
         </div>
 
-        <style jsx>{`
-          .contract-variable {
-            background: rgba(124, 58, 237, 0.2);
-            border: 1px dashed #7c3aed;
-            padding: 2px 6px;
-            border-radius: 4px;
-            color: #a78bfa;
-          }
-        `}</style>
+
       </div>
     </>
   );
