@@ -144,7 +144,21 @@ CREATE POLICY "Users can view their notifications" ON notifications FOR SELECT T
 CREATE POLICY "Users can update their notifications" ON notifications FOR UPDATE TO authenticated USING (user_id = auth.uid()) WITH CHECK (user_id = auth.uid());
 
 CREATE POLICY "Users can view their own profile" ON profiles FOR SELECT TO authenticated USING (id = auth.uid());
+CREATE POLICY "Admins can view all profiles" ON profiles FOR SELECT TO authenticated USING (
+  EXISTS (
+    SELECT 1 FROM profiles AS self WHERE self.id = auth.uid() AND self.role = 'admin'
+  )
+);
 CREATE POLICY "Users can update their own profile" ON profiles FOR UPDATE TO authenticated USING (id = auth.uid()) WITH CHECK (id = auth.uid());
+CREATE POLICY "Admins can update any profile" ON profiles FOR UPDATE TO authenticated USING (
+  EXISTS (
+    SELECT 1 FROM profiles AS self WHERE self.id = auth.uid() AND self.role = 'admin'
+  )
+) WITH CHECK (
+  EXISTS (
+    SELECT 1 FROM profiles AS self WHERE self.id = auth.uid() AND self.role = 'admin'
+  )
+);
 
 CREATE POLICY "Users can view their uploads" ON video_uploads FOR SELECT TO authenticated USING (user_id = auth.uid());
 CREATE POLICY "Users can insert their uploads" ON video_uploads FOR INSERT TO authenticated WITH CHECK (user_id = auth.uid());
