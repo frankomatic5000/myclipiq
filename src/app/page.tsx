@@ -13,14 +13,14 @@ export default function HomePage() {
 
         {/* Hero headline */}
         <div className="space-y-4">
-          <h1 className="text-5xl md:text-6xl font-bold leading-tight">
-            <span className="gradient-text">Turn long videos</span>
+          <h1 className="text-4xl md:text-6xl font-bold leading-tight">
+            <span className="gradient-text">AI intelligence</span>
             <br />
-            into viral short clips.
+            for every video you edit.
           </h1>
           <p className="text-xl text-surface-300 max-w-lg mx-auto">
-            MyClipIQ uses AI to analyze your content, find the most engaging moments, 
-            and deliver platform-ready clips — in minutes, not hours.
+            MyClipIQ analyzes your clips and automatically optimizes them for each
+            social platform — so your content reaches the right audience, every time.
           </p>
         </div>
 
