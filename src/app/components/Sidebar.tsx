@@ -117,7 +117,7 @@ export default function Sidebar() {
   }, [pathname]);
 
   /* Landing page is chrome-free. Keep hooks above this guard to preserve hook order. */
-  if (pathname === "/") return null;
+  if (pathname === "/" || pathname.startsWith("/auth")) return null;
 
   const showSidebar = isOpen || isDesktop;
 
