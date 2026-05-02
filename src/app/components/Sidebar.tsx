@@ -70,6 +70,10 @@ interface UserProfile {
 
 export default function Sidebar() {
   const pathname = usePathname();
+
+  /* Landing page is chrome-free */
+  if (pathname === "/") return null;
+
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [initials, setInitials] = useState("?");
   const [isOpen, setIsOpen] = useState(false);
