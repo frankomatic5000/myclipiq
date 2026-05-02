@@ -32,14 +32,7 @@ export default function SignupPage() {
       return;
     }
 
-    if (data.user) {
-      await getSupabaseBrowser().from("profiles").upsert({
-        id: data.user.id,
-        full_name: fullName,
-        role: "viewer",
-      });
-    }
-
+    // Profile already created by handle_new_user() DB trigger
     setLoading(false);
     router.push("/projects");
     router.refresh();
