@@ -2,7 +2,7 @@ import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const PUBLIC_PATHS = new Set(["/", "/auth/login", "/auth/signup", "/api/auth"]);
+const PUBLIC_PATHS = new Set(["/", "/auth/login", "/auth/signup", "/auth/callback", "/api/auth"]);
 const PUBLIC_PREFIXES = ["/api/auth/"];
 
 function isPublicPath(pathname: string) {
