@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { getSupabaseBrowser } from "@/lib/supabase/client";
 
 const navItems = [
   { href: "/", label: "Dashboard", icon: DashboardIcon },
@@ -60,8 +62,37 @@ function AnalyticsIcon({ className }: { className?: string }) {
   );
 }
 
+interface UserProfile {
+  full_name: string | null;
+  role: string | null;
+  avatar_url: string | null;
+}
+
 export default function Sidebar() {
   const pathname = usePathname();
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [initials, setInitials] = useState("?");
+
+  useEffect(() => {
+    async function loadProfile() {
+      const sb = getSupabaseBrowser();
+      const { data: { session } } = await sb.auth.getSession();
+      if (!session?.user) return;
+
+      const { data } = await sb
+        .from("profiles")
+        .select("full_name, role, avatar_url")
+        .eq("id", session.user.id)
+        .single();
+
+      if (data) {
+        setProfile(data);
+        const name = data.full_name || session.user.email || "";
+        setInitials(name.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase());
+      }
+    }
+    loadProfile();
+  }, []);
 
   return (
     <aside className="w-64 bg-surface-900 border-r border-surface-700/50 flex flex-col fixed h-full z-20">
@@ -104,10 +135,16 @@ export default function Sidebar() {
       {/* User */}
       <div className="p-4 border-t border-surface-700/50">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full gradient-accent flex items-center justify-center text-white text-sm font-bold">R</div>
+          <div className="w-9 h-9 rounded-full gradient-accent flex items-center justify-center text-white text-sm font-bold">
+            {initials}
+          </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium truncate">Rod Rezende</p>
-            <p className="text-xs text-surface-300">Admin</p>
+            <p className="text-sm font-medium truncate">
+              {profile?.full_name || "Loading..."}
+            </p>
+            <p className="text-xs text-surface-300">
+              {profile?.role ? profile.role.charAt(0).toUpperCase() + profile.role.slice(1) : "Viewer"}
+            </p>
           </div>
           <Link href="/onboarding" className="text-surface-300 hover:text-brand-400 transition" title="Settings">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
