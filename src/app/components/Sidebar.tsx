@@ -72,6 +72,25 @@ export default function Sidebar() {
   const pathname = usePathname();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [initials, setInitials] = useState("?");
+  const [isOpen, setIsOpen] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(true);
+
+  useEffect(() => {
+    function handleResize() {
+      setIsDesktop(window.innerWidth >= 768);
+    }
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    function handleToggle() {
+      setIsOpen((prev) => !prev);
+    }
+    window.addEventListener("toggle-sidebar", handleToggle);
+    return () => window.removeEventListener("toggle-sidebar", handleToggle);
+  }, []);
 
   useEffect(() => {
     async function loadProfile() {
@@ -94,8 +113,31 @@ export default function Sidebar() {
     loadProfile();
   }, []);
 
+  const showSidebar = isOpen || isDesktop;
+
   return (
-    <aside className="w-64 bg-surface-900 border-r border-surface-700/50 flex flex-col fixed h-full z-20">
+    <>
+      {/* Backdrop on mobile */}
+      {isOpen && !isDesktop && (
+        <div
+          className="fixed inset-0 bg-black/60 z-10"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+      {showSidebar && (
+        <aside className="w-64 bg-surface-900 border-r border-surface-700/50 flex flex-col fixed h-full z-20 transition-transform duration-200">
+          {/* Close button on mobile */}
+          {!isDesktop && (
+            <button
+              onClick={() => setIsOpen(false)}
+              className="absolute top-4 right-4 p-2 rounded-lg hover:bg-surface-800 text-surface-300"
+              aria-label="Close sidebar"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          )}
       {/* Logo */}
       <div className="p-5 border-b border-surface-700/50">
         <div className="flex items-center gap-3">
@@ -119,6 +161,7 @@ export default function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
+              onClick={() => !isDesktop && setIsOpen(false)}
               className={`sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium ${
                 isActive
                   ? "active bg-brand-500/15 text-brand-400"
@@ -154,6 +197,8 @@ export default function Sidebar() {
           </Link>
         </div>
       </div>
-    </aside>
+          </aside>
+        )}
+    </>
   );
 }

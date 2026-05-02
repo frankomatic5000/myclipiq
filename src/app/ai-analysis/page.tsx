@@ -16,12 +16,12 @@ export default function AIAnalysisPage() {
         }
       />
 
-      <div className="p-6 space-y-6">
+      <div className="p-4 md:p-6 space-y-6">
         {/* Upload Section */}
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Upload Video</h3>
-            <div className="border-2 border-dashed border-surface-700 hover:border-brand-500 hover:bg-brand-500/5 rounded-xl p-8 text-center cursor-pointer transition">
+            <div className="border-2 border-dashed border-surface-700 hover:border-brand-500 hover:bg-brand-500/5 rounded-xl p-8 text-center cursor-pointer transition min-h-[200px] flex flex-col items-center justify-center">
               <div className="w-16 h-16 rounded-full bg-brand-500/10 flex items-center justify-center mx-auto mb-4">
                 <svg className="w-8 h-8 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
               </div>
@@ -76,7 +76,7 @@ export default function AIAnalysisPage() {
             <h3 className="text-lg font-semibold">Recent Analyses</h3>
             <button className="px-4 py-2 text-sm rounded-lg border border-surface-700 text-surface-300 hover:bg-surface-800 transition">View All</button>
           </div>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
               { name: "Imigrou E1", date: "2 days ago", score: 87, level: "High Potential", color: "green", clips: 4 },
               { name: "Vaptlux Demo", date: "5 days ago", score: 62, level: "Medium", color: "amber", clips: 6 },

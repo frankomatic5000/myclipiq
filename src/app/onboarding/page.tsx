@@ -4,7 +4,7 @@ export default function OnboardingPage() {
   return (
     <div className="bg-surface-950 text-surface-100 min-h-screen">
       {/* Step Navigation */}
-      <div className="fixed top-0 left-0 right-0 z-30 bg-surface-950/80 backdrop-blur-xl border-b border-surface-700/50 px-6 py-4">
+      <div className="fixed top-0 left-0 right-0 z-30 bg-surface-950/80 backdrop-blur-xl border-b border-surface-700/50 px-4 md:px-6 py-4">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-lg gradient-accent flex items-center justify-center">
@@ -12,7 +12,7 @@ export default function OnboardingPage() {
             </div>
             <span className="text-lg font-bold gradient-text">MyClipIQ</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 overflow-x-auto">
             {[1, 2, 3, 4].map((n) => (
               <div key={n} className="flex items-center gap-2">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold cursor-pointer ${n === 1 ? "gradient-accent text-white" : "bg-surface-800 text-surface-400"}`}>{n}</div>
@@ -24,7 +24,7 @@ export default function OnboardingPage() {
         </div>
       </div>
 
-      <div className="pt-24 pb-12 px-6">
+      <div className="pt-24 pb-12 px-4 md:px-6">
         <div className="max-w-xl mx-auto">
           {/* Step 1: Signup */}
           <div>

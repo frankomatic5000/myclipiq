@@ -61,12 +61,12 @@ export default function ProjectsPage() {
               <button className="px-3 py-1.5 rounded-md text-xs font-medium bg-brand-500/20 text-brand-400">List</button>
               <button className="px-3 py-1.5 rounded-md text-xs font-medium text-surface-300 hover:text-surface-100">Grid</button>
             </div>
-            <div className="flex items-center bg-surface-900 rounded-lg border border-surface-700/50 p-0.5">
+            <div className="hidden sm:flex items-center bg-surface-900 rounded-lg border border-surface-700/50 p-0.5">
               <button className="role-btn px-3 py-1.5 rounded-md text-xs font-medium bg-brand-500/20 text-brand-400">Admin</button>
               <button className="role-btn px-3 py-1.5 rounded-md text-xs font-medium text-surface-300 hover:text-surface-100">Editor</button>
               <button className="role-btn px-3 py-1.5 rounded-md text-xs font-medium text-surface-300 hover:text-surface-100">Viewer</button>
             </div>
-            <button className="px-4 py-2 text-sm rounded-lg gradient-accent text-white font-medium hover:opacity-90 transition flex items-center gap-2">
+            <button className="px-4 py-2 text-sm rounded-lg gradient-accent text-white font-medium hover:opacity-90 transition flex items-center gap-2 whitespace-nowrap">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
               New Project
             </button>
@@ -74,9 +74,9 @@ export default function ProjectsPage() {
         }
       />
 
-      <div className="p-6">
+      <div className="p-4 md:p-6">
         {/* Pipeline Filter */}
-        <div className="flex items-center gap-2 mb-8">
+        <div className="flex flex-wrap items-center gap-2 mb-8">
           <button className="pipeline-filter px-3 py-1.5 rounded-full text-xs font-medium bg-brand-500/10 text-brand-400 border border-brand-500/20">All (12)</button>
           {pipelineStages.map((stage) => (
             <button key={stage.id} className="pipeline-filter px-3 py-1.5 rounded-full text-xs font-medium bg-surface-800 text-surface-300 border border-surface-700/50 hover:border-brand-500/30">
@@ -86,7 +86,7 @@ export default function ProjectsPage() {
         </div>
 
         {/* Kanban Pipeline View */}
-        <div className="grid grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
           {projects.map((stage) => (
             <div key={stage.id}>
               <div className="flex items-center gap-2 mb-3">

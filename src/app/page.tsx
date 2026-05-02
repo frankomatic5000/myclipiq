@@ -14,11 +14,11 @@ export default function DashboardPage() {
               <button className="role-btn px-3 py-1.5 rounded-md text-xs font-medium text-surface-300 hover:text-surface-100">Editor</button>
               <button className="role-btn px-3 py-1.5 rounded-md text-xs font-medium text-surface-300 hover:text-surface-100">Viewer</button>
             </div>
-            <Link href="/onboarding" className="admin-only px-4 py-2 text-sm rounded-lg border border-surface-700 text-surface-300 hover:bg-surface-800 transition flex items-center gap-2">
+            <Link href="/onboarding" className="admin-only px-3 py-2 md:px-4 md:py-2 text-sm rounded-lg border border-surface-700 text-surface-300 hover:bg-surface-800 transition flex items-center gap-2 whitespace-nowrap">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
               Invite Team
             </Link>
-            <Link href="/projects" className="px-4 py-2 text-sm rounded-lg gradient-accent text-white font-medium hover:opacity-90 transition flex items-center gap-2">
+            <Link href="/projects" className="px-3 py-2 md:px-4 md:py-2 text-sm rounded-lg gradient-accent text-white font-medium hover:opacity-90 transition flex items-center gap-2 whitespace-nowrap w-full sm:w-auto justify-center">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
               New Project
             </Link>
@@ -26,9 +26,9 @@ export default function DashboardPage() {
         }
       />
 
-      <div className="p-6 space-y-6">
+      <div className="p-4 md:p-6 space-y-6">
         {/* Stats Row */}
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="bg-surface-900 rounded-xl p-5 border border-surface-700/50 card-hover">
             <div className="flex items-center justify-between mb-3">
               <span className="text-xs font-medium text-surface-300 uppercase tracking-wider">Active Projects</span>
@@ -75,9 +75,9 @@ export default function DashboardPage() {
         </div>
 
         {/* Main Grid */}
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Active Projects */}
-          <div className="col-span-2 space-y-4">
+          <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold">Active Projects</h3>
               <Link href="/projects" className="text-sm text-brand-400 hover:text-brand-300 transition">View all →</Link>

@@ -16,12 +16,12 @@ export default function TeamPage() {
         subtitle="Manage team members and permissions"
         actions={
           <>
-            <div className="flex items-center bg-surface-900 rounded-lg border border-surface-700/50 p-0.5">
+            <div className="hidden sm:flex items-center bg-surface-900 rounded-lg border border-surface-700/50 p-0.5">
               <button className="px-3 py-1.5 rounded-md text-xs font-medium bg-brand-500/20 text-brand-400">Admin</button>
               <button className="px-3 py-1.5 rounded-md text-xs font-medium text-surface-300 hover:text-surface-100">Editor</button>
               <button className="px-3 py-1.5 rounded-md text-xs font-medium text-surface-300 hover:text-surface-100">Viewer</button>
             </div>
-            <Link href="/onboarding" className="px-4 py-2 text-sm rounded-lg gradient-accent text-white font-medium hover:opacity-90 transition flex items-center gap-2">
+            <Link href="/onboarding" className="px-4 py-2 text-sm rounded-lg gradient-accent text-white font-medium hover:opacity-90 transition flex items-center gap-2 whitespace-nowrap">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
               Invite Member
             </Link>
@@ -29,9 +29,9 @@ export default function TeamPage() {
         }
       />
 
-      <div className="p-6 space-y-6">
+      <div className="p-4 md:p-6 space-y-6">
         {/* Stats */}
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
             { label: "Total Members", value: "8", sub: "+2 pending invites", icon: "users", color: "brand" },
             { label: "Admins", value: "2", sub: "Rod, Karine", icon: "shield", color: "red" },
@@ -54,8 +54,8 @@ export default function TeamPage() {
         {/* Team Members */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold">Team Members</h3>
-          <div className="bg-surface-900 rounded-xl border border-surface-700/50 overflow-hidden">
-            <table className="w-full">
+          <div className="bg-surface-900 rounded-xl border border-surface-700/50 overflow-x-auto">
+            <table className="w-full min-w-[640px]">
               <thead>
                 <tr className="border-b border-surface-700/50">
                   {["Member", "Role", "Projects", "Last Active", ""].map((h) => (
@@ -95,8 +95,8 @@ export default function TeamPage() {
         {/* Pending Invites */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold">Pending Invites</h3>
-          <div className="bg-surface-900 rounded-xl border border-surface-700/50 overflow-hidden">
-            <table className="w-full">
+          <div className="bg-surface-900 rounded-xl border border-surface-700/50 overflow-x-auto">
+            <table className="w-full min-w-[640px]">
               <thead>
                 <tr className="border-b border-surface-700/50">
                   {["Email", "Role", "Sent", "Actions"].map((h) => (
