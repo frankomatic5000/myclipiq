@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { analyzeVideo } from "@/lib/ai/analyze-video";
+import { z } from "zod";
+
+const analyzeSchema = z.object({
+  uploadId: z.string().uuid(),
+  r2Key: z.string().min(1).max(1024),
+  filename: z.string().min(1).max(255).optional().default("upload.mp4"),
+});
 
 export async function POST(req: NextRequest) {
   try {
@@ -18,14 +25,38 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { uploadId, r2Key, filename } = await req.json();
+    const parsed = analyzeSchema.safeParse(await req.json());
 
-    if (!uploadId || !r2Key) {
+    if (!parsed.success) {
       return NextResponse.json(
-        { error: "Missing uploadId or r2Key" },
+        { error: "Invalid input", details: parsed.error.format() },
         { status: 400 }
       );
     }
+
+    const { uploadId, r2Key, filename } = parsed.data;
+    const expectedPrefix = `uploads/${session.user.id}/`;
+    if (!r2Key.startsWith(expectedPrefix) || r2Key.includes("..")) {
+      return NextResponse.json({ error: "Invalid upload key" }, { status: 400 });
+    }
+
+    const { data: upload, error: uploadError } = await supabase
+      .from("video_uploads")
+      .select("id")
+      .eq("id", uploadId)
+      .eq("user_id", session.user.id)
+      .eq("r2_key", r2Key)
+      .single();
+
+    if (uploadError || !upload) {
+      return NextResponse.json({ error: "Upload not found" }, { status: 404 });
+    }
+
+    await supabase
+      .from("video_uploads")
+      .update({ status: "processing" })
+      .eq("id", uploadId)
+      .eq("user_id", session.user.id);
 
     const { data: analysis, error } = await supabase
       .from("ai_analyses")

@@ -30,3 +30,6 @@ Thumbs.db
 
 # Supabase
 supabase/.temp/
+
+# ByteRover local context cache
+.brv/

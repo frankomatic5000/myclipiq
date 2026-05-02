@@ -71,9 +71,6 @@ interface UserProfile {
 export default function Sidebar() {
   const pathname = usePathname();
 
-  /* Landing page is chrome-free */
-  if (pathname === "/") return null;
-
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [initials, setInitials] = useState("?");
   const [isOpen, setIsOpen] = useState(false);
@@ -97,6 +94,8 @@ export default function Sidebar() {
   }, []);
 
   useEffect(() => {
+    if (pathname === "/") return;
+
     async function loadProfile() {
       const sb = getSupabaseBrowser();
       const { data: { session } } = await sb.auth.getSession();
@@ -115,7 +114,10 @@ export default function Sidebar() {
       }
     }
     loadProfile();
-  }, []);
+  }, [pathname]);
+
+  /* Landing page is chrome-free. Keep hooks above this guard to preserve hook order. */
+  if (pathname === "/") return null;
 
   const showSidebar = isOpen || isDesktop;
 

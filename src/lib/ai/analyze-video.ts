@@ -1,11 +1,11 @@
 import { OpenAI } from "openai";
 import { tmpdir } from "os";
-import { join } from "path";
-import { writeFile, readFile, unlink } from "fs/promises";
-import { exec } from "child_process";
+import { basename, join } from "path";
+import { mkdtemp, readFile, rm, unlink, writeFile } from "fs/promises";
+import { execFile } from "child_process";
 import { promisify } from "util";
 
-const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
 
 export interface ClipSuggestion {
   start: number;
@@ -39,27 +39,46 @@ function getVisionModel(): string {
   return process.env.OPENAI_API_KEY ? "gpt-4o" : "llava";
 }
 
+function safeTempFilename(filename: string) {
+  return basename(filename || "upload.mp4").replace(/[^a-zA-Z0-9._-]/g, "_").slice(0, 120) || "upload.mp4";
+}
+
 async function extractFrames(videoPath: string): Promise<string[]> {
-  const frameDir = join(tmpdir(), `frames-${Date.now()}`);
-  await execAsync(`mkdir -p "${frameDir}"`);
+  const frameDir = await mkdtemp(join(tmpdir(), "myclipiq-frames-"));
 
-  await execAsync(
-    `ffmpeg -i "${videoPath}" -vf "fps=1/5,scale=512:-1" -frames:v 6 "${frameDir}/frame_%03d.jpg"`,
-    { timeout: 120000 }
-  );
+  try {
+    await execFileAsync(
+      "ffmpeg",
+      [
+        "-hide_banner",
+        "-loglevel",
+        "error",
+        "-i",
+        videoPath,
+        "-vf",
+        "fps=1/5,scale=512:-1",
+        "-frames:v",
+        "6",
+        join(frameDir, "frame_%03d.jpg"),
+      ],
+      { timeout: 120000 }
+    );
 
-  const frames: string[] = [];
-  for (let i = 1; i <= 6; i++) {
-    const framePath = join(frameDir, `frame_${String(i).padStart(3, "0")}.jpg`);
-    try {
-      const buf = await readFile(framePath);
-      frames.push(`data:image/jpeg;base64,${buf.toString("base64")}`);
-    } catch {
-      break;
+    const frames: string[] = [];
+    for (let i = 1; i <= 6; i++) {
+      const framePath = join(frameDir, `frame_${String(i).padStart(3, "0")}.jpg`);
+      try {
+        const buf = await readFile(framePath);
+        frames.push(`data:image/jpeg;base64,${buf.toString("base64")}`);
+      } catch {
+        break;
+      }
     }
-  }
 
-  return frames;
+    return frames;
+  } finally {
+    await rm(frameDir, { recursive: true, force: true }).catch(() => {});
+  }
 }
 
 export async function analyzeVideo(
@@ -69,8 +88,8 @@ export async function analyzeVideo(
   const client = getOpenAIClient();
   const model = getVisionModel();
 
-  const tempPath = join(tmpdir(), `analyze-${Date.now()}-${filename}`);
-  await writeFile(tempPath, videoBuffer);
+  const tempPath = join(tmpdir(), `myclipiq-analyze-${Date.now()}-${safeTempFilename(filename)}`);
+  await writeFile(tempPath, videoBuffer, { mode: 0o600 });
 
   try {
     const frames = await extractFrames(tempPath);

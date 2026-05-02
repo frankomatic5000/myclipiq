@@ -80,12 +80,49 @@ CREATE TABLE notifications (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Profiles used by the authenticated app shell
+CREATE TABLE profiles (
+  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  full_name TEXT,
+  role TEXT CHECK (role IN ('viewer', 'editor', 'admin')) DEFAULT 'viewer',
+  avatar_url TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Upload and analysis tables used by the AI routes
+CREATE TABLE video_uploads (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  r2_key TEXT NOT NULL,
+  filename TEXT NOT NULL,
+  content_type TEXT NOT NULL CHECK (content_type IN ('video/mp4', 'video/quicktime', 'video/webm', 'video/x-msvideo')),
+  status TEXT CHECK (status IN ('uploaded', 'processing', 'completed', 'failed')) DEFAULT 'uploaded',
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE ai_analyses (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  upload_id UUID NOT NULL REFERENCES video_uploads(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  status TEXT CHECK (status IN ('processing', 'completed', 'failed')) DEFAULT 'processing',
+  engagement_score INTEGER CHECK (engagement_score >= 0 AND engagement_score <= 100),
+  clip_suggestions JSONB DEFAULT '[]',
+  results JSONB DEFAULT '{}',
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- Indexes for performance
 CREATE INDEX idx_projects_customer ON projects(customer_id);
 CREATE INDEX idx_projects_status ON projects(status);
 CREATE INDEX idx_edited_videos_project ON edited_videos(project_id);
 CREATE INDEX idx_ai_analysis_project ON ai_analysis(project_id);
 CREATE INDEX idx_notifications_user ON notifications(user_id, read);
+CREATE INDEX idx_video_uploads_user ON video_uploads(user_id, created_at DESC);
+CREATE INDEX idx_ai_analyses_user ON ai_analyses(user_id, created_at DESC);
+CREATE INDEX idx_ai_analyses_upload ON ai_analyses(upload_id);
 
 -- Row Level Security (RLS)
 ALTER TABLE customers ENABLE ROW LEVEL SECURITY;
@@ -93,8 +130,33 @@ ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
 ALTER TABLE edited_videos ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ai_analysis ENABLE ROW LEVEL SECURITY;
 ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE video_uploads ENABLE ROW LEVEL SECURITY;
+ALTER TABLE ai_analyses ENABLE ROW LEVEL SECURITY;
 
--- Policies (basic - will refine later)
-CREATE POLICY "Users can view all customers" ON customers FOR SELECT USING (true);
-CREATE POLICY "Users can view all projects" ON projects FOR SELECT USING (true);
-CREATE POLICY "Users can view all videos" ON edited_videos FOR SELECT USING (true);
+-- Policies: never expose application data to anonymous users via the public anon key.
+CREATE POLICY "Authenticated users can view customers" ON customers FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Authenticated users can view projects" ON projects FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Authenticated users can view videos" ON edited_videos FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Authenticated users can view legacy AI analysis" ON ai_analysis FOR SELECT TO authenticated USING (true);
+
+CREATE POLICY "Users can view their notifications" ON notifications FOR SELECT TO authenticated USING (user_id = auth.uid());
+CREATE POLICY "Users can update their notifications" ON notifications FOR UPDATE TO authenticated USING (user_id = auth.uid()) WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY "Users can view their own profile" ON profiles FOR SELECT TO authenticated USING (id = auth.uid());
+CREATE POLICY "Users can update their own profile" ON profiles FOR UPDATE TO authenticated USING (id = auth.uid()) WITH CHECK (id = auth.uid());
+
+CREATE POLICY "Users can view their uploads" ON video_uploads FOR SELECT TO authenticated USING (user_id = auth.uid());
+CREATE POLICY "Users can insert their uploads" ON video_uploads FOR INSERT TO authenticated WITH CHECK (user_id = auth.uid());
+CREATE POLICY "Users can update their uploads" ON video_uploads FOR UPDATE TO authenticated USING (user_id = auth.uid()) WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY "Users can view their analyses" ON ai_analyses FOR SELECT TO authenticated USING (user_id = auth.uid());
+CREATE POLICY "Users can insert their analyses" ON ai_analyses FOR INSERT TO authenticated WITH CHECK (
+  user_id = auth.uid()
+  AND EXISTS (
+    SELECT 1 FROM video_uploads
+    WHERE video_uploads.id = ai_analyses.upload_id
+      AND video_uploads.user_id = auth.uid()
+  )
+);
+CREATE POLICY "Users can update their analyses" ON ai_analyses FOR UPDATE TO authenticated USING (user_id = auth.uid()) WITH CHECK (user_id = auth.uid());
