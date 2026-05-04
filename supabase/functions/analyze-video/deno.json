@@ -1,0 +1,9 @@
+{
+  "name": "analyze-video",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.750.0",
+    "openai": "^4.85.0"
+  }
+}

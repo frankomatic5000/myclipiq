@@ -25,6 +25,7 @@ export default function AdminPage() {
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [savingId, setSavingId] = useState<string | null>(null);
+  const [creatingUser, setCreatingUser] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
 
@@ -72,66 +73,70 @@ export default function AdminPage() {
     load();
   }, [supabase]);
 
-  // Toast auto-dismiss
+  // Toast auto-dismiss with cleanup
   useEffect(() => {
     if (!toast) return;
     const t = setTimeout(() => setToast(null), 3000);
     return () => clearTimeout(t);
-  }, [toast]);
+  }, [toast?.message]);
 
   async function updateRole(userId: string, newRole: string) {
     setSavingId(userId);
-    const { error } = await supabase
-      .from("profiles")
-      .update({ role: newRole })
-      .eq("id", userId);
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ role: newRole })
+        .eq("id", userId);
 
-    setSavingId(null);
-    if (error) {
-      console.error("[Admin] Role update failed:", error.message);
-      setToast({ message: error.message, type: "error" });
-    } else {
+      if (error) throw error;
+
       setUsers((prev) =>
         prev.map((u) => (u.id === userId ? { ...u, role: newRole as any } : u))
       );
       setToast({ message: "Role updated", type: "success" });
+    } catch (err: any) {
+      console.error("[Admin] Role update failed:", err?.message || err);
+      setToast({ message: err?.message || "Failed to update role", type: "error" });
+    } finally {
+      setSavingId(null);
     }
   }
 
   async function createTestUser() {
-    const email = `test-${Date.now()}@myclipiq.ai`;
-    const password = `Test-${Math.random().toString(36).slice(2, 8)}!`;
-
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { data: { full_name: "Test User" } },
-    });
-
-    if (error) {
-      console.error("[Admin] Create test user failed:", error.message);
-      setToast({ message: error.message, type: "error" });
-      return;
-    }
-
-    const userId = data.user?.id;
-    if (userId) {
-      await supabase
-        .from("profiles")
-        .update({ role: "viewer" })
-        .eq("id", userId);
-
-      // Refresh list
-      const { data: refreshed } = await supabase
-        .from("profiles")
-        .select("id, email, full_name, role, created_at")
-        .order("created_at", { ascending: false });
-
-      setUsers((refreshed as UserProfile[]) || []);
-      setToast({
-        message: `Created ${email} / ${password}`,
-        type: "success",
+    setCreatingUser(true);
+    try {
+      const res = await fetch("/api/admin/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
       });
+
+      if (!res.ok) {
+        const { error } = await res.json().catch(() => ({ error: "Unknown error" }));
+        console.error("[Admin] Create test user failed:", error);
+        setToast({ message: error || "Failed to create user", type: "error" });
+        return;
+      }
+
+      const data = await res.json();
+
+      if (data.id) {
+        // Refresh list
+        const { data: refreshed } = await supabase
+          .from("profiles")
+          .select("id, email, full_name, role, created_at")
+          .order("created_at", { ascending: false });
+
+        setUsers((refreshed as UserProfile[]) || []);
+        setToast({
+          message: `Created ${data.email} / viewer`,
+          type: "success",
+        });
+      }
+    } catch (err) {
+      console.error("[Admin] Create test user exception:", err);
+      setToast({ message: "Network error. Please try again.", type: "error" });
+    } finally {
+      setCreatingUser(false);
     }
   }
 
@@ -187,24 +192,40 @@ export default function AdminPage() {
         </div>
         <button
           onClick={createTestUser}
-          className="hidden md:inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-500 text-white text-sm font-medium transition"
+          disabled={creatingUser}
+          className="hidden md:inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-600 hover:bg-brand-500 disabled:bg-brand-700/50 disabled:cursor-not-allowed text-white text-sm font-medium transition"
         >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-          </svg>
-          Create Test User
+          {creatingUser ? (
+            <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          ) : (
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+          )}
+          {creatingUser ? "Creating..." : "Create Test User"}
         </button>
       </div>
 
       {/* Mobile create button */}
       <button
         onClick={createTestUser}
-        className="md:hidden w-full mb-6 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-brand-600 hover:bg-brand-500 text-white text-sm font-medium transition"
+        disabled={creatingUser}
+        className="md:hidden w-full mb-6 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-brand-600 hover:bg-brand-500 disabled:bg-brand-700/50 disabled:cursor-not-allowed text-white text-sm font-medium transition"
       >
-        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-        </svg>
-        Create Test User
+        {creatingUser ? (
+          <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+        ) : (
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+          </svg>
+        )}
+        {creatingUser ? "Creating..." : "Create Test User"}
       </button>
 
       {/* Stats cards */}
@@ -253,7 +274,7 @@ export default function AdminPage() {
                         onChange={(e) => updateRole(user.id, e.target.value)}
                         disabled={savingId === user.id}
                         className={`appearance-none bg-surface-800 border border-surface-700 text-white text-sm rounded-lg pl-3 pr-8 py-1.5 focus:outline-none focus:ring-2 focus:ring-brand-500/50 ${
-                          savingId === user.id ? "opacity-50 cursor-wait" : "cursor-pointer"
+                          savingId === user.id ? "opacity-60 cursor-wait" : "cursor-pointer"
                         }`}
                       >
                         {ROLES.map((r) => (
@@ -263,9 +284,16 @@ export default function AdminPage() {
                         ))}
                       </select>
                       <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none text-surface-400">
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
+                        {savingId === user.id ? (
+                          <svg className="animate-spin h-4 w-4 text-brand-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                        ) : (
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        )}
                       </div>
                     </div>
                   </td>
