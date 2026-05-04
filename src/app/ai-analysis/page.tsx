@@ -29,6 +29,8 @@ export default function AIAnalysisPage() {
   const [phase, setPhase] = useState<"idle" | "uploading" | "analyzing" | "polling" | "done" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
   const [analysisResult, setAnalysisResult] = useState<AnalysisItem | null>(null);
+  const isAnalyzing = phase === "analyzing" || phase === "polling";
+  const isBusy = isAnalyzing || phase === "uploading";
   const [recentAnalyses, setRecentAnalyses] = useState<AnalysisItem[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const pollTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
