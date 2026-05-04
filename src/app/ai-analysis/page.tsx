@@ -30,7 +30,7 @@ export default function AIAnalysisPage() {
   const [error, setError] = useState<string | null>(null);
   const [analysisResult, setAnalysisResult] = useState<AnalysisItem | null>(null);
   const isAnalyzing = phase === "analyzing" || phase === "polling";
-  const isBusy = isAnalyzing || phase === "uploading";
+  const isBusy = phase !== "idle" && phase !== "done" && phase !== "error";
   const [recentAnalyses, setRecentAnalyses] = useState<AnalysisItem[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const pollTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -163,22 +163,27 @@ export default function AIAnalysisPage() {
 
       // 4. Poll
       setPhase("polling");
-      pollTimerRef.current = setInterval(async () => {
+      const pollTimer = setInterval(async () => {
         const pollRes = await fetch(`/api/ai/analyses/${analysisId}`);
         if (!pollRes.ok) return;
         const pollData = await pollRes.json();
         if (pollData.status === "completed") {
-          if (pollTimerRef.current) clearInterval(pollTimerRef.current);
+          clearInterval(pollTimer);
           setAnalysisResult(pollData);
           setPhase("done");
           fetchRecent();
         } else if (pollData.status === "failed") {
-          if (pollTimerRef.current) clearInterval(pollTimerRef.current);
-          throw new Error("Analysis failed on server");
+          clearInterval(pollTimer);
+          setError("Analysis failed on server");
+          setPhase("error");
         }
       }, 3000);
+      pollTimerRef.current = pollTimer;
     } catch (err: any) {
-      if (pollTimerRef.current) clearInterval(pollTimerRef.current);
+      if (pollTimerRef.current) {
+        clearInterval(pollTimerRef.current);
+        pollTimerRef.current = null;
+      }
       setError(err?.message || "Something went wrong");
       setPhase("error");
     }
