@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
+import { analyzeVideoFromStream } from "@/lib/ai/analyze-video";
 import { z } from "zod";
 import { createClient } from "@supabase/supabase-js";
 
@@ -161,5 +162,72 @@ export async function POST(req: NextRequest) {
       { error: "Failed to start analysis" },
       { status: 500 }
     );
+  }
+}
+
+async function processAnalysis(
+  uploadId: string,
+  r2Key: string,
+  filename: string,
+  analysisId: string,
+  userId: string
+) {
+  const { GetObjectCommand, S3Client } = await import("@aws-sdk/client-s3");
+  const { r2Client, R2_BUCKET } = await import("@/lib/r2/client");
+  const { createClient } = await import("@supabase/supabase-js");
+
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    { auth: { autoRefreshToken: false, persistSession: false } }
+  );
+
+  try {
+    const getCommand = new GetObjectCommand({
+      Bucket: R2_BUCKET,
+      Key: r2Key,
+    });
+    const response = await r2Client.send(getCommand);
+
+    const result = await analyzeVideoFromStream(
+      response.Body as ReadableStream<Uint8Array>,
+      filename
+    );
+
+    await supabase
+      .from("ai_analyses")
+      .update({
+        status: "completed",
+        engagement_score: result.engagement_score,
+        clip_suggestions: result.clip_suggestions,
+        results: {
+          summary: result.summary,
+          sentiment: result.sentiment,
+          pacing: result.pacing,
+          key_moments: result.key_moments,
+        },
+      })
+      .eq("id", analysisId)
+      .eq("user_id", userId);
+
+    await supabase
+      .from("video_uploads")
+      .update({ status: "completed" })
+      .eq("id", uploadId)
+      .eq("user_id", userId);
+  } catch (err) {
+    await supabase
+      .from("ai_analyses")
+      .update({ status: "failed" })
+      .eq("id", analysisId)
+      .eq("user_id", userId);
+
+    await supabase
+      .from("video_uploads")
+      .update({ status: "failed" })
+      .eq("id", uploadId)
+      .eq("user_id", userId);
+
+    throw err;
   }
 }
