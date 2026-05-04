@@ -99,28 +99,21 @@ export default function AdminPage() {
   }
 
   async function createTestUser() {
-    const email = `test-${Date.now()}@myclipiq.ai`;
-    const password = `Test-${Math.random().toString(36).slice(2, 8)}!`;
-
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { data: { full_name: "Test User" } },
+    const res = await fetch("/api/admin/users", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
     });
 
-    if (error) {
-      console.error("[Admin] Create test user failed:", error.message);
-      setToast({ message: error.message, type: "error" });
+    if (!res.ok) {
+      const { error } = await res.json().catch(() => ({ error: "Unknown error" }));
+      console.error("[Admin] Create test user failed:", error);
+      setToast({ message: error || "Failed to create user", type: "error" });
       return;
     }
 
-    const userId = data.user?.id;
-    if (userId) {
-      await supabase
-        .from("profiles")
-        .update({ role: "viewer" })
-        .eq("id", userId);
+    const data = await res.json();
 
+    if (data.id) {
       // Refresh list
       const { data: refreshed } = await supabase
         .from("profiles")
@@ -129,7 +122,7 @@ export default function AdminPage() {
 
       setUsers((refreshed as UserProfile[]) || []);
       setToast({
-        message: `Created ${email} / ${password}`,
+        message: `Created ${data.email} / viewer`,
         type: "success",
       });
     }
