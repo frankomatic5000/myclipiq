@@ -218,7 +218,6 @@ export default function AIAnalysisPage() {
       />
 
       <div className="p-4 md:p-6 space-y-6">
-        {/* Upload Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Upload Video</h3>
@@ -286,7 +285,7 @@ export default function AIAnalysisPage() {
             <div className="bg-surface-900 rounded-xl border border-surface-700/50 p-5 space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-2">Content Type</label>
-                <select className="w-full px-4 py-2 rounded-lg bg-surface-800 border border-surface-700/50 text-surface-100">
+                <select disabled={isBusy} className="w-full px-4 py-2 rounded-lg bg-surface-800 border border-surface-700/50 text-surface-100">
                   <option>Short-form Social (15-60s)</option>
                   <option>Long-form Content (5-20min)</option>
                   <option>Podcast / Interview</option>
@@ -298,7 +297,7 @@ export default function AIAnalysisPage() {
                 <div className="flex flex-wrap gap-2">
                   {["TikTok", "Instagram Reels", "YouTube Shorts", "LinkedIn"].map((p, i) => (
                     <label key={p} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-surface-800 border border-surface-700/50 cursor-pointer hover:border-brand-500/50 transition">
-                      <input type="checkbox" defaultChecked={i < 2} className="w-4 h-4 rounded bg-surface-700 border-surface-600 accent-brand-500" />
+                      <input type="checkbox" defaultChecked={i < 2} disabled={isBusy} className="w-4 h-4 rounded bg-surface-700 border-surface-600 accent-brand-500" />
                       <span className="text-sm">{p}</span>
                     </label>
                   ))}
@@ -306,7 +305,7 @@ export default function AIAnalysisPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium mb-2">Analysis Depth</label>
-                <select className="w-full px-4 py-2 rounded-lg bg-surface-800 border border-surface-700/50 text-surface-100" defaultValue="Standard Analysis (2min)">
+                <select disabled={isBusy} className="w-full px-4 py-2 rounded-lg bg-surface-800 border border-surface-700/50 text-surface-100" defaultValue="Standard Analysis (2min)">
                   <option>Quick Analysis (30s)</option>
                   <option>Standard Analysis (2min)</option>
                   <option>Deep Analysis (5min)</option>

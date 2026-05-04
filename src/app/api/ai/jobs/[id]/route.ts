@@ -22,34 +22,16 @@ export async function GET(
 
     const { id } = await params;
 
-    // Fetch analysis with its job
     const { data, error } = await supabase
-      .from("ai_analyses")
-      .select(`
-        id,
-        upload_id,
-        status,
-        engagement_score,
-        clip_suggestions,
-        results,
-        created_at,
-        analysis_jobs (
-          id,
-          status,
-          progress_pct,
-          error_message,
-          started_at,
-          completed_at,
-          created_at
-        )
-      `)
+      .from("analysis_jobs")
+      .select("*")
       .eq("id", id)
       .eq("user_id", session.user.id)
       .single();
 
     if (error || !data) {
       return NextResponse.json(
-        { error: "Analysis not found" },
+        { error: "Job not found" },
         { status: 404 }
       );
     }
@@ -57,17 +39,18 @@ export async function GET(
     return NextResponse.json({
       id: data.id,
       uploadId: data.upload_id,
+      analysisId: data.analysis_id,
       status: data.status,
-      engagementScore: data.engagement_score,
-      clipSuggestions: data.clip_suggestions,
-      results: data.results,
-      job: data.analysis_jobs?.[0] ?? null,
+      progressPct: data.progress_pct,
+      errorMessage: data.error_message,
+      startedAt: data.started_at,
+      completedAt: data.completed_at,
       createdAt: data.created_at,
     });
   } catch (err) {
-    console.error("Get analysis error:", err);
+    console.error("Get job error:", err);
     return NextResponse.json(
-      { error: "Failed to fetch analysis" },
+      { error: "Failed to fetch job" },
       { status: 500 }
     );
   }
