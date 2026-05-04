@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState, type ChangeEvent, type DragEv
 import Header from "../components/Header";
 import { getSupabaseBrowser } from "@/lib/supabase/client";
 
-type AnalysisStatus = "processing" | "completed" | "failed";
+type AnalysisStatus = "pending" | "processing" | "completed" | "failed";
 
 type ClipSuggestion = {
   start_seconds?: number;
@@ -331,6 +331,18 @@ export default function AIAnalysisPage() {
         }
       />
 
+      {isAnalyzing && analysisResult?.status === "pending" && (
+        <div className="flex items-center gap-3 rounded-lg border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-sm text-amber-300">
+          <div className="w-4 h-4 rounded-full border-2 border-amber-500/40 border-t-amber-500 animate-spin" />
+          <span>Waiting in queue…</span>
+        </div>
+      )}
+      {isAnalyzing && analysisResult?.status === "processing" && (
+        <div className="flex items-center gap-3 rounded-lg border border-brand-500/20 bg-brand-500/10 px-4 py-3 text-sm text-brand-300">
+          <div className="w-4 h-4 rounded-full border-2 border-brand-500/40 border-t-brand-500 animate-spin" />
+          <span>AI is analyzing your video…</span>
+        </div>
+      )}
       <div className="p-4 md:p-6 space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="space-y-4">
