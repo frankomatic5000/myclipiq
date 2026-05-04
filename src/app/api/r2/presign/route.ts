@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
     }
 
     const { filename, contentType } = parsed.data;
-    const { url, key } = await generatePresignedUrl(
+    const { url, key, expiresAt } = await generatePresignedUrl(
       session.user.id,
       filename,
       contentType
@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    return NextResponse.json({ url, key, uploadId: upload.id });
+    return NextResponse.json({ url, key, uploadId: upload.id, expiresAt });
   } catch (err) {
     console.error("Presign error:", err);
     return NextResponse.json(

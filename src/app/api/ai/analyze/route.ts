@@ -10,6 +10,14 @@ const analyzeSchema = z.object({
   filename: z.string().min(1).max(255).optional().default("upload.mp4"),
 });
 
+function isValidR2Key(key: string, userId: string): boolean {
+  const expectedPrefix = `uploads/${userId}/`;
+  if (!key.startsWith(expectedPrefix)) return false;
+  if (key.includes("..")) return false;
+  if (/[\x00-\x1f\x7f\\]/.test(key)) return false;
+  return true;
+}
+
 // POST /api/ai/analyze — queues a background analysis job via pgmq
 export async function POST(req: NextRequest) {
   try {
@@ -37,15 +45,14 @@ export async function POST(req: NextRequest) {
 
     const { uploadId, r2Key, filename } = parsed.data;
 
-    const expectedPrefix = `uploads/${session.user.id}/`;
-    if (!r2Key.startsWith(expectedPrefix) || r2Key.includes("..")) {
+    if (!isValidR2Key(r2Key, session.user.id)) {
       return NextResponse.json({ error: "Invalid upload key" }, { status: 400 });
     }
 
     // Verify upload exists and belongs to user
     const { data: upload, error: uploadError } = await supabase
       .from("video_uploads")
-      .select("id, status")
+      .select("id, status, content_type")
       .eq("id", uploadId)
       .eq("user_id", session.user.id)
       .eq("r2_key", r2Key)
@@ -53,6 +60,28 @@ export async function POST(req: NextRequest) {
 
     if (uploadError || !upload) {
       return NextResponse.json({ error: "Upload not found" }, { status: 404 });
+    }
+
+    // Extra safety: verify content-type matches a known video MIME
+    const ALLOWED_VIDEO_TYPES = new Set([
+      "video/mp4",
+      "video/quicktime",
+      "video/webm",
+      "video/x-msvideo",
+    ]);
+    if (!ALLOWED_VIDEO_TYPES.has(upload.content_type || "")) {
+      return NextResponse.json(
+        { error: "Unsupported video content type" },
+        { status: 400 }
+      );
+    }
+
+    // Prevent double-analysis if already processing or completed
+    if (upload.status === "processing" || upload.status === "completed") {
+      return NextResponse.json(
+        { error: `Upload already ${upload.status}` },
+        { status: 409 }
+      );
     }
 
     // Create analysis record

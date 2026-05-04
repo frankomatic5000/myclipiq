@@ -8,7 +8,7 @@ export async function generatePresignedUrl(
   filename: string,
   contentType: string,
   folder: string = "uploads/"
-): Promise<{ url: string; key: string }> {
+): Promise<{ url: string; key: string; expiresAt: number }> {
   const safeName = filename.replace(/[^a-zA-Z0-9.-]/g, "_");
   const key = `${folder}${userId}/${randomUUID()}-${safeName}`;
 
@@ -19,5 +19,6 @@ export async function generatePresignedUrl(
   });
 
   const url = await getSignedUrl(r2Client, command, { expiresIn: 300 });
-  return { url, key };
+  const expiresAt = Date.now() + 300 * 1000;
+  return { url, key, expiresAt };
 }
