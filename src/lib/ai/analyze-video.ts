@@ -1,8 +1,11 @@
 import { OpenAI } from "openai";
 import { tmpdir } from "os";
+import { createWriteStream } from "fs";
 import { basename, join } from "path";
 import { mkdtemp, readFile, rm, unlink, writeFile } from "fs/promises";
 import { execFile } from "child_process";
+import { Readable } from "stream";
+import { pipeline } from "stream/promises";
 import { promisify } from "util";
 
 const execFileAsync = promisify(execFile);
@@ -43,6 +46,28 @@ function safeTempFilename(filename: string) {
   return basename(filename || "upload.mp4").replace(/[^a-zA-Z0-9._-]/g, "_").slice(0, 120) || "upload.mp4";
 }
 
+async function writeReadableStreamToTempFile(
+  stream: ReadableStream<Uint8Array>,
+  filename: string
+): Promise<string> {
+  const tempPath = join(
+    "/tmp",
+    `myclipiq-stream-${Date.now()}-${Math.random().toString(36).slice(2)}-${safeTempFilename(filename)}`
+  );
+
+  try {
+    await pipeline(
+      Readable.fromWeb(stream as Parameters<typeof Readable.fromWeb>[0]),
+      createWriteStream(tempPath, { mode: 0o600 })
+    );
+  } catch (err) {
+    await unlink(tempPath).catch(() => {});
+    throw err;
+  }
+
+  return tempPath;
+}
+
 async function extractFrames(videoPath: string): Promise<string[]> {
   const frameDir = await mkdtemp(join(tmpdir(), "myclipiq-frames-"));
 
@@ -79,6 +104,34 @@ async function extractFrames(videoPath: string): Promise<string[]> {
   } finally {
     await rm(frameDir, { recursive: true, force: true }).catch(() => {});
   }
+}
+
+export async function analyzeVideoFromStream(
+  videoStream: ReadableStream<Uint8Array>,
+  filename: string
+): Promise<AnalysisResult> {
+  const tempPath = await writeReadableStreamToTempFile(videoStream, filename);
+
+  try {
+    const videoBuffer = await readFile(tempPath);
+    return analyzeVideo(videoBuffer, filename);
+  } finally {
+    await unlink(tempPath).catch(() => {});
+  }
+}
+
+export async function analyzeVideoFromReadableStream(
+  videoStream: ReadableStream<Uint8Array>,
+  filename: string
+): Promise<AnalysisResult> {
+  return analyzeVideoFromStream(videoStream, filename);
+}
+
+export async function analyzeVideoStream(
+  videoStream: ReadableStream<Uint8Array>,
+  filename: string
+): Promise<AnalysisResult> {
+  return analyzeVideoFromStream(videoStream, filename);
 }
 
 export async function analyzeVideo(
