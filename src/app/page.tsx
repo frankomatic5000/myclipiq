@@ -151,12 +151,15 @@ export default function HomePage() {
               <span className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
             </Link>
 
-            <button className="group inline-flex items-center gap-2.5 px-6 py-4 rounded-xl border border-surface-700/60 bg-surface-900/60 text-surface-200 font-medium text-lg backdrop-blur-sm hover:bg-surface-800/80 hover:border-surface-600 transition-all">
+            <Link
+              href="/ai-analysis"
+              className="group inline-flex items-center gap-2.5 px-6 py-4 rounded-xl border border-surface-700/60 bg-surface-900/60 text-surface-200 font-medium text-lg backdrop-blur-sm hover:bg-surface-800/80 hover:border-surface-600 transition-all"
+            >
               <span className="flex items-center justify-center w-8 h-8 rounded-full bg-surface-700/80 group-hover:bg-brand-500/20 group-hover:text-brand-300 transition-colors">
                 <PlayIcon className="w-3 h-3 ml-0.5" />
               </span>
               See how it works
-            </button>
+            </Link>
           </div>
 
           {/* Mini feature grid */}
