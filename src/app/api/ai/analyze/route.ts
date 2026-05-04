@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
-import { analyzeVideo } from "@/lib/ai/analyze-video";
+import { analyzeVideoFromStream } from "@/lib/ai/analyze-video";
 import { z } from "zod";
 
 const analyzeSchema = z.object({
@@ -116,9 +116,11 @@ async function processAnalysis(
       Key: r2Key,
     });
     const response = await r2Client.send(getCommand);
-    const videoBuffer = await response.Body!.transformToByteArray();
 
-    const result = await analyzeVideo(Buffer.from(videoBuffer), filename);
+    const result = await analyzeVideoFromStream(
+      response.Body as ReadableStream<Uint8Array>,
+      filename
+    );
 
     await supabase
       .from("ai_analyses")
