@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useLocale } from "next-intl";
 import { getSupabaseBrowser } from "@/lib/supabase/client";
-import Link from "next/link";
+import { Link } from "@/lib/i18n/navigation";
 
 export default function SignupPage() {
-  const router = useRouter();
+  const locale = useLocale();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -25,7 +25,10 @@ export default function SignupPage() {
     const { error: signUpError } = await sb.auth.signUp({
       email,
       password,
-      options: { data: { full_name: fullName } },
+      options: {
+        data: { full_name: fullName },
+        emailRedirectTo: `${window.location.origin}/${locale}/auth/callback`,
+      },
     });
     setLoading(false);
 

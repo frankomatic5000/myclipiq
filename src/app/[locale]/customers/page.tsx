@@ -1,5 +1,4 @@
 import Header from "../../components/Header";
-import Link from "next/link";
 
 const customers = [
   { initials: "IM", name: "Imigrou", email: "Internal Brand", projects: 3, revenue: "$2,400", status: "Active", statusColor: "green", contract: "N/A", lastContact: "Today" },

@@ -1,5 +1,4 @@
 import Header from "../../components/Header";
-import Link from "next/link";
 
 const pipelineStages = [
   { id: "brief", label: "Brief", color: "bg-surface-300", count: 3 },
