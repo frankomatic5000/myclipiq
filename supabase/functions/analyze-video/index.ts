@@ -2,6 +2,10 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { S3Client, GetObjectCommand } from "jsr:@aws-sdk/client-s3";
 import { OpenAI } from "jsr:@openai/openai";
 
+// ─── Constants ───────────────────────────────────────────────
+const ORPHAN_TIMEOUT_MS = 5 * 60 * 1000;   // 5 minutes
+const MAX_RETRIES = 3;
+
 // Initialize clients lazily to avoid build issues
 function getR2Client(): S3Client {
   return new S3Client({
@@ -31,6 +35,30 @@ function safeTempFilename(filename: string): string {
   return (filename || "upload.mp4").replace(/[^a-zA-Z0-9._-]/g, "_").slice(0, 120) || "upload.mp4";
 }
 
+// ─── Supabase REST helpers ───────────────────────────────────
+function sbHeaders(supabaseKey: string) {
+  return {
+    Authorization: `Bearer ${supabaseKey}`,
+    apikey: supabaseKey,
+    "Content-Type": "application/json",
+  };
+}
+
+async function sbPatch(
+  supabaseUrl: string,
+  supabaseKey: string,
+  table: string,
+  id: string,
+  payload: Record<string, unknown>
+) {
+  return fetch(`${supabaseUrl}/rest/v1/${table}?id=eq.${id}`, {
+    method: "PATCH",
+    headers: { ...sbHeaders(supabaseKey), Prefer: "return=minimal" },
+    body: JSON.stringify({ ...payload, updated_at: new Date().toISOString() }),
+  });
+}
+
+// ─── Frame extraction ────────────────────────────────────────
 async function extractFramesFromR2(
   r2Client: S3Client,
   bucket: string,
@@ -39,7 +67,6 @@ async function extractFramesFromR2(
 ): Promise<string[]> {
   const tempPath = `/tmp/analysis-${Date.now()}-${safeTempFilename(r2Key)}`;
 
-  // Stream download to temp file
   const command = new GetObjectCommand({ Bucket: bucket, Key: r2Key });
   const response = await r2Client.send(command);
   const body = response.Body;
@@ -63,22 +90,15 @@ async function extractFramesFromR2(
     offset += chunk.length;
   }
 
-  // Write to temp file
   Deno.writeFileSync(tempPath, videoBuffer, { mode: 0o600 });
 
   try {
-    // Run ffmpeg to extract 6 frames (1 every 5 seconds)
     const ffmpegProcess = new Deno.Command("ffmpeg", {
       args: [
-        "-hide_banner",
-        "-loglevel",
-        "error",
-        "-i",
-        tempPath,
-        "-vf",
-        "fps=1/5,scale=512:-1",
-        "-frames:v",
-        "6",
+        "-hide_banner", "-loglevel", "error",
+        "-i", tempPath,
+        "-vf", "fps=1/5,scale=512:-1",
+        "-frames:v", "6",
         `${frameDir}/frame_%03d.jpg`,
       ],
     });
@@ -89,7 +109,6 @@ async function extractFramesFromR2(
       throw new Error(`ffmpeg failed: ${errText}`);
     }
 
-    // Read frames
     const frames: string[] = [];
     for (let i = 1; i <= 6; i++) {
       const framePath = `${frameDir}/frame_${String(i).padStart(3, "0")}.jpg`;
@@ -100,15 +119,13 @@ async function extractFramesFromR2(
         break;
       }
     }
-
     return frames;
   } finally {
-    try {
-      await Deno.remove(tempPath);
-    } catch {}
+    try { await Deno.remove(tempPath); } catch {}
   }
 }
 
+// ─── AI Analysis ─────────────────────────────────────────────
 async function analyzeFrames(frames: string[]): Promise<{
   engagement_score: number;
   summary: string;
@@ -146,6 +163,7 @@ async function analyzeFrames(frames: string[]): Promise<{
   return JSON.parse(cleaned);
 }
 
+// ─── Main handler ────────────────────────────────────────────
 Deno.serve(async (req: Request) => {
   const url = new URL(req.url);
   const jobId = url.searchParams.get("job_id");
@@ -157,17 +175,14 @@ Deno.serve(async (req: Request) => {
     });
   }
 
-  // Get job from database via pgmq
   const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
   const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
-  const dbResp = await fetch(`${supabaseUrl}/rest/v1/analysis_jobs?id=eq.${jobId}&select=*`, {
-    headers: {
-      Authorization: `Bearer ${supabaseKey}`,
-      apikey: supabaseKey,
-      "Content-Type": "application/json",
-    },
-  });
+  // Fetch job with current retry_count
+  const dbResp = await fetch(
+    `${supabaseUrl}/rest/v1/analysis_jobs?id=eq.${jobId}&select=*,retry_count`,
+    { headers: sbHeaders(supabaseKey) }
+  );
 
   const jobs = await dbResp.json();
   if (!jobs || jobs.length === 0) {
@@ -178,23 +193,79 @@ Deno.serve(async (req: Request) => {
   }
 
   const job = jobs[0];
+
+  // ── Idempotency: already completed ──────────────────────────
+  if (job.status === "completed") {
+    return new Response(JSON.stringify({ success: true, job_id: jobId, idempotent: true }), {
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  // ── Idempotency: already failed ───────────────────────────
+  if (job.status === "failed") {
+    return new Response(JSON.stringify({ error: "Job already failed", job_id: jobId, idempotent: true }), {
+      status: 409,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  // ── Timeout / orphan detection ─────────────────────────────
+  if (job.status === "processing" && job.updated_at) {
+    const lastUpdated = new Date(job.updated_at).getTime();
+    const now = Date.now();
+    const elapsed = now - lastUpdated;
+
+    if (elapsed > ORPHAN_TIMEOUT_MS) {
+      const currentRetries = job.retry_count || 0;
+      if (currentRetries >= MAX_RETRIES) {
+        // Dead-letter
+        await sbPatch(supabaseUrl, supabaseKey, "analysis_jobs", jobId, {
+          status: "failed",
+          error_message: "Job timed out and exceeded max retries (dead-letter)",
+          completed_at: new Date().toISOString(),
+        });
+        if (job.analysis_id) {
+          await sbPatch(supabaseUrl, supabaseKey, "ai_analyses", job.analysis_id, { status: "failed" });
+        }
+        if (job.upload_id) {
+          await sbPatch(supabaseUrl, supabaseKey, "video_uploads", job.upload_id, { status: "failed" });
+        }
+        return new Response(JSON.stringify({ error: "Job dead-lettered after max retries" }), {
+          status: 500,
+          headers: { "Content-Type": "application/json" },
+        });
+      } else {
+        // Retry: reset to queued and bump retry_count
+        await sbPatch(supabaseUrl, supabaseKey, "analysis_jobs", jobId, {
+          status: "queued",
+          retry_count: currentRetries + 1,
+          started_at: null,
+          error_message: `Timeout detected after ${Math.round(elapsed / 1000)}s. Retry #${currentRetries + 1}.`,
+        });
+        return new Response(JSON.stringify({
+          retry_scheduled: true,
+          job_id: jobId,
+          retry_count: currentRetries + 1,
+          note: "Job re-queued due to timeout",
+        }), {
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+    }
+  }
+
+  // ── Only proceed if actually queued ────────────────────────
   if (job.status !== "queued") {
-    return new Response(JSON.stringify({ error: "Job not in queued state" }), {
+    return new Response(JSON.stringify({ error: "Job not in queued state", current_status: job.status }), {
       status: 409,
       headers: { "Content-Type": "application/json" },
     });
   }
 
   // Mark as processing
-  await fetch(`${supabaseUrl}/rest/v1/analysis_jobs?id=eq.${jobId}`, {
-    method: "PATCH",
-    headers: {
-      Authorization: `Bearer ${supabaseKey}`,
-      apikey: supabaseKey,
-      "Content-Type": "application/json",
-      Prefer: "return=minimal",
-    },
-    body: JSON.stringify({ status: "processing", started_at: new Date().toISOString(), updated_at: new Date().toISOString() }),
+  await sbPatch(supabaseUrl, supabaseKey, "analysis_jobs", jobId, {
+    status: "processing",
+    started_at: new Date().toISOString(),
   });
 
   const r2Client = getR2Client();
@@ -204,103 +275,88 @@ Deno.serve(async (req: Request) => {
     // Get upload record for R2 key
     const uploadResp = await fetch(
       `${supabaseUrl}/rest/v1/video_uploads?id=eq.${job.upload_id}&select=r2_key,filename&limit=1`,
-      {
-        headers: {
-          Authorization: `Bearer ${supabaseKey}`,
-          apikey: supabaseKey,
-        },
-      }
+      { headers: sbHeaders(supabaseKey) }
     );
     const uploads = await uploadResp.json();
     if (!uploads || uploads.length === 0) throw new Error("Upload not found");
 
     const { r2_key, filename } = uploads[0];
 
-    // Create temp dir for frames
     const frameDir = await Deno.makeTempDir({ prefix: "myclipiq-frames-" });
     let frames: string[] = [];
 
     try {
-      // Update progress
-      await fetch(`${supabaseUrl}/rest/v1/analysis_jobs?id=eq.${jobId}`, {
-        method: "PATCH",
-        headers: { Authorization: `Bearer ${supabaseKey}`, apikey: supabaseKey, "Content-Type": "application/json", Prefer: "return=minimal" },
-        body: JSON.stringify({ progress_pct: 20, updated_at: new Date().toISOString() }),
-      });
+      await sbPatch(supabaseUrl, supabaseKey, "analysis_jobs", jobId, { progress_pct: 20 });
 
       frames = await extractFramesFromR2(r2Client, bucket, r2_key, frameDir);
-
-      await fetch(`${supabaseUrl}/rest/v1/analysis_jobs?id=eq.${jobId}`, {
-        method: "PATCH",
-        headers: { Authorization: `Bearer ${supabaseKey}`, apikey: supabaseKey, "Content-Type": "application/json", Prefer: "return=minimal" },
-        body: JSON.stringify({ progress_pct: 50, updated_at: new Date().toISOString() }),
-      });
-
       if (frames.length === 0) throw new Error("No frames extracted");
+
+      await sbPatch(supabaseUrl, supabaseKey, "analysis_jobs", jobId, { progress_pct: 50 });
 
       const analysis = await analyzeFrames(frames);
 
-      await fetch(`${supabaseUrl}/rest/v1/analysis_jobs?id=eq.${jobId}`, {
-        method: "PATCH",
-        headers: { Authorization: `Bearer ${supabaseKey}`, apikey: supabaseKey, "Content-Type": "application/json", Prefer: "return=minimal" },
-        body: JSON.stringify({ progress_pct: 80, updated_at: new Date().toISOString() }),
-      });
+      await sbPatch(supabaseUrl, supabaseKey, "analysis_jobs", jobId, { progress_pct: 80 });
 
       // Update analysis record if exists
       if (job.analysis_id) {
-        await fetch(`${supabaseUrl}/rest/v1/ai_analyses?id=eq.${job.analysis_id}`, {
-          method: "PATCH",
-          headers: { Authorization: `Bearer ${supabaseKey}`, apikey: supabaseKey, "Content-Type": "application/json", Prefer: "return=minimal" },
-          body: JSON.stringify({
-            status: "completed",
-            engagement_score: analysis.engagement_score,
-            clip_suggestions: analysis.clip_suggestions,
-            results: { summary: analysis.summary, sentiment: analysis.sentiment, pacing: analysis.pacing, key_moments: analysis.key_moments },
-            updated_at: new Date().toISOString(),
-          }),
+        await sbPatch(supabaseUrl, supabaseKey, "ai_analyses", job.analysis_id, {
+          status: "completed",
+          engagement_score: analysis.engagement_score,
+          clip_suggestions: analysis.clip_suggestions,
+          results: {
+            summary: analysis.summary,
+            sentiment: analysis.sentiment,
+            pacing: analysis.pacing,
+            key_moments: analysis.key_moments,
+          },
         });
       }
 
       // Update upload status
-      await fetch(`${supabaseUrl}/rest/v1/video_uploads?id=eq.${job.upload_id}`, {
-        method: "PATCH",
-        headers: { Authorization: `Bearer ${supabaseKey}`, apikey: supabaseKey, "Content-Type": "application/json", Prefer: "return=minimal" },
-        body: JSON.stringify({ status: "completed", updated_at: new Date().toISOString() }),
-      });
+      await sbPatch(supabaseUrl, supabaseKey, "video_uploads", job.upload_id, { status: "completed" });
 
       // Mark job complete
-      await fetch(`${supabaseUrl}/rest/v1/analysis_jobs?id=eq.${jobId}`, {
-        method: "PATCH",
-        headers: { Authorization: `Bearer ${supabaseKey}`, apikey: supabaseKey, "Content-Type": "application/json", Prefer: "return=minimal" },
-        body: JSON.stringify({ status: "completed", progress_pct: 100, completed_at: new Date().toISOString(), updated_at: new Date().toISOString() }),
+      await sbPatch(supabaseUrl, supabaseKey, "analysis_jobs", jobId, {
+        status: "completed",
+        progress_pct: 100,
+        completed_at: new Date().toISOString(),
       });
 
       return new Response(JSON.stringify({ success: true, job_id: jobId }), {
         headers: { "Content-Type": "application/json" },
       });
     } finally {
-      try {
-        await Deno.remove(frameDir, { recursive: true });
-      } catch {}
+      try { await Deno.remove(frameDir, { recursive: true }); } catch {}
     }
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : String(err);
+    const currentRetries = job.retry_count || 0;
 
-    await fetch(`${supabaseUrl}/rest/v1/analysis_jobs?id=eq.${jobId}`, {
-      method: "PATCH",
-      headers: { Authorization: `Bearer ${supabaseKey}`, apikey: supabaseKey, "Content-Type": "application/json", Prefer: "return=minimal" },
-      body: JSON.stringify({ status: "failed", error_message: errorMessage, completed_at: new Date().toISOString(), updated_at: new Date().toISOString() }),
-    });
-
-    if (job.upload_id) {
-      await fetch(`${supabaseUrl}/rest/v1/video_uploads?id=eq.${job.upload_id}`, {
-        method: "PATCH",
-        headers: { Authorization: `Bearer ${supabaseKey}`, apikey: supabaseKey, "Content-Type": "application/json", Prefer: "return=minimal" },
-        body: JSON.stringify({ status: "failed", updated_at: new Date().toISOString() }),
+    if (currentRetries >= MAX_RETRIES) {
+      // Dead-letter
+      await sbPatch(supabaseUrl, supabaseKey, "analysis_jobs", jobId, {
+        status: "failed",
+        error_message: `${errorMessage} | Max retries exceeded (dead-letter)`,
+        completed_at: new Date().toISOString(),
+      });
+    } else {
+      // Re-queue for retry
+      await sbPatch(supabaseUrl, supabaseKey, "analysis_jobs", jobId, {
+        status: "queued",
+        retry_count: currentRetries + 1,
+        error_message: `${errorMessage} | Retry #${currentRetries + 1} scheduled.`,
+        started_at: null,
       });
     }
 
-    return new Response(JSON.stringify({ error: errorMessage }), {
+    if (job.analysis_id) {
+      await sbPatch(supabaseUrl, supabaseKey, "ai_analyses", job.analysis_id, { status: "failed" });
+    }
+    if (job.upload_id) {
+      await sbPatch(supabaseUrl, supabaseKey, "video_uploads", job.upload_id, { status: "failed" });
+    }
+
+    return new Response(JSON.stringify({ error: errorMessage, retry_count: currentRetries + 1 }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
     });
