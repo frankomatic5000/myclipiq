@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import Header from "../components/Header";
+import { useTranslations } from "next-intl";
+import Header from "../../components/Header";
 import { getSupabaseBrowser } from "@/lib/supabase/client";
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024 * 1024; // 2GB
@@ -25,6 +26,7 @@ interface AnalysisItem {
 type Phase = "idle" | "uploading" | "analyzing" | "polling" | "done" | "error";
 
 export default function AIAnalysisPage() {
+  const t = useTranslations("aiAnalysis");
   const [file, setFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -278,9 +280,9 @@ export default function AIAnalysisPage() {
   };
 
   const scoreLabel = (score: number) => {
-    if (score >= 70) return "High Potential";
-    if (score >= 40) return "Medium";
-    return "Low Engagement";
+    if (score >= 70) return t("results.highPotential");
+    if (score >= 40) return t("results.medium");
+    return t("results.lowEngagement");
   };
 
   const formatElapsed = (s: number) => {
@@ -289,18 +291,18 @@ export default function AIAnalysisPage() {
     return `${m}:${sec.toString().padStart(2, "0")}`;
   };
 
-  const statusText = (p: Phase) => {
+  const statusText = (p: Phase, t: any) => {
     switch (p) {
       case "uploading":
-        return `Uploading video… ${uploadProgress}%`;
+        return `${t("status.uploading")} ${uploadProgress}%`;
       case "analyzing":
-        return "Processing your video with AI…";
+        return t("status.analyzing");
       case "polling":
-        return `Analysis in progress, checking for results… (${formatElapsed(elapsedSeconds)})`;
+        return `${t("status.polling")} (${formatElapsed(elapsedSeconds)})`;
       case "done":
-        return "Analysis complete";
+        return t("status.done");
       case "error":
-        return error ? `Error: ${error}` : "Something went wrong";
+        return error ? `${t("status.error")}: ${error}` : t("status.error");
       default:
         return "";
     }
@@ -309,8 +311,8 @@ export default function AIAnalysisPage() {
   return (
     <>
       <Header
-        title="AI Content Analysis"
-        subtitle="Upload videos for AI-powered engagement predictions"
+        title={t("header.title")}
+        subtitle={t("header.subtitle")}
         actions={
           <div className="flex items-center bg-surface-900 rounded-lg border border-surface-700/50 p-0.5">
             <button className="px-3 py-1.5 rounded-md text-xs font-medium bg-brand-500/20 text-brand-400">Admin</button>
@@ -328,13 +330,13 @@ export default function AIAnalysisPage() {
         aria-atomic="true"
         className="sr-only"
       >
-        {statusText(phase)}
+        {statusText(phase, t)}
       </div>
 
       <div className="p-4 md:p-6 space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Upload Video</h3>
+            <h3 className="text-lg font-semibold">{t("upload.title")}</h3>
             <input
               ref={fileInputRef}
               type="file"
@@ -369,14 +371,14 @@ export default function AIAnalysisPage() {
               {phase === "uploading" && (
                 <div className="flex flex-col items-center gap-4 w-full" aria-label="Uploading video">
                   <div className="w-12 h-12 rounded-full border-4 border-brand-500/30 border-t-brand-500 animate-spin" />
-                  <p className="font-medium" aria-hidden="true">Uploading video… {uploadProgress}%</p>
-                  <div className="w-full max-w-xs h-3 bg-surface-800 rounded-full overflow-hidden" role="progressbar" aria-valuenow={uploadProgress} aria-valuemin={0} aria-valuemax={100} aria-label="Upload progress">
+                  <p className="font-medium" aria-hidden="true">{t("upload.uploading")} {uploadProgress}%</p>
+                  <div className="w-full max-w-xs h-3 bg-surface-800 rounded-full overflow-hidden" role="progressbar" aria-valuenow={uploadProgress} aria-valuemin={0} aria-valuemax={100} aria-label={t("upload.progressLabel")}>
                     <div
                       className="h-full bg-brand-500 rounded-full transition-all"
                       style={{ width: `${uploadProgress}%` }}
                     />
                   </div>
-                  <p className="text-xs text-surface-400">This may take a moment for large files</p>
+                  <p className="text-xs text-surface-400">{t("upload.largeFile")}</p>
                 </div>
               )}
 
@@ -384,8 +386,8 @@ export default function AIAnalysisPage() {
               {phase === "analyzing" && (
                 <div className="flex flex-col items-center gap-4" aria-label="Analyzing video">
                   <div className="w-12 h-12 rounded-full border-4 border-brand-500/30 border-t-brand-500 animate-spin" />
-                  <p className="font-medium">Processing your video with AI…</p>
-                  <p className="text-xs text-surface-400">Est. time: ~2 minutes</p>
+                  <p className="font-medium">{t("status.analyzing")}</p>
+                  <p className="text-xs text-surface-400">{t("upload.estTime")}</p>
                 </div>
               )}
 
@@ -393,9 +395,9 @@ export default function AIAnalysisPage() {
               {phase === "polling" && (
                 <div className="flex flex-col items-center gap-4" aria-label="Waiting for results">
                   <div className="w-12 h-12 rounded-full border-4 border-brand-500/30 border-t-brand-500 animate-spin" />
-                  <p className="font-medium">Analysis in progress, checking for results…</p>
-                  <p className="text-sm text-surface-300 font-mono">Elapsed: {formatElapsed(elapsedSeconds)}</p>
-                  <p className="text-xs text-surface-400">We&apos;ll notify you as soon as it&apos;s ready</p>
+                  <p className="font-medium">{t("status.polling")}</p>
+                  <p className="text-sm text-surface-300 font-mono">{t("upload.elapsed")}: {formatElapsed(elapsedSeconds)}</p>
+                  <p className="text-xs text-surface-400">{t("upload.notify")}</p>
                 </div>
               )}
 
@@ -407,7 +409,7 @@ export default function AIAnalysisPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M12 17a5 5 0 100-10 5 5 0 000 10z" />
                     </svg>
                   </div>
-                  <p className="font-medium text-red-300">Something went wrong</p>
+                  <p className="font-medium text-red-300">{t("status.errorTitle")}</p>
                   {error && <p className="text-sm text-red-300 max-w-xs">{error}</p>}
                   <button
                     onClick={(e) => {
@@ -415,9 +417,9 @@ export default function AIAnalysisPage() {
                       reset();
                     }}
                     className="mt-1 px-4 py-2 rounded-lg bg-surface-800 border border-surface-700 text-surface-100 text-sm font-medium hover:bg-surface-700 transition focus:outline-none focus:ring-2 focus:ring-brand-500"
-                    aria-label="Retry upload"
+                    aria-label={t("upload.retry")}
                   >
-                    Try Again
+                    {t("upload.retry")}
                   </button>
                 </div>
               )}
@@ -431,31 +433,36 @@ export default function AIAnalysisPage() {
                     </svg>
                   </div>
                   <p className="font-medium mb-2">
-                    {file ? file.name : "Drag and drop your video here"}
+                    {file ? file.name : t("upload.dropzone")}
                   </p>
-                  <p className="text-sm text-surface-300">or click to browse</p>
-                  <p className="text-xs text-surface-300 mt-2">MP4, MOV, AVI • Max 2GB</p>
+                  <p className="text-sm text-surface-300">{t("upload.orClick")}</p>
+                  <p className="text-xs text-surface-300 mt-2">{t("upload.formats")}</p>
                 </>
               )}
             </div>
           </div>
 
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Analysis Options</h3>
+            <h3 className="text-lg font-semibold">{t("options.title")}</h3>
             <div className="bg-surface-900 rounded-xl border border-surface-700/50 p-5 space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-2">Content Type</label>
+                <label className="block text-sm font-medium mb-2">{t("options.contentType")}</label>
                 <select disabled={isBusy} className="w-full px-4 py-2 rounded-lg bg-surface-800 border border-surface-700/50 text-surface-100">
-                  <option>Short-form Social (15-60s)</option>
-                  <option>Long-form Content (5-20min)</option>
-                  <option>Podcast / Interview</option>
-                  <option>Educational / Tutorial</option>
+                  <option>{t("options.contentTypes.shortform")}</option>
+                  <option>{t("options.contentTypes.longform")}</option>
+                  <option>{t("options.contentTypes.podcast")}</option>
+                  <option>{t("options.contentTypes.educational")}</option>
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">Target Platforms</label>
+                <label className="block text-sm font-medium mb-2">{t("options.targetPlatforms")}</label>
                 <div className="flex flex-wrap gap-2">
-                  {["TikTok", "Instagram Reels", "YouTube Shorts", "LinkedIn"].map((p, i) => (
+                  {[
+                    t("platforms.tiktok"),
+                    t("platforms.instagram"),
+                    t("platforms.youtube"),
+                    t("platforms.linkedin"),
+                  ].map((p, i) => (
                     <label key={p} className="flex items-center gap-2 px-3 py-2.5 rounded-lg bg-surface-800 border border-surface-700/50 cursor-pointer hover:border-brand-500/50 transition min-h-[44px]">
                       <input type="checkbox" defaultChecked={i < 2} disabled={isBusy} className="w-5 h-5 rounded bg-surface-700 border-surface-600 accent-brand-500 cursor-pointer" />
                       <span className="text-sm">{p}</span>
@@ -464,11 +471,11 @@ export default function AIAnalysisPage() {
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">Analysis Depth</label>
-                <select disabled={isBusy} className="w-full px-4 py-2 rounded-lg bg-surface-800 border border-surface-700/50 text-surface-100" defaultValue="Standard Analysis (2min)">
-                  <option>Quick Analysis (30s)</option>
-                  <option>Standard Analysis (2min)</option>
-                  <option>Deep Analysis (5min)</option>
+                <label className="block text-sm font-medium mb-2">{t("options.analysisDepth")}</label>
+                <select disabled={isBusy} className="w-full px-4 py-2 rounded-lg bg-surface-800 border border-surface-700/50 text-surface-100" defaultValue={t("options.depths.standard")}>
+                  <option>{t("options.depths.quick")}</option>
+                  <option>{t("options.depths.standard")}</option>
+                  <option>{t("options.depths.deep")}</option>
                 </select>
               </div>
               <div className="flex gap-3">
@@ -477,7 +484,7 @@ export default function AIAnalysisPage() {
                     onClick={reset}
                     className="w-full py-3 rounded-lg bg-surface-800 border border-surface-700 text-surface-100 font-medium hover:bg-surface-700 transition"
                   >
-                    Analyze Another
+                    {t("actions.analyzeAnother")}
                   </button>
                 ) : (
                   <button
@@ -488,7 +495,7 @@ export default function AIAnalysisPage() {
                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                     </svg>
-                    Start Analysis
+                    {t("actions.startAnalysis")}
                   </button>
                 )}
               </div>
@@ -499,7 +506,7 @@ export default function AIAnalysisPage() {
         {/* Result */}
         {analysisResult && analysisResult.engagementScore != null && (
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Analysis Result</h3>
+            <h3 className="text-lg font-semibold">{t("results.title")}</h3>
             <div className="bg-surface-900 rounded-xl border border-surface-700/50 p-5 space-y-4">
               <div className="flex items-center gap-4">
                 <div className={`w-14 h-14 rounded-xl bg-${scoreColor(analysisResult.engagementScore)}-500/20 flex items-center justify-center`}>
@@ -508,7 +515,7 @@ export default function AIAnalysisPage() {
                   </span>
                 </div>
                 <div>
-                  <p className="font-medium">Engagement Score</p>
+                  <p className="font-medium">{t("results.engagementScore")}</p>
                   <p className={`text-sm text-${scoreColor(analysisResult.engagementScore)}-400`}>
                     {scoreLabel(analysisResult.engagementScore)}
                   </p>
@@ -516,13 +523,13 @@ export default function AIAnalysisPage() {
               </div>
               {analysisResult.results?.summary && (
                 <div>
-                  <p className="text-sm font-medium mb-1">Summary</p>
+                  <p className="text-sm font-medium mb-1">{t("results.summary")}</p>
                   <p className="text-sm text-surface-300">{analysisResult.results.summary}</p>
                 </div>
               )}
               {Array.isArray(analysisResult.clipSuggestions) && analysisResult.clipSuggestions.length > 0 && (
                 <div>
-                  <p className="text-sm font-medium mb-2">Clip Suggestions</p>
+                  <p className="text-sm font-medium mb-2">{t("results.clipSuggestions")}</p>
                   <div className="space-y-2">
                     {analysisResult.clipSuggestions.map((c, idx) => (
                       <div key={idx} className="flex items-center justify-between rounded-lg bg-surface-800 border border-surface-700/50 px-3 py-2">
@@ -543,17 +550,17 @@ export default function AIAnalysisPage() {
         {/* Recent Analyses */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold">Recent Analyses</h3>
+            <h3 className="text-lg font-semibold">{t("results.recent")}</h3>
             <button
               onClick={fetchRecent}
               className="px-4 py-2 text-sm rounded-lg border border-surface-700 text-surface-300 hover:bg-surface-800 transition"
             >
-              Refresh
+              {t("results.refresh")}
             </button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {recentAnalyses.length === 0 && (
-              <div className="col-span-full text-sm text-surface-400">No analyses yet.</div>
+              <div className="col-span-full text-sm text-surface-400">{t("results.none")}</div>
             )}
             {recentAnalyses.map((r) => {
               const score = r.engagementScore ?? 0;
@@ -568,13 +575,13 @@ export default function AIAnalysisPage() {
                       </svg>
                     </div>
                     <div>
-                      <p className="font-medium text-sm">{r.filename || "Unknown"}</p>
+                      <p className="font-medium text-sm">{r.filename || t("results.unknown")}</p>
                       <p className="text-xs text-surface-300">{new Date(r.createdAt).toLocaleDateString()}</p>
                     </div>
                   </div>
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-surface-300">TikTok Score</span>
+                      <span className="text-surface-300">{t("results.tiktokScore")}</span>
                       <span className={`font-medium text-${color}-400`}>{score}/100</span>
                     </div>
                     <div className="w-full bg-surface-800 rounded-full h-1.5">
@@ -585,7 +592,7 @@ export default function AIAnalysisPage() {
                     <span className={`px-2 py-0.5 rounded text-[10px] bg-${color}-500/10 text-${color}-400`}>
                       {scoreLabel(score)}
                     </span>
-                    <span className="px-2 py-0.5 rounded text-[10px] bg-surface-700 text-surface-300">{clips} clips</span>
+                    <span className="px-2 py-0.5 rounded text-[10px] bg-surface-700 text-surface-300">{clips} {t("results.clips")}</span>
                   </div>
                 </div>
               );

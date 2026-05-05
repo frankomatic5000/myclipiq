@@ -1,4 +1,4 @@
-import Header from "../components/Header";
+import Header from "../../components/Header";
 
 const contracts = [
   { customer: "TechStartup Inc.", type: "Media Rights Agreement", status: "Signed", statusColor: "green", sent: "Apr 12, 2026", signed: "Apr 14, 2026", initial: "TS", bg: "bg-blue-500" },

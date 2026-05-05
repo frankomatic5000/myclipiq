@@ -1,21 +1,53 @@
+import createIntlMiddleware from 'next-intl/middleware';
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import {routing} from './lib/i18n/routing';
+
+const handleI18nRouting = createIntlMiddleware(routing);
 
 const PUBLIC_PATHS = new Set(["/", "/auth/login", "/auth/signup", "/auth/callback", "/api/auth"]);
 const PUBLIC_PREFIXES = ["/api/auth/", "/api/r2/"];
-
 const ADMIN_PATHS = new Set(["/admin"]);
 
+function stripLocale(pathname: string) {
+  const segments = pathname.split("/");
+  const maybeLocale = segments[1];
+
+  if (routing.locales.includes(maybeLocale as any)) {
+    const withoutLocale = `/${segments.slice(2).join("/")}`;
+    return withoutLocale.replace(/\/+/g, "/").replace(/\/$/, "") || "/";
+  }
+
+  return pathname.replace(/\/$/, "") || "/";
+}
+
+function getLocale(pathname: string) {
+  const maybeLocale = pathname.split("/")[1];
+  return routing.locales.includes(maybeLocale as any) ? maybeLocale : routing.defaultLocale;
+}
+
+function localizedPath(pathname: string, locale: string) {
+  return `/${locale}${pathname === "/" ? "" : pathname}`;
+}
+
 function isPublicPath(pathname: string) {
-  const normalizedPath = pathname.replace(/\/$/, "") || "/";
+  const normalizedPath = stripLocale(pathname);
   return PUBLIC_PATHS.has(normalizedPath) || PUBLIC_PREFIXES.some((prefix) => normalizedPath.startsWith(prefix));
 }
 
 export async function middleware(req: NextRequest) {
-  const res = NextResponse.next();
+  const pathname = req.nextUrl.pathname;
+  const normalizedPath = stripLocale(pathname);
+  const locale = getLocale(pathname);
 
-  const supabase = createMiddlewareClient({ req, res }, {
+  // Let next-intl add/detect the locale before auth decisions on unprefixed routes.
+  const intlResponse = handleI18nRouting(req);
+  if (intlResponse.headers.get("location") && !pathname.startsWith(`/${locale}`)) {
+    return intlResponse;
+  }
+
+  const supabase = createMiddlewareClient({ req, res: intlResponse }, {
     supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL!,
     supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
   });
@@ -24,21 +56,20 @@ export async function middleware(req: NextRequest) {
     data: { session },
   } = await supabase.auth.getSession();
 
-  const isPublic = isPublicPath(req.nextUrl.pathname);
+  const isPublic = isPublicPath(pathname);
 
-  // 1. Require auth for all non-public routes
+  // 1. Require auth for all non-public locale routes.
   if (!session && !isPublic) {
-    const loginUrl = new URL("/auth/login", req.url);
-    return NextResponse.redirect(loginUrl);
+    return NextResponse.redirect(new URL(localizedPath("/auth/login", locale), req.url));
   }
 
-  // 2. Redirect logged-in users away from auth pages
-  if (session && (req.nextUrl.pathname === "/auth/login" || req.nextUrl.pathname === "/auth/signup")) {
-    return NextResponse.redirect(new URL("/projects", req.url));
+  // 2. Redirect logged-in users away from auth pages.
+  if (session && (normalizedPath === "/auth/login" || normalizedPath === "/auth/signup")) {
+    return NextResponse.redirect(new URL(localizedPath("/projects", locale), req.url));
   }
 
-  // 3. Admin gate: only admin role may access /admin
-  if (session && ADMIN_PATHS.has(req.nextUrl.pathname.replace(/\/$/, ""))) {
+  // 3. Admin gate: only admin role may access /{locale}/admin.
+  if (session && ADMIN_PATHS.has(normalizedPath)) {
     const { data: profile } = await supabase
       .from("profiles")
       .select("role")
@@ -46,15 +77,13 @@ export async function middleware(req: NextRequest) {
       .single();
 
     if (!profile || profile.role !== "admin") {
-      return NextResponse.redirect(new URL("/projects", req.url));
+      return NextResponse.redirect(new URL(localizedPath("/projects", locale), req.url));
     }
   }
 
-  return res;
+  return intlResponse;
 }
 
 export const config = {
-  matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.svg|.*\\.png|.*\\.jpg|.*\\.jpeg|.*\\.gif).*)",
-  ],
+  matcher: ['/((?!api|_next|_vercel|.*\\..*).*)'],
 };

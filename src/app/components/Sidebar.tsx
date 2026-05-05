@@ -1,19 +1,25 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
+import { Link } from "@/lib/i18n/navigation";
 import { useEffect, useState } from "react";
 import { getSupabaseBrowser } from "@/lib/supabase/client";
+import LanguageSwitcher from "./LanguageSwitcher";
 
-const navItems = [
-  { href: "/projects", label: "Dashboard", icon: DashboardIcon },
-  { href: "/projects", label: "Projects", icon: ProjectsIcon },
-  { href: "/customers", label: "Customers", icon: CustomersIcon },
-  { href: "/ai-analysis", label: "AI Analysis", icon: AIIcon, aiOnly: true },
-  { href: "/team", label: "Team", icon: TeamIcon, adminOnly: true },
-  { href: "/analytics", label: "Analytics", icon: AnalyticsIcon, adminOnly: true },
-  { href: "/admin", label: "Admin", icon: AdminIcon, adminOnly: true },
-];
+function useNavItems() {
+  const t = useTranslations("nav");
+  return [
+    { href: "/projects", label: t("dashboard"), icon: DashboardIcon },
+    { href: "/projects", label: t("projects"), icon: ProjectsIcon },
+    { href: "/customers", label: t("customers"), icon: CustomersIcon },
+    { href: "/ai-analysis", label: t("aiAnalysis"), icon: AIIcon, aiOnly: true },
+    { href: "/team", label: t("team"), icon: TeamIcon, adminOnly: true },
+    { href: "/analytics", label: t("analytics"), icon: AnalyticsIcon, adminOnly: true },
+    { href: "/admin", label: t("admin"), icon: AdminIcon, adminOnly: true },
+  ];
+}
+
 
 function DashboardIcon({ className }: { className?: string }) {
   return (
@@ -80,6 +86,11 @@ interface UserProfile {
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const locale = useLocale();
+  const pathWithoutLocale = pathname.replace(new RegExp(`^/${locale}(?=/|$)`), "") || "/";
+  const t = useTranslations("sidebar");
+  const tNav = useTranslations("nav");
+  const navItems = useNavItems();
 
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [initials, setInitials] = useState("?");
@@ -104,7 +115,7 @@ export default function Sidebar() {
   }, []);
 
   useEffect(() => {
-    if (pathname === "/") return;
+    if (pathWithoutLocale === "/") return;
 
     async function loadProfile() {
       const sb = getSupabaseBrowser();
@@ -124,10 +135,10 @@ export default function Sidebar() {
       }
     }
     loadProfile();
-  }, [pathname]);
+  }, [pathWithoutLocale]);
 
   /* Landing page is chrome-free. Keep hooks above this guard to preserve hook order. */
-  if (pathname === "/" || pathname.startsWith("/auth")) return null;
+  if (pathWithoutLocale === "/" || pathWithoutLocale.startsWith("/auth")) return null;
 
   const showSidebar = isOpen || isDesktop;
 
@@ -164,7 +175,7 @@ export default function Sidebar() {
           </div>
           <div>
             <h1 className="text-lg font-bold gradient-text">MyClipIQ</h1>
-            <p className="text-[10px] text-surface-300 uppercase tracking-wider">Content Intelligence</p>
+            <p className="text-[10px] text-surface-300 uppercase tracking-wider">{t("contentIntelligence")}</p>
           </div>
         </div>
       </div>
@@ -172,7 +183,7 @@ export default function Sidebar() {
       {/* Navigation */}
       <nav className="flex-1 p-3 space-y-1">
         {navItems.map((item) => {
-          const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
+          const isActive = pathWithoutLocale === item.href || (item.href !== "/" && pathWithoutLocale.startsWith(item.href));
 
           // Hide admin-only links for non-admins
           if (item.adminOnly && profile?.role !== "admin") return null;
@@ -203,12 +214,13 @@ export default function Sidebar() {
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium truncate">
-              {profile?.full_name || "Loading..."}
+              {profile?.full_name || t("loading")}
             </p>
             <p className="text-xs text-surface-300">
-              {profile?.role ? profile.role.charAt(0).toUpperCase() + profile.role.slice(1) : "Viewer"}
+              {profile?.role ? profile.role.charAt(0).toUpperCase() + profile.role.slice(1) : t("viewer")}
             </p>
           </div>
+          <LanguageSwitcher />
           <Link href="/onboarding" className="text-surface-300 hover:text-brand-400 transition p-2 rounded-lg hover:bg-surface-800 min-h-[44px] min-w-[44px] flex items-center justify-center" title="Settings" aria-label="Settings">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />

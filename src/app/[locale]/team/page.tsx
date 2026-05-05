@@ -1,5 +1,5 @@
-import Header from "../components/Header";
-import Link from "next/link";
+import Header from "../../components/Header";
+import { Link } from "@/lib/i18n/navigation";
 
 const members = [
   { name: "Rod Rezende", email: "rod@growbiz.com", role: "Admin", roleColor: "brand", initial: "R", projects: 12, lastActive: "Online", avatarBg: "gradient-accent" },

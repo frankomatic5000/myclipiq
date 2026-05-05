@@ -1,0 +1,114 @@
+{
+  "landing": {
+    "badge": "Inteligência de Vídeo com IA",
+    "title": "Sua edição agora tem",
+    "titleHighlight": "um co-piloto de IA",
+    "description": "O MyClipIQ analisa cada clipe e otimiza automaticamente o enquadramento, o ritmo e o formato para cada plataforma social. Pare de adivinhar qual corte vai onde — deixe a IA decidir.",
+    "ctaPrimary": "Comece a editar com mais inteligência",
+    "ctaSecondary": "Veja como funciona",
+    "features": {
+      "smartAnalysis": {
+        "label": "Análise Inteligente",
+        "desc": "Compreensão de IA em nível de frame"
+      },
+      "instantOptimization": {
+        "label": "Otimização Instantânea",
+        "desc": "Formatação automática por plataforma"
+      },
+      "multiPlatform": {
+        "label": "Multiplataforma",
+        "desc": "Reels · Shorts · TikTok · LinkedIn"
+      }
+    },
+    "trust": "Não é necessário cartão de crédito · Plano gratuito disponível · Feito para editores, não apenas criadores"
+  },
+  "nav": {
+    "dashboard": "Painel",
+    "projects": "Projetos",
+    "customers": "Clientes",
+    "aiAnalysis": "Análise de IA",
+    "team": "Equipe",
+    "analytics": "Análises",
+    "admin": "Admin"
+  },
+  "sidebar": {
+    "contentIntelligence": "Inteligência de Conteúdo",
+    "loading": "Carregando...",
+    "viewer": "Visualizador"
+  },
+  "languageSwitcher": {
+    "label": "Idioma",
+    "en": "English",
+    "pt": "Português",
+    "es": "Español"
+  },
+  "aiAnalysis": {
+    "header": {
+      "title": "Análise de IA",
+      "subtitle": "Envie um vídeo e receba insights, pontuações e ideias de clipes prontos para cada plataforma."
+    },
+    "status": {
+      "uploading": "Enviando",
+      "analyzing": "Analisando seu vídeo...",
+      "polling": "Preparando resultados",
+      "done": "Análise concluída",
+      "error": "Erro",
+      "errorTitle": "Algo deu errado"
+    },
+    "upload": {
+      "title": "Enviar vídeo",
+      "uploading": "Enviando",
+      "progressLabel": "Progresso do envio",
+      "largeFile": "Arquivos grandes podem levar alguns minutos. Mantenha esta aba aberta.",
+      "estTime": "Isso normalmente leva de 1 a 3 minutos.",
+      "elapsed": "Tempo decorrido",
+      "notify": "Atualizaremos este painel assim que os resultados estiverem prontos.",
+      "retry": "Tentar novamente",
+      "dropzone": "Solte seu vídeo aqui",
+      "orClick": "ou clique para escolher um arquivo",
+      "formats": "MP4, MOV, WEBM ou AVI até 2GB"
+    },
+    "options": {
+      "title": "Opções de análise",
+      "contentType": "Tipo de conteúdo",
+      "contentTypes": {
+        "shortform": "Vídeo curto",
+        "longform": "Vídeo longo",
+        "podcast": "Podcast / entrevista",
+        "educational": "Conteúdo educativo"
+      },
+      "targetPlatforms": "Plataformas-alvo",
+      "analysisDepth": "Profundidade da análise",
+      "depths": {
+        "quick": "Análise rápida",
+        "standard": "Análise padrão",
+        "deep": "Análise profunda"
+      }
+    },
+    "platforms": {
+      "tiktok": "TikTok",
+      "instagram": "Instagram",
+      "youtube": "YouTube Shorts",
+      "linkedin": "LinkedIn"
+    },
+    "actions": {
+      "startAnalysis": "Iniciar análise",
+      "analyzeAnother": "Analisar outro vídeo"
+    },
+    "results": {
+      "title": "Resultado da análise",
+      "engagementScore": "Pontuação de engajamento",
+      "highPotential": "Alto potencial",
+      "medium": "Médio",
+      "lowEngagement": "Baixo engajamento",
+      "summary": "Resumo",
+      "clipSuggestions": "Sugestões de clipes",
+      "recent": "Análises recentes",
+      "refresh": "Atualizar",
+      "none": "Nenhuma análise ainda.",
+      "unknown": "Desconhecido",
+      "tiktokScore": "Pontuação no TikTok",
+      "clips": "clipes"
+    }
+  }
+}

@@ -1,0 +1,114 @@
+{
+  "landing": {
+    "badge": "AI-Powered Video Intelligence",
+    "title": "Your editing just got",
+    "titleHighlight": "an AI co-pilot",
+    "description": "MyClipIQ analyzes every clip and automatically optimizes framing, pacing, and format for each social platform. Stop guessing which cut goes where — let AI decide.",
+    "ctaPrimary": "Start editing smarter",
+    "ctaSecondary": "See how it works",
+    "features": {
+      "smartAnalysis": {
+        "label": "Smart Analysis",
+        "desc": "Frame-level AI understanding"
+      },
+      "instantOptimization": {
+        "label": "Instant Optimization",
+        "desc": "Auto-format per platform"
+      },
+      "multiPlatform": {
+        "label": "Multi-Platform",
+        "desc": "Reels · Shorts · TikTok · LinkedIn"
+      }
+    },
+    "trust": "No credit card required · Free tier available · Built for editors, not just creators"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "projects": "Projects",
+    "customers": "Customers",
+    "aiAnalysis": "AI Analysis",
+    "team": "Team",
+    "analytics": "Analytics",
+    "admin": "Admin"
+  },
+  "sidebar": {
+    "contentIntelligence": "Content Intelligence",
+    "loading": "Loading...",
+    "viewer": "Viewer"
+  },
+  "languageSwitcher": {
+    "label": "Language",
+    "en": "English",
+    "pt": "Português",
+    "es": "Español"
+  },
+  "aiAnalysis": {
+    "header": {
+      "title": "AI Analysis",
+      "subtitle": "Upload a video and get platform-ready insights, scores, and clip ideas."
+    },
+    "status": {
+      "uploading": "Uploading",
+      "analyzing": "Analyzing your video...",
+      "polling": "Preparing results",
+      "done": "Analysis complete",
+      "error": "Error",
+      "errorTitle": "Something went wrong"
+    },
+    "upload": {
+      "title": "Upload video",
+      "uploading": "Uploading",
+      "progressLabel": "Upload progress",
+      "largeFile": "Large files can take a few minutes. Keep this tab open.",
+      "estTime": "This usually takes 1–3 minutes.",
+      "elapsed": "Elapsed",
+      "notify": "We will update this panel as soon as results are ready.",
+      "retry": "Try again",
+      "dropzone": "Drop your video here",
+      "orClick": "or click to choose a file",
+      "formats": "MP4, MOV, WEBM, or AVI up to 2GB"
+    },
+    "options": {
+      "title": "Analysis options",
+      "contentType": "Content type",
+      "contentTypes": {
+        "shortform": "Short-form video",
+        "longform": "Long-form video",
+        "podcast": "Podcast / interview",
+        "educational": "Educational content"
+      },
+      "targetPlatforms": "Target platforms",
+      "analysisDepth": "Analysis depth",
+      "depths": {
+        "quick": "Quick scan",
+        "standard": "Standard analysis",
+        "deep": "Deep analysis"
+      }
+    },
+    "platforms": {
+      "tiktok": "TikTok",
+      "instagram": "Instagram",
+      "youtube": "YouTube Shorts",
+      "linkedin": "LinkedIn"
+    },
+    "actions": {
+      "startAnalysis": "Start Analysis",
+      "analyzeAnother": "Analyze Another Video"
+    },
+    "results": {
+      "title": "Analysis Result",
+      "engagementScore": "Engagement Score",
+      "highPotential": "High Potential",
+      "medium": "Medium",
+      "lowEngagement": "Low Engagement",
+      "summary": "Summary",
+      "clipSuggestions": "Clip Suggestions",
+      "recent": "Recent Analyses",
+      "refresh": "Refresh",
+      "none": "No analyses yet.",
+      "unknown": "Unknown",
+      "tiktokScore": "TikTok Score",
+      "clips": "clips"
+    }
+  }
+}
