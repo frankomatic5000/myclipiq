@@ -32,7 +32,7 @@ export default function CustomersPage() {
               <input type="text" placeholder="Search customers..." autoComplete="off" className="pl-10 pr-4 py-2.5 rounded-lg bg-surface-900 border border-surface-700/50 text-sm text-surface-100 placeholder-surface-300/50 focus:outline-none focus:border-brand-500 w-full sm:w-64 min-h-[44px]" />
               <svg className="w-4 h-4 text-surface-300 absolute left-3 top-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
             </div>
-            <button className="admin-only px-4 py-2 text-sm rounded-lg gradient-accent text-white font-medium hover:opacity-90 transition flex items-center gap-2 whitespace-nowrap">
+            <button onClick={() => alert("Coming soon — customer creation form in development")} className="admin-only px-4 py-2 text-sm rounded-lg gradient-accent text-white font-medium hover:opacity-90 transition flex items-center gap-2 whitespace-nowrap">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
               Add Customer
             </button>
