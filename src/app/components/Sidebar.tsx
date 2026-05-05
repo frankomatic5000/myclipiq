@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { getSupabaseBrowser } from "@/lib/supabase/client";
 
 const navItems = [
-  { href: "/", label: "Dashboard", icon: DashboardIcon },
+  { href: "/projects", label: "Dashboard", icon: DashboardIcon },
   { href: "/projects", label: "Projects", icon: ProjectsIcon },
   { href: "/customers", label: "Customers", icon: CustomersIcon },
   { href: "/ai-analysis", label: "AI Analysis", icon: AIIcon, aiOnly: true },
