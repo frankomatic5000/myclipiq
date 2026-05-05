@@ -122,9 +122,10 @@ export default function SignupPage() {
             <input
               type="text"
               required
+              autoComplete="name"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-lg bg-surface-800 border border-surface-700/50 text-surface-100 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
+              className="w-full px-4 py-2.5 rounded-lg bg-surface-800 border border-surface-700/50 text-surface-100 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 min-h-[44px]"
               placeholder="Rod Rezende"
             />
           </div>
@@ -134,9 +135,10 @@ export default function SignupPage() {
             <input
               type="email"
               required
+              autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-lg bg-surface-800 border border-surface-700/50 text-surface-100 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
+              className="w-full px-4 py-2.5 rounded-lg bg-surface-800 border border-surface-700/50 text-surface-100 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 min-h-[44px]"
               placeholder="you@company.com"
             />
           </div>
@@ -147,9 +149,10 @@ export default function SignupPage() {
               type="password"
               required
               minLength={6}
+              autoComplete="new-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-lg bg-surface-800 border border-surface-700/50 text-surface-100 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500"
+              className="w-full px-4 py-2.5 rounded-lg bg-surface-800 border border-surface-700/50 text-surface-100 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 min-h-[44px]"
               placeholder="Min 6 characters"
             />
           </div>

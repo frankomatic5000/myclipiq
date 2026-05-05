@@ -456,8 +456,8 @@ export default function AIAnalysisPage() {
                 <label className="block text-sm font-medium mb-2">Target Platforms</label>
                 <div className="flex flex-wrap gap-2">
                   {["TikTok", "Instagram Reels", "YouTube Shorts", "LinkedIn"].map((p, i) => (
-                    <label key={p} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-surface-800 border border-surface-700/50 cursor-pointer hover:border-brand-500/50 transition">
-                      <input type="checkbox" defaultChecked={i < 2} disabled={isBusy} className="w-4 h-4 rounded bg-surface-700 border-surface-600 accent-brand-500" />
+                    <label key={p} className="flex items-center gap-2 px-3 py-2.5 rounded-lg bg-surface-800 border border-surface-700/50 cursor-pointer hover:border-brand-500/50 transition min-h-[44px]">
+                      <input type="checkbox" defaultChecked={i < 2} disabled={isBusy} className="w-5 h-5 rounded bg-surface-700 border-surface-600 accent-brand-500 cursor-pointer" />
                       <span className="text-sm">{p}</span>
                     </label>
                   ))}

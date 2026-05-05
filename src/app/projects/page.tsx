@@ -77,9 +77,9 @@ export default function ProjectsPage() {
       <div className="p-4 md:p-6">
         {/* Pipeline Filter */}
         <div className="flex flex-wrap items-center gap-2 mb-8">
-          <button className="pipeline-filter px-3 py-1.5 rounded-full text-xs font-medium bg-brand-500/10 text-brand-400 border border-brand-500/20">All (12)</button>
+          <button className="pipeline-filter px-3 py-2 rounded-full text-xs font-medium bg-brand-500/10 text-brand-400 border border-brand-500/20 min-h-[44px]">All (12)</button>
           {pipelineStages.map((stage) => (
-            <button key={stage.id} className="pipeline-filter px-3 py-1.5 rounded-full text-xs font-medium bg-surface-800 text-surface-300 border border-surface-700/50 hover:border-brand-500/30">
+            <button key={stage.id} className="pipeline-filter px-3 py-2 rounded-full text-xs font-medium bg-surface-800 text-surface-300 border border-surface-700/50 hover:border-brand-500/30 min-h-[44px]">
               {stage.label} ({stage.count})
             </button>
           ))}

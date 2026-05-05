@@ -70,15 +70,15 @@ export default function OnboardingPage() {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-1.5">Full Name</label>
-                <input type="text" placeholder="Rod Rezende" className="w-full px-4 py-3 rounded-lg bg-surface-900 border border-surface-700/50 text-surface-100 placeholder-surface-300/50 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500" />
+                <input type="text" placeholder="Rod Rezende" autoComplete="name" className="w-full px-4 py-3 rounded-lg bg-surface-900 border border-surface-700/50 text-surface-100 placeholder-surface-300/50 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 min-h-[44px]" />
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1.5">Email</label>
-                <input type="email" placeholder="rod@growbiz.com" className="w-full px-4 py-3 rounded-lg bg-surface-900 border border-surface-700/50 text-surface-100 placeholder-surface-300/50 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500" />
+                <input type="email" placeholder="rod@growbiz.com" autoComplete="email" className="w-full px-4 py-3 rounded-lg bg-surface-900 border border-surface-700/50 text-surface-100 placeholder-surface-300/50 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 min-h-[44px]" />
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1.5">Password</label>
-                <input type="password" placeholder="••••••••" className="w-full px-4 py-3 rounded-lg bg-surface-900 border border-surface-700/50 text-surface-100 placeholder-surface-300/50 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500" />
+                <input type="password" placeholder="••••••••" autoComplete="new-password" className="w-full px-4 py-3 rounded-lg bg-surface-900 border border-surface-700/50 text-surface-100 placeholder-surface-300/50 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 min-h-[44px]" />
               </div>
               <button className="w-full py-3 rounded-lg gradient-accent text-white font-medium hover:opacity-90 transition">Create Account</button>
             </div>

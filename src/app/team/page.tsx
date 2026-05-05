@@ -81,7 +81,7 @@ export default function TeamPage() {
                     <td className="px-5 py-4 text-sm">{m.projects}</td>
                     <td className="px-5 py-4 text-sm text-surface-300">{m.lastActive}</td>
                     <td className="px-5 py-4">
-                      <button className="p-1.5 rounded hover:bg-surface-700 transition" title="Edit">
+                      <button className="p-2.5 rounded hover:bg-surface-700 transition min-w-[44px] min-h-[44px] flex items-center justify-center" title="Edit" aria-label="Edit member">
                         <svg className="w-4 h-4 text-surface-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                       </button>
                     </td>
@@ -111,8 +111,8 @@ export default function TeamPage() {
                   <td className="px-5 py-4 text-sm text-surface-300">2 days ago</td>
                   <td className="px-5 py-4">
                     <div className="flex items-center gap-2">
-                      <button className="px-3 py-1 text-xs rounded-lg gradient-accent text-white hover:opacity-90 transition">Resend</button>
-                      <button className="px-3 py-1 text-xs rounded-lg border border-surface-700 text-surface-300 hover:bg-surface-800 transition">Revoke</button>
+                      <button className="px-3 py-2 text-xs rounded-lg gradient-accent text-white hover:opacity-90 transition min-h-[44px]">Resend</button>
+                      <button className="px-3 py-2 text-xs rounded-lg border border-surface-700 text-surface-300 hover:bg-surface-800 transition min-h-[44px]">Revoke</button>
                     </div>
                   </td>
                 </tr>
