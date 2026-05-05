@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { Link } from "@/lib/i18n/navigation";
 import { useEffect, useState } from "react";
 import { getSupabaseBrowser } from "@/lib/supabase/client";
 import LanguageSwitcher from "./LanguageSwitcher";
@@ -85,6 +85,8 @@ interface UserProfile {
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const locale = useLocale();
+  const pathWithoutLocale = pathname.replace(new RegExp(`^/${locale}(?=/|$)`), "") || "/";
   const t = useTranslations("sidebar");
   const tNav = useTranslations("nav");
   const navItems = useNavItems();
@@ -112,7 +114,7 @@ export default function Sidebar() {
   }, []);
 
   useEffect(() => {
-    if (pathname === "/") return;
+    if (pathWithoutLocale === "/") return;
 
     async function loadProfile() {
       const sb = getSupabaseBrowser();
@@ -132,10 +134,10 @@ export default function Sidebar() {
       }
     }
     loadProfile();
-  }, [pathname]);
+  }, [pathWithoutLocale]);
 
   /* Landing page is chrome-free. Keep hooks above this guard to preserve hook order. */
-  if (pathname === "/" || pathname.startsWith("/auth")) return null;
+  if (pathWithoutLocale === "/" || pathWithoutLocale.startsWith("/auth")) return null;
 
   const showSidebar = isOpen || isDesktop;
 
@@ -180,7 +182,7 @@ export default function Sidebar() {
       {/* Navigation */}
       <nav className="flex-1 p-3 space-y-1">
         {navItems.map((item) => {
-          const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
+          const isActive = pathWithoutLocale === item.href || (item.href !== "/" && pathWithoutLocale.startsWith(item.href));
 
           // Hide admin-only links for non-admins
           if (item.adminOnly && profile?.role !== "admin") return null;

@@ -41,5 +41,74 @@
     "en": "English",
     "pt": "Português",
     "es": "Español"
+  },
+  "aiAnalysis": {
+    "header": {
+      "title": "Análise de IA",
+      "subtitle": "Envie um vídeo e receba insights, pontuações e ideias de clipes prontos para cada plataforma."
+    },
+    "status": {
+      "uploading": "Enviando",
+      "analyzing": "Analisando seu vídeo...",
+      "polling": "Preparando resultados",
+      "done": "Análise concluída",
+      "error": "Erro",
+      "errorTitle": "Algo deu errado"
+    },
+    "upload": {
+      "title": "Enviar vídeo",
+      "uploading": "Enviando",
+      "progressLabel": "Progresso do envio",
+      "largeFile": "Arquivos grandes podem levar alguns minutos. Mantenha esta aba aberta.",
+      "estTime": "Isso normalmente leva de 1 a 3 minutos.",
+      "elapsed": "Tempo decorrido",
+      "notify": "Atualizaremos este painel assim que os resultados estiverem prontos.",
+      "retry": "Tentar novamente",
+      "dropzone": "Solte seu vídeo aqui",
+      "orClick": "ou clique para escolher um arquivo",
+      "formats": "MP4, MOV, WEBM ou AVI até 2GB"
+    },
+    "options": {
+      "title": "Opções de análise",
+      "contentType": "Tipo de conteúdo",
+      "contentTypes": {
+        "shortform": "Vídeo curto",
+        "longform": "Vídeo longo",
+        "podcast": "Podcast / entrevista",
+        "educational": "Conteúdo educativo"
+      },
+      "targetPlatforms": "Plataformas-alvo",
+      "analysisDepth": "Profundidade da análise",
+      "depths": {
+        "quick": "Análise rápida",
+        "standard": "Análise padrão",
+        "deep": "Análise profunda"
+      }
+    },
+    "platforms": {
+      "tiktok": "TikTok",
+      "instagram": "Instagram",
+      "youtube": "YouTube Shorts",
+      "linkedin": "LinkedIn"
+    },
+    "actions": {
+      "startAnalysis": "Iniciar análise",
+      "analyzeAnother": "Analisar outro vídeo"
+    },
+    "results": {
+      "title": "Resultado da análise",
+      "engagementScore": "Pontuação de engajamento",
+      "highPotential": "Alto potencial",
+      "medium": "Médio",
+      "lowEngagement": "Baixo engajamento",
+      "summary": "Resumo",
+      "clipSuggestions": "Sugestões de clipes",
+      "recent": "Análises recentes",
+      "refresh": "Atualizar",
+      "none": "Nenhuma análise ainda.",
+      "unknown": "Desconhecido",
+      "tiktokScore": "Pontuação no TikTok",
+      "clips": "clipes"
+    }
   }
 }

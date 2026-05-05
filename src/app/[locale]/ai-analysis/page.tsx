@@ -280,9 +280,9 @@ export default function AIAnalysisPage() {
   };
 
   const scoreLabel = (score: number) => {
-    if (score >= 70) return "High Potential";
-    if (score >= 40) return "Medium";
-    return "Low Engagement";
+    if (score >= 70) return t("results.highPotential");
+    if (score >= 40) return t("results.medium");
+    return t("results.lowEngagement");
   };
 
   const formatElapsed = (s: number) => {
@@ -506,7 +506,7 @@ export default function AIAnalysisPage() {
         {/* Result */}
         {analysisResult && analysisResult.engagementScore != null && (
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Analysis Result</h3>
+            <h3 className="text-lg font-semibold">{t("results.title")}</h3>
             <div className="bg-surface-900 rounded-xl border border-surface-700/50 p-5 space-y-4">
               <div className="flex items-center gap-4">
                 <div className={`w-14 h-14 rounded-xl bg-${scoreColor(analysisResult.engagementScore)}-500/20 flex items-center justify-center`}>
@@ -515,7 +515,7 @@ export default function AIAnalysisPage() {
                   </span>
                 </div>
                 <div>
-                  <p className="font-medium">Engagement Score</p>
+                  <p className="font-medium">{t("results.engagementScore")}</p>
                   <p className={`text-sm text-${scoreColor(analysisResult.engagementScore)}-400`}>
                     {scoreLabel(analysisResult.engagementScore)}
                   </p>
@@ -523,13 +523,13 @@ export default function AIAnalysisPage() {
               </div>
               {analysisResult.results?.summary && (
                 <div>
-                  <p className="text-sm font-medium mb-1">Summary</p>
+                  <p className="text-sm font-medium mb-1">{t("results.summary")}</p>
                   <p className="text-sm text-surface-300">{analysisResult.results.summary}</p>
                 </div>
               )}
               {Array.isArray(analysisResult.clipSuggestions) && analysisResult.clipSuggestions.length > 0 && (
                 <div>
-                  <p className="text-sm font-medium mb-2">Clip Suggestions</p>
+                  <p className="text-sm font-medium mb-2">{t("results.clipSuggestions")}</p>
                   <div className="space-y-2">
                     {analysisResult.clipSuggestions.map((c, idx) => (
                       <div key={idx} className="flex items-center justify-between rounded-lg bg-surface-800 border border-surface-700/50 px-3 py-2">
@@ -550,17 +550,17 @@ export default function AIAnalysisPage() {
         {/* Recent Analyses */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold">Recent Analyses</h3>
+            <h3 className="text-lg font-semibold">{t("results.recent")}</h3>
             <button
               onClick={fetchRecent}
               className="px-4 py-2 text-sm rounded-lg border border-surface-700 text-surface-300 hover:bg-surface-800 transition"
             >
-              Refresh
+              {t("results.refresh")}
             </button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {recentAnalyses.length === 0 && (
-              <div className="col-span-full text-sm text-surface-400">No analyses yet.</div>
+              <div className="col-span-full text-sm text-surface-400">{t("results.none")}</div>
             )}
             {recentAnalyses.map((r) => {
               const score = r.engagementScore ?? 0;
@@ -575,13 +575,13 @@ export default function AIAnalysisPage() {
                       </svg>
                     </div>
                     <div>
-                      <p className="font-medium text-sm">{r.filename || "Unknown"}</p>
+                      <p className="font-medium text-sm">{r.filename || t("results.unknown")}</p>
                       <p className="text-xs text-surface-300">{new Date(r.createdAt).toLocaleDateString()}</p>
                     </div>
                   </div>
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-surface-300">TikTok Score</span>
+                      <span className="text-surface-300">{t("results.tiktokScore")}</span>
                       <span className={`font-medium text-${color}-400`}>{score}/100</span>
                     </div>
                     <div className="w-full bg-surface-800 rounded-full h-1.5">
@@ -592,7 +592,7 @@ export default function AIAnalysisPage() {
                     <span className={`px-2 py-0.5 rounded text-[10px] bg-${color}-500/10 text-${color}-400`}>
                       {scoreLabel(score)}
                     </span>
-                    <span className="px-2 py-0.5 rounded text-[10px] bg-surface-700 text-surface-300">{clips} clips</span>
+                    <span className="px-2 py-0.5 rounded text-[10px] bg-surface-700 text-surface-300">{clips} {t("results.clips")}</span>
                   </div>
                 </div>
               );
