@@ -103,6 +103,7 @@ export default function AdminPage() {
   }
 
   async function createTestUser() {
+    if (!window.confirm("Create a test user with random credentials?")) return;
     setCreatingUser(true);
     try {
       const res = await fetch("/api/admin/users", {
