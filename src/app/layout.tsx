@@ -19,7 +19,7 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <body className={`${inter.className} bg-surface-950 text-surface-100 min-h-screen`}>
         <Sidebar />
-        {children}
+        <div className="ml-0 md:ml-64">{children}</div>
       </body>
     </html>
   );
