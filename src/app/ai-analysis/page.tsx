@@ -22,18 +22,23 @@ interface AnalysisItem {
   createdAt: string;
 }
 
+type Phase = "idle" | "uploading" | "analyzing" | "polling" | "done" | "error";
+
 export default function AIAnalysisPage() {
   const [file, setFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [phase, setPhase] = useState<"idle" | "uploading" | "analyzing" | "polling" | "done" | "error">("idle");
+  const [phase, setPhase] = useState<Phase>("idle");
   const [error, setError] = useState<string | null>(null);
   const [analysisResult, setAnalysisResult] = useState<AnalysisItem | null>(null);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const isAnalyzing = phase === "analyzing" || phase === "polling";
   const isBusy = phase !== "idle" && phase !== "done" && phase !== "error";
   const [recentAnalyses, setRecentAnalyses] = useState<AnalysisItem[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const pollTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const elapsedTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const statusRef = useRef<HTMLDivElement>(null);
 
   const fetchRecent = useCallback(async () => {
     const supabase = getSupabaseBrowser();
@@ -64,8 +69,37 @@ export default function AIAnalysisPage() {
   useEffect(() => {
     return () => {
       if (pollTimerRef.current) clearInterval(pollTimerRef.current);
+      if (elapsedTimerRef.current) clearInterval(elapsedTimerRef.current);
     };
   }, []);
+
+  // Focus management: move focus to status region when phase changes to a busy or terminal state
+  useEffect(() => {
+    if (phase === "uploading" || phase === "analyzing" || phase === "polling" || phase === "error" || phase === "done") {
+      statusRef.current?.focus();
+    }
+  }, [phase]);
+
+  // Elapsed timer during polling
+  useEffect(() => {
+    if (phase === "polling") {
+      setElapsedSeconds(0);
+      elapsedTimerRef.current = setInterval(() => {
+        setElapsedSeconds((s) => s + 1);
+      }, 1000);
+    } else {
+      if (elapsedTimerRef.current) {
+        clearInterval(elapsedTimerRef.current);
+        elapsedTimerRef.current = null;
+      }
+    }
+    return () => {
+      if (elapsedTimerRef.current) {
+        clearInterval(elapsedTimerRef.current);
+        elapsedTimerRef.current = null;
+      }
+    };
+  }, [phase]);
 
   const validateFile = (f: File): string | null => {
     if (!ALLOWED_TYPES.has(f.type)) return "Unsupported file type. Use MP4, MOV, WEBM, or AVI.";
@@ -233,6 +267,7 @@ export default function AIAnalysisPage() {
     setError(null);
     setUploadProgress(0);
     setAnalysisResult(null);
+    setElapsedSeconds(0);
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
@@ -246,6 +281,29 @@ export default function AIAnalysisPage() {
     if (score >= 70) return "High Potential";
     if (score >= 40) return "Medium";
     return "Low Engagement";
+  };
+
+  const formatElapsed = (s: number) => {
+    const m = Math.floor(s / 60);
+    const sec = s % 60;
+    return `${m}:${sec.toString().padStart(2, "0")}`;
+  };
+
+  const statusText = (p: Phase) => {
+    switch (p) {
+      case "uploading":
+        return `Uploading video… ${uploadProgress}%`;
+      case "analyzing":
+        return "Processing your video with AI…";
+      case "polling":
+        return `Analysis in progress, checking for results… (${formatElapsed(elapsedSeconds)})`;
+      case "done":
+        return "Analysis complete";
+      case "error":
+        return error ? `Error: ${error}` : "Something went wrong";
+      default:
+        return "";
+    }
   };
 
   return (
@@ -262,18 +320,17 @@ export default function AIAnalysisPage() {
         }
       />
 
-      {isAnalyzing && analysisResult?.status === "pending" && (
-        <div className="flex items-center gap-3 rounded-lg border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-sm text-amber-300">
-          <div className="w-4 h-4 rounded-full border-2 border-amber-500/40 border-t-amber-500 animate-spin" />
-          <span>Waiting in queue…</span>
-        </div>
-      )}
-      {isAnalyzing && analysisResult?.status === "processing" && (
-        <div className="flex items-center gap-3 rounded-lg border border-brand-500/20 bg-brand-500/10 px-4 py-3 text-sm text-brand-300">
-          <div className="w-4 h-4 rounded-full border-2 border-brand-500/40 border-t-brand-500 animate-spin" />
-          <span>AI is analyzing your video…</span>
-        </div>
-      )}
+      {/* Live status region for screen readers */}
+      <div
+        ref={statusRef}
+        tabIndex={-1}
+        aria-live="polite"
+        aria-atomic="true"
+        className="sr-only"
+      >
+        {statusText(phase)}
+      </div>
+
       <div className="p-4 md:p-6 space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="space-y-4">
@@ -284,41 +341,92 @@ export default function AIAnalysisPage() {
               accept="video/mp4,video/quicktime,video/webm,video/x-msvideo"
               className="hidden"
               onChange={onFileInputChange}
+              aria-label="Select video file"
             />
             <div
               onClick={() => fileInputRef.current?.click()}
               onDrop={onDrop}
               onDragOver={onDragOver}
               onDragLeave={onDragLeave}
+              role="button"
+              aria-label="Video dropzone. Click or drag and drop a video file here."
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  fileInputRef.current?.click();
+                }
+              }}
               className={[
-                "border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition min-h-[200px] flex flex-col items-center justify-center",
+                "border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition min-h-[220px] flex flex-col items-center justify-center",
                 isDragging
                   ? "border-brand-500 bg-brand-500/10"
                   : "border-surface-700 hover:border-brand-500 hover:bg-brand-500/5",
                 phase === "error" ? "border-red-500 bg-red-500/5" : "",
               ].join(" ")}
             >
-              {phase === "uploading" || phase === "analyzing" || phase === "polling" ? (
-                <div className="flex flex-col items-center gap-3">
+              {/* Uploading State */}
+              {phase === "uploading" && (
+                <div className="flex flex-col items-center gap-4 w-full" aria-label="Uploading video">
                   <div className="w-12 h-12 rounded-full border-4 border-brand-500/30 border-t-brand-500 animate-spin" />
-                  <p className="font-medium">
-                    {phase === "uploading" && `Uploading… ${uploadProgress}%`}
-                    {phase === "analyzing" && "Starting analysis…"}
-                    {phase === "polling" && "Analyzing video…"}
-                  </p>
-                  {phase === "uploading" && (
-                    <div className="w-48 h-2 bg-surface-800 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-brand-500 rounded-full transition-all"
-                        style={{ width: `${uploadProgress}%` }}
-                      />
-                    </div>
-                  )}
+                  <p className="font-medium" aria-hidden="true">Uploading video… {uploadProgress}%</p>
+                  <div className="w-full max-w-xs h-3 bg-surface-800 rounded-full overflow-hidden" role="progressbar" aria-valuenow={uploadProgress} aria-valuemin={0} aria-valuemax={100} aria-label="Upload progress">
+                    <div
+                      className="h-full bg-brand-500 rounded-full transition-all"
+                      style={{ width: `${uploadProgress}%` }}
+                    />
+                  </div>
+                  <p className="text-xs text-surface-400">This may take a moment for large files</p>
                 </div>
-              ) : (
+              )}
+
+              {/* Analyzing State */}
+              {phase === "analyzing" && (
+                <div className="flex flex-col items-center gap-4" aria-label="Analyzing video">
+                  <div className="w-12 h-12 rounded-full border-4 border-brand-500/30 border-t-brand-500 animate-spin" />
+                  <p className="font-medium">Processing your video with AI…</p>
+                  <p className="text-xs text-surface-400">Est. time: ~2 minutes</p>
+                </div>
+              )}
+
+              {/* Polling State */}
+              {phase === "polling" && (
+                <div className="flex flex-col items-center gap-4" aria-label="Waiting for results">
+                  <div className="w-12 h-12 rounded-full border-4 border-brand-500/30 border-t-brand-500 animate-spin" />
+                  <p className="font-medium">Analysis in progress, checking for results…</p>
+                  <p className="text-sm text-surface-300 font-mono">Elapsed: {formatElapsed(elapsedSeconds)}</p>
+                  <p className="text-xs text-surface-400">We&apos;ll notify you as soon as it&apos;s ready</p>
+                </div>
+              )}
+
+              {/* Error State */}
+              {phase === "error" && (
+                <div className="flex flex-col items-center gap-4" aria-label="Upload or analysis error">
+                  <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center">
+                    <svg className="w-7 h-7 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M12 17a5 5 0 100-10 5 5 0 000 10z" />
+                    </svg>
+                  </div>
+                  <p className="font-medium text-red-300">Something went wrong</p>
+                  {error && <p className="text-sm text-red-300 max-w-xs">{error}</p>}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      reset();
+                    }}
+                    className="mt-1 px-4 py-2 rounded-lg bg-surface-800 border border-surface-700 text-surface-100 text-sm font-medium hover:bg-surface-700 transition focus:outline-none focus:ring-2 focus:ring-brand-500"
+                    aria-label="Retry upload"
+                  >
+                    Try Again
+                  </button>
+                </div>
+              )}
+
+              {/* Idle / Done dropzone content */}
+              {phase !== "uploading" && phase !== "analyzing" && phase !== "polling" && phase !== "error" && (
                 <>
                   <div className="w-16 h-16 rounded-full bg-brand-500/10 flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-8 h-8 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="w-8 h-8 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                     </svg>
                   </div>
@@ -330,11 +438,6 @@ export default function AIAnalysisPage() {
                 </>
               )}
             </div>
-            {error && (
-              <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
-                {error}
-              </div>
-            )}
           </div>
 
           <div className="space-y-4">
@@ -382,7 +485,7 @@ export default function AIAnalysisPage() {
                     disabled={!file || phase !== "idle"}
                     className="w-full py-3 rounded-lg gradient-accent text-white font-medium hover:opacity-90 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                     </svg>
                     Start Analysis
@@ -460,7 +563,7 @@ export default function AIAnalysisPage() {
                 <div key={r.id} className="bg-surface-900 rounded-xl border border-surface-700/50 p-4 card-hover">
                   <div className="flex items-center gap-3 mb-3">
                     <div className={`w-10 h-10 rounded-lg bg-${color === "green" ? "brand" : color}-500/20 flex items-center justify-center`}>
-                      <svg className={`w-5 h-5 text-${color}-400`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className={`w-5 h-5 text-${color}-400`} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                       </svg>
                     </div>
