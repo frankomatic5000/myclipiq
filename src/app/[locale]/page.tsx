@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 
 /* ── SVG icon helpers ────────────────────────────────────────── */
@@ -42,6 +43,26 @@ function PlayIcon({ className }: { className?: string }) {
 /* ── Component ───────────────────────────────────────────────── */
 
 export default function HomePage() {
+  const t = useTranslations("landing");
+
+  const features = [
+    {
+      icon: CpuIcon,
+      label: t("features.smartAnalysis.label"),
+      desc: t("features.smartAnalysis.desc"),
+    },
+    {
+      icon: ZapIcon,
+      label: t("features.instantOptimization.label"),
+      desc: t("features.instantOptimization.desc"),
+    },
+    {
+      icon: GlobeIcon,
+      label: t("features.multiPlatform.label"),
+      desc: t("features.multiPlatform.desc"),
+    },
+  ];
+
   return (
     <main className="relative min-h-screen overflow-hidden">
       {/* ═══════════════════ Ambient background ═══════════════════ */}
@@ -99,15 +120,15 @@ export default function HomePage() {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-400" />
             </span>
-            AI-Powered Video Intelligence
+            {t("badge")}
           </div>
 
           {/* Headline */}
           <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold tracking-tight leading-[1.05]">
-            Your editing just got
+            {t("title")}
             <br />
             <span className="relative">
-              <span className="gradient-text">an AI co-pilot</span>
+              <span className="gradient-text">{t("titleHighlight")}</span>
               <svg
                 className="absolute -bottom-2 left-0 w-full h-3 text-brand-500/30"
                 viewBox="0 0 300 12"
@@ -126,9 +147,7 @@ export default function HomePage() {
 
           {/* Subheadline */}
           <p className="text-lg sm:text-xl text-surface-300 max-w-2xl mx-auto leading-relaxed">
-            MyClipIQ analyzes every clip and automatically optimizes
-            framing, pacing, and format for each social platform.
-            Stop guessing which cut goes where — let AI decide.
+            {t("description")}
           </p>
 
           {/* CTAs */}
@@ -137,7 +156,7 @@ export default function HomePage() {
               href="/auth/signup"
               className="group relative inline-flex items-center gap-2 px-8 py-4 rounded-xl gradient-accent text-white font-semibold text-lg overflow-hidden transition-transform hover:scale-[1.02] active:scale-[0.98]"
             >
-              <span className="relative z-10">Start editing smarter</span>
+              <span className="relative z-10">{t("ctaPrimary")}</span>
               <svg
                 className="relative z-10 w-5 h-5 transition-transform group-hover:translate-x-0.5"
                 fill="none"
@@ -158,29 +177,13 @@ export default function HomePage() {
               <span className="flex items-center justify-center w-8 h-8 rounded-full bg-surface-700/80 group-hover:bg-brand-500/20 group-hover:text-brand-300 transition-colors">
                 <PlayIcon className="w-3 h-3 ml-0.5" />
               </span>
-              See how it works
+              {t("ctaSecondary")}
             </Link>
           </div>
 
           {/* Mini feature grid */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-10 max-w-3xl mx-auto">
-            {[
-              {
-                icon: CpuIcon,
-                label: "Smart Analysis",
-                desc: "Frame-level AI understanding",
-              },
-              {
-                icon: ZapIcon,
-                label: "Instant Optimization",
-                desc: "Auto-format per platform",
-              },
-              {
-                icon: GlobeIcon,
-                label: "Multi-Platform",
-                desc: "Reels · Shorts · TikTok · LinkedIn",
-              },
-            ].map((f) => (
+            {features.map((f) => (
               <div
                 key={f.label}
                 className="group flex flex-col items-center gap-3 p-5 rounded-2xl border border-surface-800 bg-surface-900/40 backdrop-blur-sm hover:border-brand-500/30 hover:bg-surface-800/50 transition-all"
@@ -198,7 +201,7 @@ export default function HomePage() {
 
           {/* Trust microcopy */}
           <p className="text-xs text-surface-500 pt-2">
-            No credit card required · Free tier available · Built for editors, not just creators
+            {t("trust")}
           </p>
         </div>
       </div>

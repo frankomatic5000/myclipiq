@@ -1,0 +1,45 @@
+{
+  "landing": {
+    "badge": "AI-Powered Video Intelligence",
+    "title": "Your editing just got",
+    "titleHighlight": "an AI co-pilot",
+    "description": "MyClipIQ analyzes every clip and automatically optimizes framing, pacing, and format for each social platform. Stop guessing which cut goes where — let AI decide.",
+    "ctaPrimary": "Start editing smarter",
+    "ctaSecondary": "See how it works",
+    "features": {
+      "smartAnalysis": {
+        "label": "Smart Analysis",
+        "desc": "Frame-level AI understanding"
+      },
+      "instantOptimization": {
+        "label": "Instant Optimization",
+        "desc": "Auto-format per platform"
+      },
+      "multiPlatform": {
+        "label": "Multi-Platform",
+        "desc": "Reels · Shorts · TikTok · LinkedIn"
+      }
+    },
+    "trust": "No credit card required · Free tier available · Built for editors, not just creators"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "projects": "Projects",
+    "customers": "Customers",
+    "aiAnalysis": "AI Analysis",
+    "team": "Team",
+    "analytics": "Analytics",
+    "admin": "Admin"
+  },
+  "sidebar": {
+    "contentIntelligence": "Content Intelligence",
+    "loading": "Loading...",
+    "viewer": "Viewer"
+  },
+  "languageSwitcher": {
+    "label": "Language",
+    "en": "English",
+    "pt": "Português",
+    "es": "Español"
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "landing": {
+    "badge": "Inteligencia de Video con IA",
+    "title": "Tu edición ahora tiene",
+    "titleHighlight": "un co-piloto de IA",
+    "description": "MyClipIQ analiza cada clip y optimiza automáticamente el encuadre, el ritmo y el formato para cada plataforma social. Deja de adivinar qué corte va dónde — deja que la IA decida.",
+    "ctaPrimary": "Empieza a editar más inteligente",
+    "ctaSecondary": "Mira cómo funciona",
+    "features": {
+      "smartAnalysis": {
+        "label": "Análisis Inteligente",
+        "desc": "Comprensión de IA a nivel de fotograma"
+      },
+      "instantOptimization": {
+        "label": "Optimización Instantánea",
+        "desc": "Formato automático por plataforma"
+      },
+      "multiPlatform": {
+        "label": "Multiplataforma",
+        "desc": "Reels · Shorts · TikTok · LinkedIn"
+      }
+    },
+    "trust": "No se requiere tarjeta de crédito · Plan gratuito disponible · Hecho para editores, no solo creadores"
+  },
+  "nav": {
+    "dashboard": "Panel",
+    "projects": "Proyectos",
+    "customers": "Clientes",
+    "aiAnalysis": "Análisis de IA",
+    "team": "Equipo",
+    "analytics": "Analíticas",
+    "admin": "Admin"
+  },
+  "sidebar": {
+    "contentIntelligence": "Inteligencia de Contenido",
+    "loading": "Cargando...",
+    "viewer": "Visualizador"
+  },
+  "languageSwitcher": {
+    "label": "Idioma",
+    "en": "English",
+    "pt": "Português",
+    "es": "Español"
+  }
+}
