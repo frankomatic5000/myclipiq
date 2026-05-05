@@ -1,0 +1,57 @@
+name: Weekly Memory Maintenance
+
+on:
+  schedule:
+    - cron: '0 2 * * 0'  # Sunday 2:00 AM UTC
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  memory-maintenance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install ByteRover CLI
+        run: npm install -g byterover-cli
+
+      - name: Run memory review
+        env:
+          # Use GitHub secret for ByteRover API key if configured
+          # Set BRV_API_KEY in repo Settings > Secrets and variables > Actions
+          BRV_API_KEY: ${{ secrets.BRV_API_KEY }}
+        run: |
+          echo "## Memory Maintenance Report" > report.md
+          echo "Date: $(date -u)" >> report.md
+          echo "Runner: ${{ github.run_id }}" >> report.md
+          echo "" >> report.md
+
+          echo "### Review Queue" >> report.md
+          brv review pending >> report.md 2>&1 || true
+          echo "" >> report.md
+
+          echo "### Memory Stats" >> report.md
+          brv status >> report.md 2>&1 || true
+          echo "" >> report.md
+
+          echo "### Search for duplicates (sample)" >> report.md
+          brv search "merge decision" >> report.md 2>&1 || true
+          echo "" >> report.md
+
+          echo "### High-impact items flagged" >> report.md
+          brv search "#decision" --since "7 days ago" >> report.md 2>&1 || true
+          echo "" >> report.md
+
+          echo "### System/routine items" >> report.md
+          brv search "#system #routine" --since "7 days ago" >> report.md 2>&1 || true
+
+      - name: Upload report
+        uses: actions/upload-artifact@v4
+        with:
+          name: memory-maintenance-report-${{ github.run_id }}
+          path: report.md
+          retention-days: 30
