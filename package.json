@@ -12,7 +12,8 @@
     "test:ci": "jest --config jest.config.ts --ci --coverage",
     "db:types": "supabase gen types typescript --project-id your-project-id --schema public > src/types/database.ts",
     "db:migrate": "supabase migration up",
-    "db:seed": "psql $DATABASE_URL -f supabase/seed.sql"
+    "db:seed": "psql $DATABASE_URL -f supabase/seed.sql",
+    "seed:test-admin": "ts-node scripts/seed-test-admin.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.750.0",
