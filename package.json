@@ -13,7 +13,9 @@
     "db:types": "supabase gen types typescript --project-id your-project-id --schema public > src/types/database.ts",
     "db:migrate": "supabase migration up",
     "db:seed": "psql $DATABASE_URL -f supabase/seed.sql",
-    "seed:test-admin": "ts-node scripts/seed-test-admin.ts"
+    "seed:test-admin": "ts-node scripts/seed-test-admin.ts",
+    "memory:review": "ts-node scripts/memory-maintenance.ts",
+    "memory:sync-obsidian": "ts-node scripts/obsidian-sync.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.750.0",
