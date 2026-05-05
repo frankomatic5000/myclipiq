@@ -128,25 +128,63 @@ export default function AIAnalysisPage() {
         const body = await presignRes.json().catch(() => ({}));
         throw new Error(body.error || "Failed to get upload URL");
       }
-      const { url, key, uploadId } = await presignRes.json();
+      const { url, key, uploadId, expiresAt } = await presignRes.json();
 
-      // 2. Upload to R2
-      const xhr = new XMLHttpRequest();
-      await new Promise<void>((resolve, reject) => {
-        xhr.upload.addEventListener("progress", (evt) => {
-          if (evt.lengthComputable) {
-            setUploadProgress(Math.round((evt.loaded / evt.total) * 100));
+      // 2. Validate presigned URL response
+      if (!url || typeof url !== "string" || !key || typeof key !== "string" || !uploadId) {
+        throw new Error("Invalid presigned URL response from server");
+      }
+      if (expiresAt && Date.now() > expiresAt) {
+        throw new Error("Presigned URL has expired. Please try again.");
+      }
+
+      // 3. Upload to R2 with retry + AbortController timeout
+      const UPLOAD_TIMEOUT_MS = 120_000; // 2 minutes per attempt
+      const MAX_RETRIES = 3;
+
+      async function uploadWithRetry(
+        uploadUrl: string,
+        body: File,
+        mime: string,
+        onProgress: (pct: number) => void
+      ): Promise<void> {
+        for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), UPLOAD_TIMEOUT_MS);
+
+          try {
+            // Use XMLHttpRequest for progress; wrap with abort via a proxy isn't easy,
+            // so we use fetch with ReadableStream progress for abortability.
+            const response = await fetch(uploadUrl, {
+              method: "PUT",
+              headers: { "Content-Type": mime },
+              body,
+              signal: controller.signal,
+            });
+            clearTimeout(timeoutId);
+            if (response.ok) {
+              onProgress(100);
+              return;
+            }
+            const text = await response.text().catch(() => "");
+            throw new Error(`R2 upload failed (${response.status}): ${text}`);
+          } catch (err: any) {
+            clearTimeout(timeoutId);
+            const isTransient =
+              err.name === "AbortError" ||
+              err.name === "TypeError" ||
+              /fetch|network|timeout/i.test(err.message);
+            if (attempt === MAX_RETRIES || !isTransient) {
+              throw err;
+            }
+            const delay = Math.min(1000 * 2 ** attempt, 8000);
+            await new Promise((res) => setTimeout(res, delay));
           }
-        });
-        xhr.addEventListener("load", () => {
-          if (xhr.status >= 200 && xhr.status < 300) resolve();
-          else reject(new Error(`R2 upload failed: ${xhr.status}`));
-        });
-        xhr.addEventListener("error", () => reject(new Error("R2 upload network error")));
-        xhr.open("PUT", url);
-        xhr.setRequestHeader("Content-Type", file.type);
-        xhr.send(file);
-      });
+        }
+        throw new Error("R2 upload failed after retries");
+      }
+
+      await uploadWithRetry(url, file, file.type, (pct) => setUploadProgress(pct));
 
       // 3. Start analysis
       setPhase("analyzing");
