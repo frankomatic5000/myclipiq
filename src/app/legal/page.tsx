@@ -62,8 +62,8 @@ export default function LegalPage() {
             </select>
           </div>
 
-          <div className="bg-surface-900 rounded-xl border border-surface-700/50 overflow-hidden">
-            <table className="w-full">
+          <div className="bg-surface-900 rounded-xl border border-surface-700/50 overflow-x-auto">
+            <table className="w-full min-w-[640px]">
               <thead>
                 <tr className="border-b border-surface-700/50">
                   {["Customer", "Contract Type", "Status", "Sent Date", "Signed Date", "Actions"].map((h) => (

@@ -12,7 +12,7 @@ export default function OnboardingPage() {
             </div>
             <span className="text-lg font-bold gradient-text">MyClipIQ</span>
           </div>
-          <div className="flex items-center gap-2 overflow-x-auto">
+          <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
             {[1, 2, 3, 4].map((n) => (
               <div key={n} className="flex items-center gap-2">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold cursor-pointer ${n === 1 ? "gradient-accent text-white" : "bg-surface-800 text-surface-400"}`}>{n}</div>

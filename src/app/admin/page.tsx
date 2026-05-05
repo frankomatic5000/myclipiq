@@ -229,7 +229,7 @@ export default function AdminPage() {
       </button>
 
       {/* Stats cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {[
           { label: "Total Users", value: users.length },
           { label: "Admins", value: users.filter((u) => u.role === "admin").length },
