@@ -102,7 +102,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Create job record
+    // Create job record with retry metadata
     const { data: job, error: jobError } = await supabase
       .from("analysis_jobs")
       .insert({
@@ -110,6 +110,8 @@ export async function POST(req: NextRequest) {
         user_id: session.user.id,
         analysis_id: analysis.id,
         status: "queued",
+        retry_count: 0,
+        updated_at: new Date().toISOString(),
       })
       .select("id")
       .single();
