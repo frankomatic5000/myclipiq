@@ -46,7 +46,7 @@ export default function DashboardPage() {
           {quickStats.map((s) => (
             <div
               key={s.labelKey}
-              className="bg-surface-900 rounded-xl p-5 border border-surface-700/50"
+              className="bg-surface-900 rounded-xl p-5 border border-surface-700/50 transition-colors duration-150 hover:bg-surface-800 hover:border-surface-600/50"
             >
               <div className="flex items-center justify-between mb-3">
                 <span className="text-xs font-medium text-surface-300 uppercase tracking-wider">
