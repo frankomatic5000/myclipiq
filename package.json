@@ -10,6 +10,8 @@
     "lint": "eslint .",
     "test": "jest --config jest.config.ts",
     "test:ci": "jest --config jest.config.ts --ci --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
     "db:types": "supabase gen types typescript --project-id your-project-id --schema public > src/types/database.ts",
     "db:migrate": "supabase migration up",
     "db:seed": "psql $DATABASE_URL -f supabase/seed.sql",
@@ -43,6 +45,7 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@playwright/test": "^1.59.1",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
