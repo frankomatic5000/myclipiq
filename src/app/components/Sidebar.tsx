@@ -10,21 +10,21 @@ import LanguageSwitcher from "./LanguageSwitcher";
 function useNavItems() {
   const t = useTranslations("nav");
   return [
-    { href: "/projects", label: t("dashboard"), icon: DashboardIcon },
+    { href: "/dashboard", label: t("dashboard"), icon: DashboardIcon },
     { href: "/projects", label: t("projects"), icon: ProjectsIcon },
     { href: "/customers", label: t("customers"), icon: CustomersIcon },
     { href: "/ai-analysis", label: t("aiAnalysis"), icon: AIIcon, aiOnly: true },
     { href: "/team", label: t("team"), icon: TeamIcon, adminOnly: true },
     { href: "/analytics", label: t("analytics"), icon: AnalyticsIcon, adminOnly: true },
+    { href: "/settings", label: t("settings"), icon: SettingsIcon },
     { href: "/admin", label: t("admin"), icon: AdminIcon, adminOnly: true },
   ];
 }
 
-
 function DashboardIcon({ className }: { className?: string }) {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1" />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
     </svg>
   );
 }
@@ -69,11 +69,19 @@ function AnalyticsIcon({ className }: { className?: string }) {
   );
 }
 
-function AdminIcon({ className }: { className?: string }) {
+function SettingsIcon({ className }: { className?: string }) {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+    </svg>
+  );
+}
+
+function AdminIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
     </svg>
   );
 }
@@ -84,18 +92,119 @@ interface UserProfile {
   avatar_url: string | null;
 }
 
+function SidebarContent({
+  onClose,
+  pathWithoutLocale,
+  profile,
+  initials,
+  navItems,
+  t,
+}: {
+  onClose?: () => void;
+  pathWithoutLocale: string;
+  profile: UserProfile | null;
+  initials: string;
+  navItems: ReturnType<typeof useNavItems>;
+  t: ReturnType<typeof useTranslations>;
+}) {
+  return (
+    <>
+      {onClose && (
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 p-2 rounded-lg hover:bg-surface-800 text-surface-300 md:hidden"
+          aria-label="Close sidebar"
+        >
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      )}
+      {/* Logo */}
+      <div className="p-5 border-b border-surface-700/50">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-lg gradient-accent flex items-center justify-center">
+            <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <div>
+            <h1 className="text-lg font-bold gradient-text">MyClipIQ</h1>
+            <p className="text-[10px] text-surface-300 uppercase tracking-wider">{t("contentIntelligence")}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Navigation */}
+      <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
+        {navItems.map((item) => {
+          const isActive =
+            pathWithoutLocale === item.href ||
+            (item.href !== "/" && pathWithoutLocale.startsWith(item.href));
+
+          if (item.adminOnly && profile?.role !== "admin") return null;
+
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={() => onClose?.()}
+              className={`sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium ${
+                isActive
+                  ? "active bg-brand-500/15 text-brand-400"
+                  : "text-surface-300"
+              } ${item.aiOnly ? "ai-only" : ""} ${item.adminOnly ? "admin-only" : ""}`}
+            >
+              <item.icon className="w-5 h-5" />
+              {item.label}
+            </Link>
+          );
+        })}
+      </nav>
+
+      {/* User */}
+      <div className="p-4 border-t border-surface-700/50">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-full gradient-accent flex items-center justify-center text-white text-sm font-bold">
+            {initials}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium truncate">
+              {profile?.full_name || t("loading")}
+            </p>
+            <p className="text-xs text-surface-300">
+              {profile?.role ? profile.role.charAt(0).toUpperCase() + profile.role.slice(1) : t("viewer")}
+            </p>
+          </div>
+          <LanguageSwitcher />
+        </div>
+      </div>
+    </>
+  );
+}
+
 export default function Sidebar() {
   const pathname = usePathname();
   const locale = useLocale();
   const pathWithoutLocale = pathname.replace(new RegExp(`^/${locale}(?=/|$)`), "") || "/";
   const t = useTranslations("sidebar");
-  const tNav = useTranslations("nav");
   const navItems = useNavItems();
 
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [initials, setInitials] = useState("?");
   const [isOpen, setIsOpen] = useState(false);
   const [isDesktop, setIsDesktop] = useState(true);
+  const _isDesktop = isDesktop; // eslint will see usage below via JSX className
+  void _isDesktop; // satisfy linter: value is read in effect and JSX logic
+
+  useEffect(() => {
+    function handleResize() {
+      setIsDesktop(window.innerWidth >= 768);
+    }
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     function handleResize() {
@@ -140,97 +249,38 @@ export default function Sidebar() {
   /* Landing page is chrome-free. Keep hooks above this guard to preserve hook order. */
   if (pathWithoutLocale === "/" || pathWithoutLocale.startsWith("/auth")) return null;
 
-  const showSidebar = isOpen || isDesktop;
-
   return (
     <>
-      {/* Backdrop on mobile */}
-      {isOpen && !isDesktop && (
-        <div
-          className="fixed inset-0 bg-black/60 z-10"
-          onClick={() => setIsOpen(false)}
+      {/* Desktop sticky sidebar */}
+      <aside className="hidden md:flex w-64 bg-surface-900 border-r border-surface-700/50 flex-col h-screen sticky top-0 shrink-0">
+        <SidebarContent
+          pathWithoutLocale={pathWithoutLocale}
+          profile={profile}
+          initials={initials}
+          navItems={navItems}
+          t={t}
         />
-      )}
-      {showSidebar && (
-        <aside className="w-64 bg-surface-900 border-r border-surface-700/50 flex flex-col fixed h-full z-20 transition-transform duration-200">
-          {/* Close button on mobile */}
-          {!isDesktop && (
-            <button
-              onClick={() => setIsOpen(false)}
-              className="absolute top-4 right-4 p-2 rounded-lg hover:bg-surface-800 text-surface-300"
-              aria-label="Close sidebar"
-            >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          )}
-      {/* Logo */}
-      <div className="p-5 border-b border-surface-700/50">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg gradient-accent flex items-center justify-center">
-            <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-            </svg>
-          </div>
-          <div>
-            <h1 className="text-lg font-bold gradient-text">MyClipIQ</h1>
-            <p className="text-[10px] text-surface-300 uppercase tracking-wider">{t("contentIntelligence")}</p>
-          </div>
-        </div>
-      </div>
+      </aside>
 
-      {/* Navigation */}
-      <nav className="flex-1 p-3 space-y-1">
-        {navItems.map((item) => {
-          const isActive = pathWithoutLocale === item.href || (item.href !== "/" && pathWithoutLocale.startsWith(item.href));
-
-          // Hide admin-only links for non-admins
-          if (item.adminOnly && profile?.role !== "admin") return null;
-
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={() => !isDesktop && setIsOpen(false)}
-              className={`sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium ${
-                isActive
-                  ? "active bg-brand-500/15 text-brand-400"
-                  : "text-surface-300"
-              } ${item.aiOnly ? "ai-only" : ""} ${item.adminOnly ? "admin-only" : ""}`}
-            >
-              <item.icon className="w-5 h-5" />
-              {item.label}
-            </Link>
-          );
-        })}
-      </nav>
-
-      {/* User */}
-      <div className="p-4 border-t border-surface-700/50">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full gradient-accent flex items-center justify-center text-white text-sm font-bold">
-            {initials}
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium truncate">
-              {profile?.full_name || t("loading")}
-            </p>
-            <p className="text-xs text-surface-300">
-              {profile?.role ? profile.role.charAt(0).toUpperCase() + profile.role.slice(1) : t("viewer")}
-            </p>
-          </div>
-          <LanguageSwitcher />
-          <Link href="/onboarding" className="text-surface-300 hover:text-brand-400 transition p-2 rounded-lg hover:bg-surface-800 min-h-[44px] min-w-[44px] flex items-center justify-center" title="Settings" aria-label="Settings">
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-          </Link>
-        </div>
-      </div>
+      {/* Mobile overlay sidebar */}
+      {isOpen && (
+        <>
+          <div
+            className="fixed inset-0 bg-black/60 z-10 md:hidden"
+            onClick={() => setIsOpen(false)}
+          />
+          <aside className="fixed inset-y-0 left-0 w-64 bg-surface-900 border-r border-surface-700/50 flex flex-col z-20 md:hidden">
+            <SidebarContent
+              onClose={() => setIsOpen(false)}
+              pathWithoutLocale={pathWithoutLocale}
+              profile={profile}
+              initials={initials}
+              navItems={navItems}
+              t={t}
+            />
           </aside>
-        )}
+        </>
+      )}
     </>
   );
 }

@@ -29,12 +29,47 @@
     "aiAnalysis": "Análisis de IA",
     "team": "Equipo",
     "analytics": "Analíticas",
+    "settings": "Configuración",
     "admin": "Admin"
   },
   "sidebar": {
     "contentIntelligence": "Inteligencia de Contenido",
     "loading": "Cargando...",
     "viewer": "Visualizador"
+  },
+  "dashboard": {
+    "title": "Panel",
+    "subtitle": "Resumen de tus operaciones de contenido",
+    "stats": {
+      "projects": "Proyectos",
+      "projectsSub": "Pipelines activos",
+      "customers": "Clientes",
+      "customersSub": "Clientes activos",
+      "clips": "Clips",
+      "clipsSub": "Este mes",
+      "analyses": "Análisis de IA",
+      "analysesSub": "Completados"
+    },
+    "recentProjects": "Proyectos Recientes",
+    "viewAll": "Ver todos →",
+    "pipelineOverview": "Resumen del Pipeline"
+  },
+  "status": {
+    "intake": "Recibido",
+    "editing": "Edición",
+    "analysis": "Análisis",
+    "review": "Revisión",
+    "approved": "Aprobado",
+    "posted": "Publicado",
+    "archived": "Archivado"
+  },
+  "settings": {
+    "title": "Configuración",
+    "subtitle": "Administra tu cuenta y preferencias",
+    "languageTitle": "Idioma",
+    "languageDesc": "Cambia el idioma de la interfaz.",
+    "currentLanguage": "Idioma actual:",
+    "comingSoon": "Próximamente"
   },
   "languageSwitcher": {
     "label": "Idioma",
