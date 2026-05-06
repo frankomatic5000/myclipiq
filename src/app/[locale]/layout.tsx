@@ -35,8 +35,12 @@ export default async function RootLayout({
         className={`${inter.className} bg-surface-950 text-surface-100 min-h-screen`}
       >
         <NextIntlClientProvider messages={messages}>
-          <Sidebar />
-          {children}
+          <div className="flex min-h-screen">
+            <Sidebar />
+            <main className="flex-1 min-w-0">
+              {children}
+            </main>
+          </div>
         </NextIntlClientProvider>
       </body>
     </html>
