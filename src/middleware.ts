@@ -6,9 +6,20 @@ import {routing} from './lib/i18n/routing';
 
 const handleI18nRouting = createIntlMiddleware(routing);
 
-const PUBLIC_PATHS = new Set(["/", "/auth/login", "/auth/signup", "/auth/callback", "/api/auth"]);
+const PUBLIC_PATHS = new Set([
+  "/",
+  "/projects",
+  "/customers",
+  "/team",
+  "/legal",
+  "/ai-analysis",
+  "/auth/login",
+  "/auth/signup",
+  "/auth/callback",
+  "/api/auth",
+]);
 const PUBLIC_PREFIXES = ["/api/auth/", "/api/r2/"];
-const ADMIN_PATHS = new Set(["/admin"]);
+const ADMIN_PATH = "/admin";
 
 function stripLocale(pathname: string) {
   const segments = pathname.split("/");
@@ -47,6 +58,13 @@ export async function middleware(req: NextRequest) {
     return intlResponse;
   }
 
+  const isPublic = isPublicPath(pathname);
+
+  // Public marketing and auth routes should not touch Supabase auth at all.
+  if (isPublic) {
+    return intlResponse;
+  }
+
   const supabase = createMiddlewareClient({ req, res: intlResponse }, {
     supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL!,
     supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -56,20 +74,13 @@ export async function middleware(req: NextRequest) {
     data: { session },
   } = await supabase.auth.getSession();
 
-  const isPublic = isPublicPath(pathname);
-
   // 1. Require auth for all non-public locale routes.
-  if (!session && !isPublic) {
+  if (!session) {
     return NextResponse.redirect(new URL(localizedPath("/auth/login", locale), req.url));
   }
 
-  // 2. Redirect logged-in users away from auth pages.
-  if (session && (normalizedPath === "/auth/login" || normalizedPath === "/auth/signup")) {
-    return NextResponse.redirect(new URL(localizedPath("/projects", locale), req.url));
-  }
-
-  // 3. Admin gate: only admin role may access /{locale}/admin.
-  if (session && ADMIN_PATHS.has(normalizedPath)) {
+  // 2. Admin gate: only admin role may access /{locale}/admin.
+  if (normalizedPath === ADMIN_PATH || normalizedPath.startsWith(`${ADMIN_PATH}/`)) {
     const { data: profile } = await supabase
       .from("profiles")
       .select("role")

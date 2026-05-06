@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Link } from "@/lib/i18n/navigation";
+import LanguageSwitcher from "../components/LanguageSwitcher";
 
 /* ── SVG icon helpers ────────────────────────────────────────── */
 
@@ -110,6 +111,10 @@ export default function HomePage() {
       <div className="pointer-events-none absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-brand-500/40 to-transparent" />
 
       {/* ═══════════════════ Content ══════════════════════════════ */}
+
+      <div className="absolute right-4 top-4 z-20 sm:right-6 sm:top-6">
+        <LanguageSwitcher />
+      </div>
 
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-6 sm:px-8">
         <div className="max-w-4xl w-full text-center space-y-10">

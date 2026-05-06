@@ -110,5 +110,40 @@
       "tiktokScore": "TikTok Score",
       "clips": "clips"
     }
+  },
+  "auth": {
+    "login": {
+      "title": "Sign in",
+      "subtitle": "Access your MyClipIQ workspace",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Sign In",
+      "submitting": "Signing in...",
+      "noAccount": "Don’t have an account?",
+      "signupLink": "Sign up",
+      "emailPlaceholder": "you@company.com",
+      "passwordPlaceholder": "••••••••"
+    },
+    "signup": {
+      "title": "Create account",
+      "subtitle": "Start your AI content intelligence journey",
+      "fullName": "Full name",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Create Account",
+      "submitting": "Creating account...",
+      "haveAccount": "Already have an account?",
+      "loginLink": "Sign in",
+      "namePlaceholder": "Rod Rezende",
+      "emailPlaceholder": "you@company.com",
+      "passwordPlaceholder": "Min 6 characters",
+      "checkEmailTitle": "Check your email",
+      "sentTo": "We sent a confirmation link to",
+      "instructions": "Click the link in your email to activate your account. Don’t forget to check your spam folder.",
+      "resent": "Confirmation email resent!",
+      "resend": "Resend confirmation",
+      "resending": "Sending...",
+      "alreadyConfirmed": "Already confirmed?"
+    }
   }
 }
