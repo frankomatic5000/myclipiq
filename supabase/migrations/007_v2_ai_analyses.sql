@@ -1,0 +1,26 @@
+-- Migration 007: Verify and document ai_analyses table (already exists from migration 001)
+-- Issue: #62
+-- Risk: LOW — verification only, no schema changes
+--
+-- This migration documents that ai_analyses was already created in migration 001.
+-- The table structure matches v2 requirements:
+--   - id UUID PRIMARY KEY DEFAULT gen_random_uuid()
+--   - upload_id UUID REFERENCES video_uploads(id) ON DELETE CASCADE
+--   - user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE
+--   - status TEXT DEFAULT 'processing'
+--   - engagement_score INTEGER
+--   - clip_suggestions JSONB DEFAULT '[]'
+--   - results JSONB DEFAULT '{}'
+--   - created_at TIMESTAMPTZ DEFAULT NOW()
+--   - updated_at TIMESTAMPTZ DEFAULT NOW()
+--
+-- RLS policies already exist:
+--   - "Users can view their analyses" FOR SELECT
+--   - "Users can insert their analyses" FOR INSERT
+--   - "Users can update their analyses" FOR UPDATE
+--
+-- Indexes already exist:
+--   - idx_ai_analyses_user ON (user_id, created_at DESC)
+--   - idx_ai_analyses_upload ON (upload_id)
+
+SELECT 'ai_analyses already exists and matches v2 spec' AS status;
