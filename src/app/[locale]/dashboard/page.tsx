@@ -12,10 +12,10 @@ const quickStats = [
 ];
 
 const recentProjects = [
-  { title: "Pernas Cruzadas S2", status: "editing", initials: "K", color: "bg-brand-500", date: "May 20" },
-  { title: "TechStartup Product Demo", status: "review", initials: "R", color: "bg-blue-500", date: "May 18" },
-  { title: "Vaptlux SaaS Walkthrough", status: "approved", initials: "R", color: "bg-blue-500", date: "May 15" },
-  { title: "GrowBiz SEO Batch", status: "intake", initials: "A", color: "bg-amber-500", date: "Jun 1" },
+  { title: "Pernas Cruzadas S2", status: "editing", initials: "K", color: "bg-surface-600", date: "May 20" },
+  { title: "TechStartup Product Demo", status: "review", initials: "R", color: "bg-surface-600", date: "May 18" },
+  { title: "Vaptlux SaaS Walkthrough", status: "approved", initials: "R", color: "bg-surface-600", date: "May 15" },
+  { title: "GrowBiz SEO Batch", status: "intake", initials: "A", color: "bg-surface-600", date: "Jun 1" },
 ];
 
 const statusOrder: Record<string, number> = {
