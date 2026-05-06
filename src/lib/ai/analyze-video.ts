@@ -170,19 +170,21 @@ export async function analyzeVideo(
 
     const raw = response.choices[0]?.message?.content || "{}";
     const cleaned = raw.replace(/```json\s?/gi, "").replace(/```\s?/gi, "").trim();
-    const parsed = JSON.parse(cleaned);
+    const parsed = JSON.parse(cleaned) as Record<string, unknown>;
+
+    const clipSuggestions = (parsed.clip_suggestions || []) as Record<string, unknown>[];
 
     return {
-      engagement_score: parsed.engagement_score || 50,
-      summary: parsed.summary || "",
-      clip_suggestions: (parsed.clip_suggestions || []).map((c: any) => ({
-        start: c.start_seconds || 0,
-        end: c.end_seconds || 15,
-        platform: c.platform || "TikTok",
-        hook_text: c.hook_text || "",
+      engagement_score: Number(parsed.engagement_score) || 50,
+      summary: String(parsed.summary) || "",
+      clip_suggestions: clipSuggestions.map((c) => ({
+        start: Number(c.start_seconds) || 0,
+        end: Number(c.end_seconds) || 15,
+        platform: String(c.platform) || "TikTok",
+        hook_text: String(c.hook_text) || "",
       })),
-      sentiment: parsed.sentiment || "neutral",
-      pacing: parsed.pacing || "medium",
+      sentiment: String(parsed.sentiment) || "neutral",
+      pacing: String(parsed.pacing) || "medium",
       key_moments: parsed.key_moments || [],
     };
   } finally {
