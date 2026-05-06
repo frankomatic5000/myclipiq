@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { getSupabaseBrowser } from "@/lib/supabase/client";
 import { Link } from "@/lib/i18n/navigation";
 
 export default function SignupPage() {
   const locale = useLocale();
+  const t = useTranslations("auth.signup");
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -69,19 +70,19 @@ export default function SignupPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
             </div>
-            <h1 className="text-2xl font-bold gradient-text">Check your email</h1>
-            <p className="text-sm text-surface-300">We sent a confirmation link to</p>
+            <h1 className="text-2xl font-bold gradient-text">{t("checkEmailTitle")}</h1>
+            <p className="text-sm text-surface-300">{t("sentTo")}</p>
             <p className="text-sm font-medium text-brand-400">{email}</p>
           </div>
 
           <div className="space-y-4">
             <p className="text-center text-sm text-surface-300">
-              Click the link in your email to activate your account. Don&apos;t forget to check your spam folder.
+              {t("instructions")}
             </p>
 
             {resendSuccess && (
               <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-sm text-center">
-                Confirmation email resent!
+                {t("resent")}
               </div>
             )}
 
@@ -91,14 +92,14 @@ export default function SignupPage() {
               disabled={resending}
               className="w-full py-2.5 rounded-lg border border-surface-700 text-surface-200 font-medium hover:bg-surface-800 transition disabled:opacity-50"
             >
-              {resending ? "Sending..." : "Resend confirmation"}
+              {resending ? t("resending") : t("resend")}
             </button>
           </div>
 
           <p className="text-center text-sm text-surface-300">
-            Already confirmed?{" "}
+            {t("alreadyConfirmed")}{" "}
             <Link href="/auth/login" className="text-brand-400 hover:text-brand-300 transition">
-              Sign in
+              {t("loginLink")}
             </Link>
           </p>
         </div>
@@ -115,13 +116,13 @@ export default function SignupPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold gradient-text">Create account</h1>
-          <p className="text-sm text-surface-300">Start your AI content intelligence journey</p>
+          <h1 className="text-2xl font-bold gradient-text">{t("title")}</h1>
+          <p className="text-sm text-surface-300">{t("subtitle")}</p>
         </div>
 
         <form onSubmit={handleEmailSignup} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1.5">Full name</label>
+            <label className="block text-sm font-medium mb-1.5">{t("fullName")}</label>
             <input
               type="text"
               required
@@ -129,12 +130,12 @@ export default function SignupPage() {
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               className="w-full px-4 py-2.5 rounded-lg bg-surface-800 border border-surface-700/50 text-surface-100 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 min-h-[44px]"
-              placeholder="Rod Rezende"
+              placeholder={t("namePlaceholder")}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1.5">Email</label>
+            <label className="block text-sm font-medium mb-1.5">{t("email")}</label>
             <input
               type="email"
               required
@@ -142,12 +143,12 @@ export default function SignupPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-2.5 rounded-lg bg-surface-800 border border-surface-700/50 text-surface-100 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 min-h-[44px]"
-              placeholder="you@company.com"
+              placeholder={t("emailPlaceholder")}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1.5">Password</label>
+            <label className="block text-sm font-medium mb-1.5">{t("password")}</label>
             <input
               type="password"
               required
@@ -156,7 +157,7 @@ export default function SignupPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full px-4 py-2.5 rounded-lg bg-surface-800 border border-surface-700/50 text-surface-100 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 min-h-[44px]"
-              placeholder="Min 6 characters"
+              placeholder={t("passwordPlaceholder")}
             />
           </div>
 
@@ -171,14 +172,14 @@ export default function SignupPage() {
             disabled={loading}
             className="w-full py-2.5 rounded-lg gradient-accent text-white font-medium hover:opacity-90 transition disabled:opacity-50"
           >
-            {loading ? "Creating account..." : "Create Account"}
+            {loading ? t("submitting") : t("submit")}
           </button>
         </form>
 
         <p className="text-center text-sm text-surface-300">
-          Already have an account?{" "}
+          {t("haveAccount")}{" "}
           <Link href="/auth/login" className="text-brand-400 hover:text-brand-300 transition">
-            Sign in
+            {t("loginLink")}
           </Link>
         </p>
       </div>

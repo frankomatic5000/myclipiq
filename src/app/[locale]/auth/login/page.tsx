@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { getSupabaseBrowser } from "@/lib/supabase/client";
 import { Link, useRouter } from "@/lib/i18n/navigation";
 
 export default function LoginPage() {
   const router = useRouter();
+  const t = useTranslations("auth.login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -38,13 +40,13 @@ export default function LoginPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold gradient-text">Sign in</h1>
-          <p className="text-sm text-surface-300">Access your MyClipIQ workspace</p>
+          <h1 className="text-2xl font-bold gradient-text">{t("title")}</h1>
+          <p className="text-sm text-surface-300">{t("subtitle")}</p>
         </div>
 
         <form onSubmit={handleEmailLogin} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1.5">Email</label>
+            <label className="block text-sm font-medium mb-1.5">{t("email")}</label>
             <input
               type="email"
               required
@@ -52,12 +54,12 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-2.5 rounded-lg bg-surface-800 border border-surface-700/50 text-surface-100 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 min-h-[44px]"
-              placeholder="you@company.com"
+              placeholder={t("emailPlaceholder")}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1.5">Password</label>
+            <label className="block text-sm font-medium mb-1.5">{t("password")}</label>
             <input
               type="password"
               required
@@ -65,7 +67,7 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full px-4 py-2.5 rounded-lg bg-surface-800 border border-surface-700/50 text-surface-100 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 min-h-[44px]"
-              placeholder="••••••••"
+              placeholder={t("passwordPlaceholder")}
             />
           </div>
 
@@ -80,14 +82,14 @@ export default function LoginPage() {
             disabled={loading}
             className="w-full py-2.5 rounded-lg gradient-accent text-white font-medium hover:opacity-90 transition disabled:opacity-50"
           >
-            {loading ? "Signing in..." : "Sign In"}
+            {loading ? t("submitting") : t("submit")}
           </button>
         </form>
 
         <p className="text-center text-sm text-surface-300">
-          Don&apos;t have an account?{" "}
+          {t("noAccount")}{" "}
           <Link href="/auth/signup" className="text-brand-400 hover:text-brand-300 transition">
-            Sign up
+            {t("signupLink")}
           </Link>
         </p>
       </div>

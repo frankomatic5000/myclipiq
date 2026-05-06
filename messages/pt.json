@@ -110,5 +110,40 @@
       "tiktokScore": "Pontuação no TikTok",
       "clips": "clipes"
     }
+  },
+  "auth": {
+    "login": {
+      "title": "Entrar",
+      "subtitle": "Acesse seu workspace MyClipIQ",
+      "email": "Email",
+      "password": "Senha",
+      "submit": "Entrar",
+      "submitting": "Entrando...",
+      "noAccount": "Ainda não tem uma conta?",
+      "signupLink": "Cadastre-se",
+      "emailPlaceholder": "voce@empresa.com",
+      "passwordPlaceholder": "••••••••"
+    },
+    "signup": {
+      "title": "Criar conta",
+      "subtitle": "Comece sua jornada de inteligência de conteúdo com IA",
+      "fullName": "Nome completo",
+      "email": "Email",
+      "password": "Senha",
+      "submit": "Criar conta",
+      "submitting": "Criando conta...",
+      "haveAccount": "Já tem uma conta?",
+      "loginLink": "Entrar",
+      "namePlaceholder": "Rod Rezende",
+      "emailPlaceholder": "voce@empresa.com",
+      "passwordPlaceholder": "Mínimo de 6 caracteres",
+      "checkEmailTitle": "Confira seu email",
+      "sentTo": "Enviamos um link de confirmação para",
+      "instructions": "Clique no link do email para ativar sua conta. Não se esqueça de verificar a pasta de spam.",
+      "resent": "Email de confirmação reenviado!",
+      "resend": "Reenviar confirmação",
+      "resending": "Enviando...",
+      "alreadyConfirmed": "Já confirmou?"
+    }
   }
 }
