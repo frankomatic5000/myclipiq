@@ -25,7 +25,7 @@ function stripLocale(pathname: string) {
   const segments = pathname.split("/");
   const maybeLocale = segments[1];
 
-  if (routing.locales.includes(maybeLocale as any)) {
+  if (routing.locales.includes(maybeLocale as (typeof routing.locales)[number])) {
     const withoutLocale = `/${segments.slice(2).join("/")}`;
     return withoutLocale.replace(/\/+/g, "/").replace(/\/$/, "") || "/";
   }
@@ -35,7 +35,7 @@ function stripLocale(pathname: string) {
 
 function getLocale(pathname: string) {
   const maybeLocale = pathname.split("/")[1];
-  return routing.locales.includes(maybeLocale as any) ? maybeLocale : routing.defaultLocale;
+  return routing.locales.includes(maybeLocale as (typeof routing.locales)[number]) ? maybeLocale : routing.defaultLocale;
 }
 
 function localizedPath(pathname: string, locale: string) {

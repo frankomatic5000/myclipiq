@@ -7,7 +7,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "test": "jest --config jest.config.ts",
     "test:ci": "jest --config jest.config.ts --ci --coverage",
     "db:types": "supabase gen types typescript --project-id your-project-id --schema public > src/types/database.ts",
@@ -53,13 +53,14 @@
     "@types/react-dom": "^19.0.0",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.20.0",
-    "eslint-config-next": "^15.0.0",
+    "eslint-config-next": "^16.2.5",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^30.3.0",
     "jest-environment-jsdom": "^30.3.0",
     "postcss": "^8.5.0",
     "ts-jest": "^29.4.9",
     "ts-node": "^10.9.2",
-    "typescript": "^5.7.0"
+    "typescript": "^5.7.0",
+    "typescript-eslint": "^8.59.2"
   }
 }
