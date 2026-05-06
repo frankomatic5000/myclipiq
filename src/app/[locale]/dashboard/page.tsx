@@ -74,7 +74,7 @@ export default function DashboardPage() {
                 href="/projects"
                 className="text-xs text-brand-400 hover:text-brand-300 transition"
               >
-                {t("viewAll")}
+                {t("viewAll")} →
               </Link>
             </div>
             <div className="divide-y divide-surface-700/30">
