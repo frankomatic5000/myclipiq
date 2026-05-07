@@ -9,18 +9,18 @@ interface ProspectTableProps {
 }
 
 const statusBadgeClass: Record<SalesStatus, string> = {
-  prospecting: "bg-purple-500/10 text-purple-400 border-purple-500/20",
-  first_contact: "bg-blue-500/10 text-blue-400 border-blue-500/20",
-  follow_up: "bg-blue-400/10 text-blue-300 border-blue-400/20",
-  proposal_sent: "bg-amber-500/10 text-amber-400 border-amber-500/20",
-  negotiation: "bg-amber-400/10 text-amber-300 border-amber-400/20",
-  pending_contract: "bg-amber-600/10 text-amber-500 border-amber-600/20",
-  contract_signed: "bg-green-500/10 text-green-400 border-green-500/20",
-  onboarding: "bg-green-400/10 text-green-300 border-green-400/20",
-  in_production: "bg-green-300/10 text-green-200 border-green-300/20",
-  pending_payment: "bg-amber-300/10 text-amber-200 border-amber-300/20",
-  closed_won: "bg-green-600/10 text-green-400 border-green-600/20",
-  closed_lost: "bg-red-500/10 text-red-400 border-red-500/20",
+  lead_cadastrado: "bg-purple-500/10 text-purple-400 border-purple-500/20",
+  primeiro_contato_enviado: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+  aguardando_resposta: "bg-blue-400/10 text-blue-300 border-blue-400/20",
+  respondeu: "bg-blue-300/10 text-blue-200 border-blue-300/20",
+  follow_up_enviado: "bg-blue-200/10 text-blue-100 border-blue-200/20",
+  call_agendada: "bg-amber-500/10 text-amber-400 border-amber-500/20",
+  call_realizada: "bg-amber-400/10 text-amber-300 border-amber-400/20",
+  proposta_enviada: "bg-amber-300/10 text-amber-200 border-amber-300/20",
+  negociacao: "bg-amber-600/10 text-amber-500 border-amber-600/20",
+  venda_fechada: "bg-green-600/10 text-green-400 border-green-600/20",
+  venda_perdida: "bg-red-500/10 text-red-400 border-red-500/20",
+  pediu_contato_futuro: "bg-surface-500/10 text-surface-300 border-surface-500/20",
 };
 
 export default function ProspectTable({ prospects, onSelect }: ProspectTableProps) {

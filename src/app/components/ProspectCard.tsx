@@ -9,18 +9,18 @@ interface ProspectCardProps {
 }
 
 const statusDotClass: Record<SalesStatus, string> = {
-  prospecting: "bg-purple-500",
-  first_contact: "bg-blue-500",
-  follow_up: "bg-blue-400",
-  proposal_sent: "bg-amber-500",
-  negotiation: "bg-amber-400",
-  pending_contract: "bg-amber-600",
-  contract_signed: "bg-green-500",
-  onboarding: "bg-green-400",
-  in_production: "bg-green-300",
-  pending_payment: "bg-amber-300",
-  closed_won: "bg-green-600",
-  closed_lost: "bg-red-500",
+  lead_cadastrado: "bg-purple-500",
+  primeiro_contato_enviado: "bg-blue-500",
+  aguardando_resposta: "bg-blue-400",
+  respondeu: "bg-blue-300",
+  follow_up_enviado: "bg-blue-200",
+  call_agendada: "bg-amber-500",
+  call_realizada: "bg-amber-400",
+  proposta_enviada: "bg-amber-300",
+  negociacao: "bg-amber-600",
+  venda_fechada: "bg-green-600",
+  venda_perdida: "bg-red-500",
+  pediu_contato_futuro: "bg-surface-500",
 };
 
 

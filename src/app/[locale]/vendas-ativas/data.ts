@@ -1,16 +1,16 @@
 export type SalesStatus =
-  | "prospecting"
-  | "first_contact"
-  | "follow_up"
-  | "proposal_sent"
-  | "negotiation"
-  | "pending_contract"
-  | "contract_signed"
-  | "onboarding"
-  | "in_production"
-  | "pending_payment"
-  | "closed_won"
-  | "closed_lost";
+  | "lead_cadastrado"
+  | "primeiro_contato_enviado"
+  | "aguardando_resposta"
+  | "respondeu"
+  | "follow_up_enviado"
+  | "call_agendada"
+  | "call_realizada"
+  | "proposta_enviada"
+  | "negociacao"
+  | "venda_fechada"
+  | "venda_perdida"
+  | "pediu_contato_futuro";
 
 export interface TimelineEvent {
   id: string;
@@ -37,7 +37,7 @@ export interface ChecklistItem {
 
 export interface AlertItem {
   id: string;
-  type: "follow_up" | "deadline" | "payment";
+  type: "follow_up_enviado" | "deadline" | "payment";
   message: string;
   dueDate: string;
 }
@@ -62,31 +62,31 @@ export interface Prospect {
 }
 
 export const STATUS_ORDER: SalesStatus[] = [
-  "prospecting",
-  "first_contact",
-  "follow_up",
-  "proposal_sent",
-  "negotiation",
-  "pending_contract",
-  "contract_signed",
-  "onboarding",
-  "in_production",
-  "pending_payment",
-  "closed_won",
-  "closed_lost",
+  "lead_cadastrado",
+  "primeiro_contato_enviado",
+  "aguardando_resposta",
+  "respondeu",
+  "follow_up_enviado",
+  "call_agendada",
+  "call_realizada",
+  "proposta_enviada",
+  "negociacao",
+  "venda_fechada",
+  "venda_perdida",
+  "pediu_contato_futuro",
 ];
 
 export const PRODUCT_OPTIONS = [
-  "social_media",
-  "content_creation",
-  "video_editing",
-  "visual_identity",
-  "marketing_consulting",
-  "landing_page",
-  "ads_campaign",
-  "product_photography",
-  "email_marketing",
-  "full_branding",
+  "podcast_entrevista_imigrou",
+  "gravacao_curso",
+  "gravacao_mentoria",
+  "conteudo_pronto_postar",
+  "gestao_redes_sociais",
+  "glowup_instagram",
+  "cobertura_evento",
+  "publicacao_pessoas_globais",
+  "participacao_pernas_cruzadas",
+  "pacote_personalizado",
 ];
 
 export const mockProspects: Prospect[] = [
@@ -97,9 +97,9 @@ export const mockProspects: Prospect[] = [
     instagram: "@bellamoda_oficial",
     phone: "(11) 98765-4321",
     email: "mariana@bellamoda.com.br",
-    status: "negotiation",
+    status: "negociacao",
     lastContact: "2026-05-06",
-    productsInterested: ["social_media", "content_creation", "visual_identity"],
+    productsInterested: ["podcast_entrevista_imigrou", "gravacao_curso", "conteudo_pronto_postar"],
     assignedTo: "Karine",
     notes: "Cliente interessada em rebranding completo. Orçamento de R$ 5.000/mês.",
     revenue: "R$ 5.000/mês",
@@ -118,7 +118,7 @@ export const mockProspects: Prospect[] = [
       { id: "ch3", label: "Definir cronograma de entrega", done: false, category: "production" },
     ],
     alerts: [
-      { id: "a1", type: "follow_up", message: "Enviar proposta revisada até sexta", dueDate: "2026-05-09" },
+      { id: "a1", type: "follow_up_enviado", message: "Enviar proposta revisada até sexta", dueDate: "2026-05-09" },
     ],
   },
   {
@@ -128,9 +128,9 @@ export const mockProspects: Prospect[] = [
     instagram: "@limafitness_studio",
     phone: "(21) 99876-5432",
     email: "roberto@limafitness.com.br",
-    status: "first_contact",
+    status: "primeiro_contato_enviado",
     lastContact: "2026-05-05",
-    productsInterested: ["video_editing", "social_media"],
+    productsInterested: ["gravacao_mentoria", "podcast_entrevista_imigrou"],
     assignedTo: "Rod",
     notes: "Academia pequena quer crescer no Instagram. Budget limitado (~R$ 2.000).",
     revenue: "R$ 2.000/mês",
@@ -145,7 +145,7 @@ export const mockProspects: Prospect[] = [
       { id: "ch2", label: "Agendar segunda ligação", done: false, category: "sales" },
     ],
     alerts: [
-      { id: "a1", type: "follow_up", message: "Ligar para Roberto na terça-feira", dueDate: "2026-05-12" },
+      { id: "a1", type: "follow_up_enviado", message: "Ligar para Roberto na terça-feira", dueDate: "2026-05-12" },
     ],
   },
   {
@@ -155,9 +155,9 @@ export const mockProspects: Prospect[] = [
     instagram: "@docearte_confeitaria",
     phone: "(31) 91234-5678",
     email: "fernanda@docearte.com.br",
-    status: "closed_won",
+    status: "venda_fechada",
     lastContact: "2026-05-01",
-    productsInterested: ["social_media", "content_creation", "product_photography"],
+    productsInterested: ["podcast_entrevista_imigrou", "gravacao_curso", "publicacao_pessoas_globais"],
     assignedTo: "Karine",
     notes: "Venda fechada! Pacote de R$ 3.500/mês. Contrato assinado em 1º de maio.",
     revenue: "R$ 3.500/mês",
@@ -174,8 +174,8 @@ export const mockProspects: Prospect[] = [
       { id: "c2", date: "2026-04-05", duration: "15 min", outcome: "Negociação", notes: "Pediu desconto de 10% — aceitamos com contrato de 6 meses" },
     ],
     checklist: [
-      { id: "ch1", label: "Coletar logo e materiais", done: true, category: "onboarding" },
-      { id: "ch2", label: "Criar calendário editorial", done: true, category: "onboarding" },
+      { id: "ch1", label: "Coletar logo e materiais", done: true, category: "proposta_enviada" },
+      { id: "ch2", label: "Criar calendário editorial", done: true, category: "proposta_enviada" },
       { id: "ch3", label: "Agendar sessão de fotos", done: false, category: "production" },
       { id: "ch4", label: "Primeira postagem", done: false, category: "production" },
     ],
@@ -190,9 +190,9 @@ export const mockProspects: Prospect[] = [
     instagram: "@mendesadvogados",
     phone: "(11) 95555-9999",
     email: "carlos@mendesadv.com.br",
-    status: "proposal_sent",
+    status: "proposta_enviada",
     lastContact: "2026-05-04",
-    productsInterested: ["landing_page", "ads_campaign", "content_creation"],
+    productsInterested: ["glowup_instagram", "cobertura_evento", "gravacao_curso"],
     assignedTo: "Rod",
     notes: "Escritório de advocacia quer landing page + campanha Google Ads. Orçamento R$ 6.000 inicial.",
     revenue: "R$ 6.000",
@@ -209,7 +209,7 @@ export const mockProspects: Prospect[] = [
       { id: "ch2", label: "Preparar mockup da landing page", done: false, category: "production" },
     ],
     alerts: [
-      { id: "a1", type: "follow_up", message: "Ligar para Carlos sobre proposta", dueDate: "2026-05-11" },
+      { id: "a1", type: "follow_up_enviado", message: "Ligar para Carlos sobre proposta", dueDate: "2026-05-11" },
     ],
   },
   {
@@ -219,9 +219,9 @@ export const mockProspects: Prospect[] = [
     instagram: "@jujukids_moda",
     phone: "(41) 93333-7777",
     email: "juliana@jujukids.com.br",
-    status: "closed_lost",
+    status: "venda_perdida",
     lastContact: "2026-04-18",
-    productsInterested: ["social_media", "email_marketing"],
+    productsInterested: ["podcast_entrevista_imigrou", "participacao_pernas_cruzadas"],
     assignedTo: "Karine",
     notes: "Cliente decidiu fazer in-house. Manter contato para reaproximação em 3 meses.",
     revenue: "—",
@@ -241,7 +241,7 @@ export const mockProspects: Prospect[] = [
       { id: "ch2", label: "Reaproximar em 3 meses", done: false, category: "sales" },
     ],
     alerts: [
-      { id: "a1", type: "follow_up", message: "Reaproximar Juliana em agosto", dueDate: "2026-08-18" },
+      { id: "a1", type: "follow_up_enviado", message: "Reaproximar Juliana em agosto", dueDate: "2026-08-18" },
     ],
   },
   {
@@ -251,9 +251,9 @@ export const mockProspects: Prospect[] = [
     instagram: "@oliveiratech",
     phone: "(11) 97777-2222",
     email: "andre@oliveiratech.com.br",
-    status: "in_production",
+    status: "negociacao",
     lastContact: "2026-05-03",
-    productsInterested: ["content_creation", "video_editing", "full_branding"],
+    productsInterested: ["gravacao_curso", "gravacao_mentoria", "pacote_personalizado"],
     assignedTo: "Rod",
     notes: "Startup B2B SaaS. Pacote completo de branding + conteúdo. Em produção desde 20/04.",
     revenue: "R$ 8.000/mês",
@@ -269,7 +269,7 @@ export const mockProspects: Prospect[] = [
       { id: "c2", date: "2026-05-03", duration: "20 min", outcome: "Acompanhamento", notes: "Reunião semanal — ajustes no tom de voz" },
     ],
     checklist: [
-      { id: "ch1", label: "Entregar guia de marca", done: true, category: "onboarding" },
+      { id: "ch1", label: "Entregar guia de marca", done: true, category: "proposta_enviada" },
       { id: "ch2", label: "Criar calendário editorial", done: true, category: "production" },
       { id: "ch3", label: "Produzir 4 posts/semana", done: true, category: "production" },
       { id: "ch4", label: "Produzir 2 reels/semana", done: false, category: "production" },
@@ -285,9 +285,9 @@ export const mockProspects: Prospect[] = [
     instagram: "@almeidaderma",
     phone: "(19) 98888-3333",
     email: "patricia@almeidaderma.com.br",
-    status: "pending_contract",
+    status: "call_agendada",
     lastContact: "2026-05-02",
-    productsInterested: ["social_media", "landing_page", "ads_campaign"],
+    productsInterested: ["podcast_entrevista_imigrou", "glowup_instagram", "cobertura_evento"],
     assignedTo: "Karine",
     notes: "Clínica de dermatologia. Aceitou proposta verbalmente. Aguardando assinatura do contrato.",
     revenue: "R$ 4.500/mês",
@@ -303,11 +303,11 @@ export const mockProspects: Prospect[] = [
     ],
     checklist: [
       { id: "ch1", label: "Contrato assinado", done: false, category: "sales" },
-      { id: "ch2", label: "Coletar fotos da clínica", done: false, category: "onboarding" },
+      { id: "ch2", label: "Coletar fotos da clínica", done: false, category: "proposta_enviada" },
       { id: "ch3", label: "Criar landing page", done: false, category: "production" },
     ],
     alerts: [
-      { id: "a1", type: "follow_up", message: "Lembrar Patricia para assinar contrato", dueDate: "2026-05-09" },
+      { id: "a1", type: "follow_up_enviado", message: "Lembrar Patricia para assinar contrato", dueDate: "2026-05-09" },
     ],
   },
   {
@@ -317,9 +317,9 @@ export const mockProspects: Prospect[] = [
     instagram: "@ribeiroimoveis",
     phone: "(11) 96666-4444",
     email: "thiago@ribeiroimoveis.com.br",
-    status: "prospecting",
+    status: "lead_cadastrado",
     lastContact: "2026-04-30",
-    productsInterested: ["social_media", "ads_campaign", "video_editing"],
+    productsInterested: ["podcast_entrevista_imigrou", "cobertura_evento", "gravacao_mentoria"],
     assignedTo: "Rod",
     notes: "Corretor independente quer expandir presença digital. Orçamento estimado R$ 3.000/mês.",
     revenue: "R$ 3.000/mês",
@@ -331,7 +331,7 @@ export const mockProspects: Prospect[] = [
       { id: "ch1", label: "Agendar ligação de apresentação", done: false, category: "sales" },
     ],
     alerts: [
-      { id: "a1", type: "follow_up", message: "Ligar para Thiago esta semana", dueDate: "2026-05-08" },
+      { id: "a1", type: "follow_up_enviado", message: "Ligar para Thiago esta semana", dueDate: "2026-05-08" },
     ],
   },
   {
@@ -341,9 +341,9 @@ export const mockProspects: Prospect[] = [
     instagram: "@duartearquitetura",
     phone: "(21) 95555-8888",
     email: "camila@duartearq.com.br",
-    status: "pending_payment",
+    status: "venda_fechada",
     lastContact: "2026-05-01",
-    productsInterested: ["visual_identity", "content_creation", "product_photography"],
+    productsInterested: ["conteudo_pronto_postar", "gravacao_curso", "publicacao_pessoas_globais"],
     assignedTo: "Karine",
     notes: "Projeto de identidade visual + fotos de obras finalizado. Aguardando pagamento final de R$ 4.000.",
     revenue: "R$ 4.000",
@@ -372,9 +372,9 @@ export const mockProspects: Prospect[] = [
     instagram: "@ferreira.ecommerce",
     phone: "(11) 94444-6666",
     email: "lucas@ferreirashop.com.br",
-    status: "follow_up",
+    status: "follow_up_enviado",
     lastContact: "2026-05-04",
-    productsInterested: ["ads_campaign", "email_marketing", "content_creation"],
+    productsInterested: ["cobertura_evento", "participacao_pernas_cruzadas", "gravacao_curso"],
     assignedTo: "Rod",
     notes: "Loja online de eletrônicos. Pediu orçamento detalhado. Quer começar com ads + email.",
     revenue: "R$ 6.500/mês",
@@ -391,7 +391,7 @@ export const mockProspects: Prospect[] = [
       { id: "ch2", label: "Preparar estratégia de ads", done: false, category: "production" },
     ],
     alerts: [
-      { id: "a1", type: "follow_up", message: "Ligar para Lucas na sexta", dueDate: "2026-05-09" },
+      { id: "a1", type: "follow_up_enviado", message: "Ligar para Lucas na sexta", dueDate: "2026-05-09" },
     ],
   },
   {
@@ -401,9 +401,9 @@ export const mockProspects: Prospect[] = [
     instagram: "@gomesestetica",
     phone: "(31) 92222-5555",
     email: "renata@gomesestetica.com.br",
-    status: "onboarding",
+    status: "proposta_enviada",
     lastContact: "2026-05-05",
-    productsInterested: ["social_media", "landing_page", "content_creation"],
+    productsInterested: ["podcast_entrevista_imigrou", "glowup_instagram", "gravacao_curso"],
     assignedTo: "Karine",
     notes: "Clínica de estética. Contrato assinado ontem. Iniciando onboarding hoje.",
     revenue: "R$ 3.800/mês",
@@ -417,10 +417,10 @@ export const mockProspects: Prospect[] = [
       { id: "c1", date: "2026-04-10", duration: "20 min", outcome: "Interessada", notes: "Quer posts sobre procedimentos + landing para agendamentos" },
     ],
     checklist: [
-      { id: "ch1", label: "Coletar logo e cores da marca", done: true, category: "onboarding" },
-      { id: "ch2", label: "Preencher briefing", done: false, category: "onboarding" },
-      { id: "ch3", label: "Criar calendário editorial", done: false, category: "onboarding" },
-      { id: "ch4", label: "Configurar conta de ads", done: false, category: "onboarding" },
+      { id: "ch1", label: "Coletar logo e cores da marca", done: true, category: "proposta_enviada" },
+      { id: "ch2", label: "Preencher briefing", done: false, category: "proposta_enviada" },
+      { id: "ch3", label: "Criar calendário editorial", done: false, category: "proposta_enviada" },
+      { id: "ch4", label: "Configurar conta de ads", done: false, category: "proposta_enviada" },
     ],
     alerts: [
       { id: "a1", type: "deadline", message: "Finalizar onboarding até 15/05", dueDate: "2026-05-15" },
@@ -433,9 +433,9 @@ export const mockProspects: Prospect[] = [
     instagram: "@carvalhopizzaria",
     phone: "(21) 91111-3333",
     email: "bruno@carvalhopizzaria.com.br",
-    status: "contract_signed",
+    status: "call_realizada",
     lastContact: "2026-05-03",
-    productsInterested: ["social_media", "video_editing", "ads_campaign"],
+    productsInterested: ["podcast_entrevista_imigrou", "gravacao_mentoria", "cobertura_evento"],
     assignedTo: "Rod",
     notes: "Pizzaria tradicional quer modernizar. Contrato assinado. Aguardando início do onboarding.",
     revenue: "R$ 2.800/mês",
@@ -449,8 +449,8 @@ export const mockProspects: Prospect[] = [
       { id: "c1", date: "2026-04-05", duration: "10 min", outcome: "Interessado", notes: "Quer vídeos de pizzas sendo preparadas + posts diários" },
     ],
     checklist: [
-      { id: "ch1", label: "Agendar kickoff", done: false, category: "onboarding" },
-      { id: "ch2", label: "Coletar menu e fotos atuais", done: false, category: "onboarding" },
+      { id: "ch1", label: "Agendar kickoff", done: false, category: "proposta_enviada" },
+      { id: "ch2", label: "Coletar menu e fotos atuais", done: false, category: "proposta_enviada" },
     ],
     alerts: [
       { id: "a1", type: "deadline", message: "Agendar kickoff até 10/05", dueDate: "2026-05-10" },
@@ -460,23 +460,28 @@ export const mockProspects: Prospect[] = [
 
 export const columnGroups = [
   {
-    key: "prospecting",
-    statuses: ["prospecting", "first_contact"],
-    labelKey: "colProspecting",
+    key: "cadastro",
+    statuses: ["lead_cadastrado"],
+    labelKey: "colCadastro",
   },
   {
-    key: "pipeline",
-    statuses: ["follow_up", "proposal_sent", "negotiation", "pending_contract"],
-    labelKey: "colPipeline",
+    key: "contato",
+    statuses: ["primeiro_contato_enviado", "aguardando_resposta", "respondeu", "follow_up_enviado"],
+    labelKey: "colContato",
   },
   {
-    key: "progress",
-    statuses: ["contract_signed", "onboarding", "in_production", "pending_payment"],
-    labelKey: "colProgress",
+    key: "call_proposta",
+    statuses: ["call_agendada", "call_realizada", "proposta_enviada"],
+    labelKey: "colCallProposta",
   },
   {
-    key: "closed",
-    statuses: ["closed_won", "closed_lost"],
-    labelKey: "colClosed",
+    key: "negociacao",
+    statuses: ["negociacao"],
+    labelKey: "colNegociacao",
+  },
+  {
+    key: "fechamento",
+    statuses: ["venda_fechada", "venda_perdida", "pediu_contato_futuro"],
+    labelKey: "colFechamento",
   },
 ];

@@ -63,18 +63,18 @@ export default function VendasAtivasPage() {
               <option value="all">{t("filter.allStatuses")}</option>
               {(
                 [
-                  "prospecting",
-                  "first_contact",
-                  "follow_up",
-                  "proposal_sent",
-                  "negotiation",
-                  "pending_contract",
-                  "contract_signed",
-                  "onboarding",
-                  "in_production",
-                  "pending_payment",
-                  "closed_won",
-                  "closed_lost",
+                  "lead_cadastrado",
+                  "primeiro_contato_enviado",
+                  "aguardando_resposta",
+                  "respondeu",
+                  "follow_up_enviado",
+                  "call_agendada",
+                  "call_realizada",
+                  "proposta_enviada",
+                  "negociacao",
+                  "venda_fechada",
+                  "venda_perdida",
+                  "pediu_contato_futuro",
                 ] as SalesStatus[]
               ).map((s) => (
                 <option key={s} value={s}>
