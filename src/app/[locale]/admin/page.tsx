@@ -78,7 +78,7 @@ export default function AdminPage() {
     if (!toast) return;
     const t = setTimeout(() => setToast(null), 3000);
     return () => clearTimeout(t);
-  }, [toast?.message]);
+  }, [toast]);
 
   async function updateRole(userId: string, newRole: string) {
     setSavingId(userId);
@@ -91,12 +91,12 @@ export default function AdminPage() {
       if (error) throw error;
 
       setUsers((prev) =>
-        prev.map((u) => (u.id === userId ? { ...u, role: newRole as any } : u))
+        prev.map((u) => (u.id === userId ? { ...u, role: newRole as UserProfile['role'] } : u))
       );
       setToast({ message: "Role updated", type: "success" });
-    } catch (err: any) {
-      console.error("[Admin] Role update failed:", err?.message || err);
-      setToast({ message: err?.message || "Failed to update role", type: "error" });
+    } catch (err: unknown) {
+      console.error("[Admin] Role update failed:", err instanceof Error ? err.message : err);
+      setToast({ message: err instanceof Error ? err.message : "Failed to update role", type: "error" });
     } finally {
       setSavingId(null);
     }
@@ -112,7 +112,7 @@ export default function AdminPage() {
       });
 
       if (!res.ok) {
-        const { error } = await res.json().catch(() => ({ error: "Unknown error" }));
+        const { error } = await res.json().catch(() => ({ error: "Unknown error" })) as { error: string };
         console.error("[Admin] Create test user failed:", error);
         setToast({ message: error || "Failed to create user", type: "error" });
         return;
