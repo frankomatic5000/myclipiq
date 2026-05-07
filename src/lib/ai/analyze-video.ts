@@ -185,7 +185,7 @@ export async function analyzeVideo(
       })),
       sentiment: String(parsed.sentiment) || "neutral",
       pacing: String(parsed.pacing) || "medium",
-      key_moments: parsed.key_moments || [],
+      key_moments: (parsed.key_moments || []) as string[],
     };
   } finally {
     await unlink(tempPath).catch(() => {});

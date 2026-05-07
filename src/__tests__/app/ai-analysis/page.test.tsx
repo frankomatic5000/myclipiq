@@ -7,7 +7,6 @@ import { render, screen, fireEvent, waitFor, act } from "@testing-library/react"
 import AIAnalysisPage from "@/app/ai-analysis/page";
 
 const mockGetSession = jest.fn();
-const mockFromSelect = jest.fn();
 
 jest.mock("@/lib/supabase/client", () => ({
   getSupabaseBrowser: () => ({
@@ -19,7 +18,7 @@ jest.mock("@/lib/supabase/client", () => ({
         eq: () => ({
           order: () => ({
             limit: () => ({
-              then: (cb: any) =>
+              then: (cb: unknown) =>
                 Promise.resolve(
                   cb({
                     data: [],

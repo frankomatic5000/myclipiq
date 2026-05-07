@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
-import { analyzeVideoFromStream } from "@/lib/ai/analyze-video";
+
 import { z } from "zod";
 import { createClient } from "@supabase/supabase-js";
 
