@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 interface ChecklistItem {
   id: string;
@@ -14,6 +15,7 @@ interface ChecklistProps {
 }
 
 export default function Checklist({ items: initial }: ChecklistProps) {
+  const t = useTranslations("vendasAtivas.checklistCategory");
   const [items, setItems] = useState(initial);
 
   const toggle = (id: string) => {
@@ -31,7 +33,7 @@ export default function Checklist({ items: initial }: ChecklistProps) {
       {Object.entries(byCategory).map(([cat, catItems]) => (
         <div key={cat}>
           <h4 className="text-xs font-semibold uppercase tracking-wider text-surface-400 mb-2">
-            {cat}
+            {t(cat)}
           </h4>
           <div className="space-y-2">
             {catItems.map((item) => (

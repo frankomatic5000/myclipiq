@@ -302,6 +302,12 @@
       "calls": "Llamadas Comerciales",
       "timeline": "Línea de Tiempo de Contacto",
       "checklist": "Checklist Operacional"
+    },
+    "checklistCategory": {
+      "gravacao": "Grabación / Podcast / Curso / Mentoría",
+      "social": "Gestión de Redes Sociales / GlowUp",
+      "evento": "Cobertura de Eventos",
+      "sales": "Ventas"
     }
   }
 }

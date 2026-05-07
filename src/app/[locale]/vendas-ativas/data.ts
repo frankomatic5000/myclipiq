@@ -112,11 +112,7 @@ export const mockProspects: Prospect[] = [
     calls: [
       { id: "c1", date: "2026-04-20", duration: "25 min", outcome: "Interessada — quer proposta", notes: "Muito receptiva, pediu preços para redes sociais + identidade visual" },
     ],
-    checklist: [
-      { id: "ch1", label: "Enviar proposta revisada", done: false, category: "sales" },
-      { id: "ch2", label: "Coletar fotos do produto", done: false, category: "production" },
-      { id: "ch3", label: "Definir cronograma de entrega", done: false, category: "production" },
-    ],
+    checklist: generateChecklist(["podcast_entrevista_imigrou", "gravacao_curso", "conteudo_pronto_postar"]),
     alerts: [
       { id: "a1", type: "follow_up", message: "Enviar proposta revisada até sexta", dueDate: "2026-05-09" },
     ],
@@ -140,10 +136,7 @@ export const mockProspects: Prospect[] = [
     calls: [
       { id: "c1", date: "2026-05-05", duration: "12 min", outcome: "Interessado — quer mais info", notes: "Disse que vai conversar com a sócia e retorna essa semana" },
     ],
-    checklist: [
-      { id: "ch1", label: "Enviar portfolio de fitness", done: false, category: "sales" },
-      { id: "ch2", label: "Agendar segunda ligação", done: false, category: "sales" },
-    ],
+    checklist: generateChecklist(["gravacao_mentoria", "podcast_entrevista_imigrou"]),
     alerts: [
       { id: "a1", type: "follow_up", message: "Ligar para Roberto na terça-feira", dueDate: "2026-05-12" },
     ],
@@ -173,12 +166,7 @@ export const mockProspects: Prospect[] = [
       { id: "c1", date: "2026-03-15", duration: "30 min", outcome: "Muito interessada", notes: "Quer fotos dos doces + posts diários" },
       { id: "c2", date: "2026-04-05", duration: "15 min", outcome: "Negociação", notes: "Pediu desconto de 10% — aceitamos com contrato de 6 meses" },
     ],
-    checklist: [
-      { id: "ch1", label: "Coletar logo e materiais", done: true, category: "proposta_enviada" },
-      { id: "ch2", label: "Criar calendário editorial", done: true, category: "proposta_enviada" },
-      { id: "ch3", label: "Agendar sessão de fotos", done: false, category: "production" },
-      { id: "ch4", label: "Primeira postagem", done: false, category: "production" },
-    ],
+    checklist: generateChecklist(["podcast_entrevista_imigrou", "gravacao_curso", "publicacao_pessoas_globais"]),
     alerts: [
       { id: "a1", type: "deadline", message: "Sessão de fotos agendada para 15/05", dueDate: "2026-05-15" },
     ],
@@ -204,10 +192,7 @@ export const mockProspects: Prospect[] = [
     calls: [
       { id: "c1", date: "2026-04-10", duration: "20 min", outcome: "Quer reunião presencial", notes: "Disponibilidade só nas quintas de manhã" },
     ],
-    checklist: [
-      { id: "ch1", label: "Aguardar resposta da proposta", done: false, category: "sales" },
-      { id: "ch2", label: "Preparar mockup da landing page", done: false, category: "production" },
-    ],
+    checklist: generateChecklist(["glowup_instagram", "cobertura_evento", "gravacao_curso"]),
     alerts: [
       { id: "a1", type: "follow_up", message: "Ligar para Carlos sobre proposta", dueDate: "2026-05-11" },
     ],
@@ -236,10 +221,7 @@ export const mockProspects: Prospect[] = [
       { id: "c1", date: "2026-03-12", duration: "18 min", outcome: "Interessada", notes: "Quer posts diários com looks infantis" },
       { id: "c2", date: "2026-04-18", duration: "8 min", outcome: "Perdido", notes: "Decidiu contratar alguém interno" },
     ],
-    checklist: [
-      { id: "ch1", label: "Enviar proposta final", done: true, category: "sales" },
-      { id: "ch2", label: "Reaproximar em 3 meses", done: false, category: "sales" },
-    ],
+    checklist: generateChecklist(["podcast_entrevista_imigrou", "participacao_pernas_cruzadas"]),
     alerts: [
       { id: "a1", type: "follow_up", message: "Reaproximar Juliana em agosto", dueDate: "2026-08-18" },
     ],
@@ -268,12 +250,7 @@ export const mockProspects: Prospect[] = [
       { id: "c1", date: "2026-02-15", duration: "40 min", outcome: "Fechado", notes: "Quer posicionamento de marca + conteúdo técnico" },
       { id: "c2", date: "2026-05-03", duration: "20 min", outcome: "Acompanhamento", notes: "Reunião semanal — ajustes no tom de voz" },
     ],
-    checklist: [
-      { id: "ch1", label: "Entregar guia de marca", done: true, category: "proposta_enviada" },
-      { id: "ch2", label: "Criar calendário editorial", done: true, category: "production" },
-      { id: "ch3", label: "Produzir 4 posts/semana", done: true, category: "production" },
-      { id: "ch4", label: "Produzir 2 reels/semana", done: false, category: "production" },
-    ],
+    checklist: generateChecklist(["gravacao_curso", "gravacao_mentoria", "pacote_personalizado"]),
     alerts: [
       { id: "a1", type: "deadline", message: "Entrega do relatório mensal", dueDate: "2026-05-10" },
     ],
@@ -301,11 +278,7 @@ export const mockProspects: Prospect[] = [
       { id: "c1", date: "2026-04-01", duration: "22 min", outcome: "Interessada", notes: "Quer crescer no Instagram + landing page para agendamentos" },
       { id: "c2", date: "2026-04-25", duration: "10 min", outcome: "Aceitou proposta", notes: "Vai revisar contrato e retornar em 1 semana" },
     ],
-    checklist: [
-      { id: "ch1", label: "Contrato assinado", done: false, category: "sales" },
-      { id: "ch2", label: "Coletar fotos da clínica", done: false, category: "proposta_enviada" },
-      { id: "ch3", label: "Criar landing page", done: false, category: "production" },
-    ],
+    checklist: generateChecklist(["podcast_entrevista_imigrou", "glowup_instagram", "cobertura_evento"]),
     alerts: [
       { id: "a1", type: "follow_up", message: "Lembrar Patricia para assinar contrato", dueDate: "2026-05-09" },
     ],
@@ -327,9 +300,7 @@ export const mockProspects: Prospect[] = [
       { id: "t1", date: "2026-04-30", type: "message", description: "Contato via Instagram DM", author: "Rod" },
     ],
     calls: [],
-    checklist: [
-      { id: "ch1", label: "Agendar ligação de apresentação", done: false, category: "sales" },
-    ],
+    checklist: generateChecklist(["podcast_entrevista_imigrou", "cobertura_evento", "gravacao_mentoria"]),
     alerts: [
       { id: "a1", type: "follow_up", message: "Ligar para Thiago esta semana", dueDate: "2026-05-08" },
     ],
@@ -356,11 +327,7 @@ export const mockProspects: Prospect[] = [
     calls: [
       { id: "c1", date: "2026-04-20", duration: "15 min", outcome: "Entrega aceita", notes: "Cliente gostou do resultado. Pagamento em 30 dias." },
     ],
-    checklist: [
-      { id: "ch1", label: "Entregar identidade visual", done: true, category: "production" },
-      { id: "ch2", label: "Entregar fotos das obras", done: true, category: "production" },
-      { id: "ch3", label: "Receber pagamento final", done: false, category: "sales" },
-    ],
+    checklist: generateChecklist(["conteudo_pronto_postar", "gravacao_curso", "publicacao_pessoas_globais"]),
     alerts: [
       { id: "a1", type: "payment", message: "Pagamento final vence em 30 dias", dueDate: "2026-05-30" },
     ],
@@ -386,10 +353,7 @@ export const mockProspects: Prospect[] = [
     calls: [
       { id: "c1", date: "2026-04-20", duration: "30 min", outcome: "Muito interessado", notes: "Meta: R$ 50k/mês em vendas. Quer ROAS de 4x." },
     ],
-    checklist: [
-      { id: "ch1", label: "Aguardar resposta do orçamento", done: false, category: "sales" },
-      { id: "ch2", label: "Preparar estratégia de ads", done: false, category: "production" },
-    ],
+    checklist: generateChecklist(["cobertura_evento", "participacao_pernas_cruzadas", "gravacao_curso"]),
     alerts: [
       { id: "a1", type: "follow_up", message: "Ligar para Lucas na sexta", dueDate: "2026-05-09" },
     ],
@@ -416,12 +380,7 @@ export const mockProspects: Prospect[] = [
     calls: [
       { id: "c1", date: "2026-04-10", duration: "20 min", outcome: "Interessada", notes: "Quer posts sobre procedimentos + landing para agendamentos" },
     ],
-    checklist: [
-      { id: "ch1", label: "Coletar logo e cores da marca", done: true, category: "proposta_enviada" },
-      { id: "ch2", label: "Preencher briefing", done: false, category: "proposta_enviada" },
-      { id: "ch3", label: "Criar calendário editorial", done: false, category: "proposta_enviada" },
-      { id: "ch4", label: "Configurar conta de ads", done: false, category: "proposta_enviada" },
-    ],
+    checklist: generateChecklist(["podcast_entrevista_imigrou", "glowup_instagram", "gravacao_curso"]),
     alerts: [
       { id: "a1", type: "deadline", message: "Finalizar onboarding até 15/05", dueDate: "2026-05-15" },
     ],
@@ -448,15 +407,79 @@ export const mockProspects: Prospect[] = [
     calls: [
       { id: "c1", date: "2026-04-05", duration: "10 min", outcome: "Interessado", notes: "Quer vídeos de pizzas sendo preparadas + posts diários" },
     ],
-    checklist: [
-      { id: "ch1", label: "Agendar kickoff", done: false, category: "proposta_enviada" },
-      { id: "ch2", label: "Coletar menu e fotos atuais", done: false, category: "proposta_enviada" },
-    ],
+    checklist: generateChecklist(["podcast_entrevista_imigrou", "gravacao_mentoria", "cobertura_evento"]),
     alerts: [
       { id: "a1", type: "deadline", message: "Agendar kickoff até 10/05", dueDate: "2026-05-10" },
     ],
   },
 ];
+
+export const CHECKLIST_ITEMS = {
+  gravacao: [
+    { label: "Confirmar data e local da gravação", done: false, category: "gravacao" },
+    { label: "Enviar briefing ao cliente", done: false, category: "gravacao" },
+    { label: "Preparar equipamento", done: false, category: "gravacao" },
+    { label: "Realizar gravação", done: false, category: "gravacao" },
+    { label: "Edição de áudio/vídeo", done: false, category: "gravacao" },
+    { label: "Revisão com cliente", done: false, category: "gravacao" },
+    { label: "Entrega final", done: false, category: "gravacao" },
+  ],
+  social: [
+    { label: "Coletar materiais da marca", done: false, category: "social" },
+    { label: "Criar calendário editorial", done: false, category: "social" },
+    { label: "Aprovar conteúdo com cliente", done: false, category: "social" },
+    { label: "Agendar posts", done: false, category: "social" },
+    { label: "Responder comentários/DMs", done: false, category: "social" },
+    { label: "Relatório semanal", done: false, category: "social" },
+    { label: "Ajustes de estratégia", done: false, category: "social" },
+  ],
+  evento: [
+    { label: "Confirmar data/horário/local", done: false, category: "evento" },
+    { label: "Visita técnica prévia", done: false, category: "evento" },
+    { label: "Equipamento carregado/testado", done: false, category: "evento" },
+    { label: "Cobertura foto + vídeo", done: false, category: "evento" },
+    { label: "Edição rápida (24h)", done: false, category: "evento" },
+    { label: "Entrega de conteúdo", done: false, category: "evento" },
+    { label: "Post no feed/stories", done: false, category: "evento" },
+  ],
+  sales: [
+    { label: "Enviar proposta", done: false, category: "sales" },
+    { label: "Follow-up com cliente", done: false, category: "sales" },
+    { label: "Agendar call", done: false, category: "sales" },
+    { label: "Preparar contrato", done: false, category: "sales" },
+  ],
+};
+
+export function generateChecklist(products: string[]): ChecklistItem[] {
+  const hasGravacao = products.some(p =>
+    ["podcast_entrevista_imigrou", "gravacao_curso", "gravacao_mentoria"].includes(p)
+  );
+  const hasSocial = products.some(p =>
+    ["gestao_redes_sociais", "glowup_instagram", "conteudo_pronto_postar"].includes(p)
+  );
+  const hasEvento = products.some(p =>
+    ["cobertura_evento", "publicacao_pessoas_globais", "participacao_pernas_cruzadas"].includes(p)
+  );
+
+  let idCounter = 0;
+  const nextId = () => `ch${++idCounter}`;
+
+  const items: ChecklistItem[] = [];
+
+  if (hasGravacao) {
+    CHECKLIST_ITEMS.gravacao.forEach(item => items.push({ ...item, id: nextId() }));
+  }
+  if (hasSocial) {
+    CHECKLIST_ITEMS.social.forEach(item => items.push({ ...item, id: nextId() }));
+  }
+  if (hasEvento) {
+    CHECKLIST_ITEMS.evento.forEach(item => items.push({ ...item, id: nextId() }));
+  }
+  // Always include sales items
+  CHECKLIST_ITEMS.sales.forEach(item => items.push({ ...item, id: nextId() }));
+
+  return items;
+}
 
 export const columnGroups = [
   {
