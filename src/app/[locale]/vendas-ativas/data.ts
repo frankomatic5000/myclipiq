@@ -414,41 +414,44 @@ export const mockProspects: Prospect[] = [
   },
 ];
 
-export const CHECKLIST_ITEMS = {
-  gravacao: [
-    { label: "Confirmar data e local da gravação", done: false, category: "gravacao" },
-    { label: "Enviar briefing ao cliente", done: false, category: "gravacao" },
-    { label: "Preparar equipamento", done: false, category: "gravacao" },
-    { label: "Realizar gravação", done: false, category: "gravacao" },
-    { label: "Edição de áudio/vídeo", done: false, category: "gravacao" },
-    { label: "Revisão com cliente", done: false, category: "gravacao" },
-    { label: "Entrega final", done: false, category: "gravacao" },
-  ],
-  social: [
-    { label: "Coletar materiais da marca", done: false, category: "social" },
-    { label: "Criar calendário editorial", done: false, category: "social" },
-    { label: "Aprovar conteúdo com cliente", done: false, category: "social" },
-    { label: "Agendar posts", done: false, category: "social" },
-    { label: "Responder comentários/DMs", done: false, category: "social" },
-    { label: "Relatório semanal", done: false, category: "social" },
-    { label: "Ajustes de estratégia", done: false, category: "social" },
-  ],
-  evento: [
-    { label: "Confirmar data/horário/local", done: false, category: "evento" },
-    { label: "Visita técnica prévia", done: false, category: "evento" },
-    { label: "Equipamento carregado/testado", done: false, category: "evento" },
-    { label: "Cobertura foto + vídeo", done: false, category: "evento" },
-    { label: "Edição rápida (24h)", done: false, category: "evento" },
-    { label: "Entrega de conteúdo", done: false, category: "evento" },
-    { label: "Post no feed/stories", done: false, category: "evento" },
-  ],
-  sales: [
-    { label: "Enviar proposta", done: false, category: "sales" },
-    { label: "Follow-up com cliente", done: false, category: "sales" },
-    { label: "Agendar call", done: false, category: "sales" },
-    { label: "Preparar contrato", done: false, category: "sales" },
-  ],
-};
+export function getChecklistItems(key: "gravacao" | "social" | "evento" | "sales", nextId: () => string): ChecklistItem[] {
+  const CHECKLIST_ITEMS = {
+    gravacao: [
+      { label: "Confirmar data e local da gravação", done: false, category: "gravacao" },
+      { label: "Enviar briefing ao cliente", done: false, category: "gravacao" },
+      { label: "Preparar equipamento", done: false, category: "gravacao" },
+      { label: "Realizar gravação", done: false, category: "gravacao" },
+      { label: "Edição de áudio/vídeo", done: false, category: "gravacao" },
+      { label: "Revisão com cliente", done: false, category: "gravacao" },
+      { label: "Entrega final", done: false, category: "gravacao" },
+    ],
+    social: [
+      { label: "Coletar materiais da marca", done: false, category: "social" },
+      { label: "Criar calendário editorial", done: false, category: "social" },
+      { label: "Aprovar conteúdo com cliente", done: false, category: "social" },
+      { label: "Agendar posts", done: false, category: "social" },
+      { label: "Responder comentários/DMs", done: false, category: "social" },
+      { label: "Relatório semanal", done: false, category: "social" },
+      { label: "Ajustes de estratégia", done: false, category: "social" },
+    ],
+    evento: [
+      { label: "Confirmar data/horário/local", done: false, category: "evento" },
+      { label: "Visita técnica prévia", done: false, category: "evento" },
+      { label: "Equipamento carregado/testado", done: false, category: "evento" },
+      { label: "Cobertura foto + vídeo", done: false, category: "evento" },
+      { label: "Edição rápida (24h)", done: false, category: "evento" },
+      { label: "Entrega de conteúdo", done: false, category: "evento" },
+      { label: "Post no feed/stories", done: false, category: "evento" },
+    ],
+    sales: [
+      { label: "Enviar proposta", done: false, category: "sales" },
+      { label: "Follow-up com cliente", done: false, category: "sales" },
+      { label: "Agendar call", done: false, category: "sales" },
+      { label: "Preparar contrato", done: false, category: "sales" },
+    ],
+  };
+  return CHECKLIST_ITEMS[key].map(item => ({ ...item, id: nextId() }));
+}
 
 export function generateChecklist(products: string[]): ChecklistItem[] {
   const hasGravacao = products.some(p =>
@@ -467,16 +470,16 @@ export function generateChecklist(products: string[]): ChecklistItem[] {
   const items: ChecklistItem[] = [];
 
   if (hasGravacao) {
-    CHECKLIST_ITEMS.gravacao.forEach(item => items.push({ ...item, id: nextId() }));
+    items.push(...getChecklistItems("gravacao", nextId));
   }
   if (hasSocial) {
-    CHECKLIST_ITEMS.social.forEach(item => items.push({ ...item, id: nextId() }));
+    items.push(...getChecklistItems("social", nextId));
   }
   if (hasEvento) {
-    CHECKLIST_ITEMS.evento.forEach(item => items.push({ ...item, id: nextId() }));
+    items.push(...getChecklistItems("evento", nextId));
   }
   // Always include sales items
-  CHECKLIST_ITEMS.sales.forEach(item => items.push({ ...item, id: nextId() }));
+  items.push(...getChecklistItems("sales", nextId));
 
   return items;
 }
