@@ -1,237 +1,306 @@
 {
-    "landing": {
-        "badge": "Inteligencia de Video con IA",
-        "title": "Tu edición ahora tiene",
-        "titleHighlight": "un co-piloto de IA",
-        "description": "MyClipIQ analiza cada clip y optimiza automáticamente el encuadre, el ritmo y el formato para cada plataforma social. Deja de adivinar qué corte va dónde — deja que la IA decida.",
-        "ctaPrimary": "Empieza a editar más inteligente",
-        "ctaSecondary": "Mira cómo funciona",
-        "features": {
-            "smartAnalysis": {
-                "label": "Análisis Inteligente",
-                "desc": "Comprensión de IA a nivel de fotograma"
-            },
-            "instantOptimization": {
-                "label": "Optimización Instantánea",
-                "desc": "Formato automático por plataforma"
-            },
-            "multiPlatform": {
-                "label": "Multiplataforma",
-                "desc": "Reels · Shorts · TikTok · LinkedIn"
-            }
-        },
-        "trust": "No se requiere tarjeta de crédito · Plan gratuito disponible · Hecho para editores, no solo creadores"
+  "landing": {
+    "badge": "Inteligencia de Video con IA",
+    "title": "Tu edición ahora tiene",
+    "titleHighlight": "un co-piloto de IA",
+    "description": "MyClipIQ analiza cada clip y optimiza automáticamente el encuadre, el ritmo y el formato para cada plataforma social. Deja de adivinar qué corte va dónde — deja que la IA decida.",
+    "ctaPrimary": "Empieza a editar más inteligente",
+    "ctaSecondary": "Mira cómo funciona",
+    "features": {
+      "smartAnalysis": {
+        "label": "Análisis Inteligente",
+        "desc": "Comprensión de IA a nivel de fotograma"
+      },
+      "instantOptimization": {
+        "label": "Optimización Instantánea",
+        "desc": "Formato automático por plataforma"
+      },
+      "multiPlatform": {
+        "label": "Multiplataforma",
+        "desc": "Reels · Shorts · TikTok · LinkedIn"
+      }
     },
-    "nav": {
-        "dashboard": "Panel",
-        "projects": "Proyectos",
-        "customers": "Clientes",
-        "aiAnalysis": "Análisis de IA",
-        "team": "Equipo",
-        "analytics": "Analíticas",
-        "settings": "Configuración",
-        "admin": "Admin"
+    "trust": "No se requiere tarjeta de crédito · Plan gratuito disponible · Hecho para editores, no solo creadores"
+  },
+  "nav": {
+    "dashboard": "Panel",
+    "projects": "Proyectos",
+    "customers": "Clientes",
+    "aiAnalysis": "Análisis de IA",
+    "team": "Equipo",
+    "analytics": "Analíticas",
+    "settings": "Configuración",
+    "admin": "Admin"
+  },
+  "sidebar": {
+    "contentIntelligence": "Inteligencia de Contenido",
+    "loading": "Cargando...",
+    "viewer": "Visualizador"
+  },
+  "dashboard": {
+    "title": "Panel",
+    "subtitle": "Resumen de tus operaciones de contenido",
+    "stats": {
+      "projects": "Proyectos",
+      "projectsSub": "Pipelines activos",
+      "customers": "Clientes",
+      "customersSub": "Clientes activos",
+      "clips": "Clips",
+      "clipsSub": "Este mes",
+      "analyses": "Análisis de IA",
+      "analysesSub": "Completados"
     },
-    "sidebar": {
-        "contentIntelligence": "Inteligencia de Contenido",
-        "loading": "Cargando...",
-        "viewer": "Visualizador"
-    },
-    "dashboard": {
-        "title": "Panel",
-        "subtitle": "Resumen de tus operaciones de contenido",
-        "stats": {
-            "projects": "Proyectos",
-            "projectsSub": "Pipelines activos",
-            "customers": "Clientes",
-            "customersSub": "Clientes activos",
-            "clips": "Clips",
-            "clipsSub": "Este mes",
-            "analyses": "Análisis de IA",
-            "analysesSub": "Completados"
-        },
-        "recentProjects": "Proyectos Recientes",
-        "viewAll": "Ver todos",
-        "pipelineOverview": "Resumen del Pipeline"
+    "recentProjects": "Proyectos Recientes",
+    "viewAll": "Ver todos",
+    "pipelineOverview": "Resumen del Pipeline"
+  },
+  "status": {
+    "intake": "Recibido",
+    "editing": "Edición",
+    "analysis": "Análisis",
+    "review": "Revisión",
+    "approved": "Aprobado",
+    "posted": "Publicado",
+    "archived": "Archivado"
+  },
+  "settings": {
+    "title": "Configuración",
+    "subtitle": "Administra tu cuenta y preferencias",
+    "languageTitle": "Idioma",
+    "languageDesc": "Cambia el idioma de la interfaz.",
+    "currentLanguage": "Idioma actual:",
+    "comingSoon": "Próximamente"
+  },
+  "languageSwitcher": {
+    "label": "Idioma",
+    "en": "English",
+    "pt": "Português",
+    "es": "Español"
+  },
+  "aiAnalysis": {
+    "header": {
+      "title": "Análisis con IA",
+      "subtitle": "Sube un video y recibe insights, puntuaciones e ideas de clips listas para cada plataforma."
     },
     "status": {
-        "intake": "Recibido",
-        "editing": "Edición",
-        "analysis": "Análisis",
-        "review": "Revisión",
-        "approved": "Aprobado",
-        "posted": "Publicado",
-        "archived": "Archivado"
+      "uploading": "Subiendo",
+      "analyzing": "Analizando tu video...",
+      "polling": "Preparando resultados",
+      "done": "Análisis completo",
+      "error": "Error",
+      "errorTitle": "Algo salió mal"
     },
-    "settings": {
-        "title": "Configuración",
-        "subtitle": "Administra tu cuenta y preferencias",
-        "languageTitle": "Idioma",
-        "languageDesc": "Cambia el idioma de la interfaz.",
-        "currentLanguage": "Idioma actual:",
-        "comingSoon": "Próximamente"
+    "upload": {
+      "title": "Subir video",
+      "uploading": "Subiendo",
+      "progressLabel": "Progreso de carga",
+      "largeFile": "Los archivos grandes pueden tardar unos minutos. Mantén esta pestaña abierta.",
+      "estTime": "Normalmente tarda de 1 a 3 minutos.",
+      "elapsed": "Tiempo transcurrido",
+      "notify": "Actualizaremos este panel en cuanto los resultados estén listos.",
+      "retry": "Intentar de nuevo",
+      "dropzone": "Suelta tu video aquí",
+      "orClick": "o haz clic para elegir un archivo",
+      "formats": "MP4, MOV, WEBM o AVI hasta 2GB"
     },
-    "languageSwitcher": {
-        "label": "Idioma",
-        "en": "English",
-        "pt": "Português",
-        "es": "Español"
+    "options": {
+      "title": "Opciones de análisis",
+      "contentType": "Tipo de contenido",
+      "contentTypes": {
+        "shortform": "Video corto",
+        "longform": "Video largo",
+        "podcast": "Podcast / entrevista",
+        "educational": "Contenido educativo"
+      },
+      "targetPlatforms": "Plataformas objetivo",
+      "analysisDepth": "Profundidad del análisis",
+      "depths": {
+        "quick": "Revisión rápida",
+        "standard": "Análisis estándar",
+        "deep": "Análisis profundo"
+      }
     },
-    "aiAnalysis": {
-        "header": {
-            "title": "Análisis con IA",
-            "subtitle": "Sube un video y recibe insights, puntuaciones e ideas de clips listas para cada plataforma."
-        },
-        "status": {
-            "uploading": "Subiendo",
-            "analyzing": "Analizando tu video...",
-            "polling": "Preparando resultados",
-            "done": "Análisis completo",
-            "error": "Error",
-            "errorTitle": "Algo salió mal"
-        },
-        "upload": {
-            "title": "Subir video",
-            "uploading": "Subiendo",
-            "progressLabel": "Progreso de carga",
-            "largeFile": "Los archivos grandes pueden tardar unos minutos. Mantén esta pestaña abierta.",
-            "estTime": "Normalmente tarda de 1 a 3 minutos.",
-            "elapsed": "Tiempo transcurrido",
-            "notify": "Actualizaremos este panel en cuanto los resultados estén listos.",
-            "retry": "Intentar de nuevo",
-            "dropzone": "Suelta tu video aquí",
-            "orClick": "o haz clic para elegir un archivo",
-            "formats": "MP4, MOV, WEBM o AVI hasta 2GB"
-        },
-        "options": {
-            "title": "Opciones de análisis",
-            "contentType": "Tipo de contenido",
-            "contentTypes": {
-                "shortform": "Video corto",
-                "longform": "Video largo",
-                "podcast": "Podcast / entrevista",
-                "educational": "Contenido educativo"
-            },
-            "targetPlatforms": "Plataformas objetivo",
-            "analysisDepth": "Profundidad del análisis",
-            "depths": {
-                "quick": "Revisión rápida",
-                "standard": "Análisis estándar",
-                "deep": "Análisis profundo"
-            }
-        },
-        "platforms": {
-            "tiktok": "TikTok",
-            "instagram": "Instagram",
-            "youtube": "YouTube Shorts",
-            "linkedin": "LinkedIn"
-        },
-        "actions": {
-            "startAnalysis": "Iniciar análisis",
-            "analyzeAnother": "Analizar otro video"
-        },
-        "results": {
-            "title": "Resultado del análisis",
-            "engagementScore": "Puntuación de engagement",
-            "highPotential": "Alto potencial",
-            "medium": "Medio",
-            "lowEngagement": "Bajo engagement",
-            "summary": "Resumen",
-            "clipSuggestions": "Sugerencias de clips",
-            "recent": "Análisis recientes",
-            "refresh": "Actualizar",
-            "none": "Todavía no hay análisis.",
-            "unknown": "Desconocido",
-            "tiktokScore": "Puntuación de TikTok",
-            "clips": "clips"
-        }
+    "platforms": {
+      "tiktok": "TikTok",
+      "instagram": "Instagram",
+      "youtube": "YouTube Shorts",
+      "linkedin": "LinkedIn"
     },
-    "auth": {
-        "login": {
-            "title": "Iniciar sesión",
-            "subtitle": "Accede a tu espacio de trabajo de MyClipIQ",
-            "email": "Correo electrónico",
-            "password": "Contraseña",
-            "submit": "Iniciar sesión",
-            "submitting": "Iniciando sesión...",
-            "noAccount": "¿No tienes una cuenta?",
-            "signupLink": "Regístrate",
-            "emailPlaceholder": "tu@empresa.com",
-            "passwordPlaceholder": "••••••••"
-        },
-        "signup": {
-            "title": "Crear cuenta",
-            "subtitle": "Comienza tu recorrido de inteligencia de contenido con IA",
-            "fullName": "Nombre completo",
-            "email": "Correo electrónico",
-            "password": "Contraseña",
-            "submit": "Crear cuenta",
-            "submitting": "Creando cuenta...",
-            "haveAccount": "¿Ya tienes una cuenta?",
-            "loginLink": "Iniciar sesión",
-            "namePlaceholder": "Rod Rezende",
-            "emailPlaceholder": "tu@empresa.com",
-            "passwordPlaceholder": "Mínimo 6 caracteres",
-            "checkEmailTitle": "Revisa tu correo",
-            "sentTo": "Enviamos un enlace de confirmación a",
-            "instructions": "Haz clic en el enlace del correo para activar tu cuenta. No olvides revisar la carpeta de spam.",
-            "resent": "¡Correo de confirmación reenviado!",
-            "resend": "Reenviar confirmación",
-            "resending": "Enviando...",
-            "alreadyConfirmed": "¿Ya confirmaste?"
-        }
+    "actions": {
+      "startAnalysis": "Iniciar análisis",
+      "analyzeAnother": "Analizar otro video"
     },
-    "customers": {
-        "title": "Clientes",
-        "subtitle": "Gestión de relaciones con clientes",
-        "searchPlaceholder": "Buscar clientes...",
-        "addCustomer": "Agregar Cliente",
-        "comingSoon": "Próximamente — formulario de creación de cliente en desarrollo",
-        "roles": {
-            "admin": "Admin",
-            "editor": "Editor",
-            "viewer": "Visualizador"
-        },
-        "table": {
-            "customer": "Cliente",
-            "projects": "Proyectos",
-            "revenue": "Ingresos",
-            "status": "Estado",
-            "contract": "Contrato",
-            "lastContact": "Último Contacto",
-            "actions": "Acciones"
-        },
-        "statusLabels": {
-            "active": "Activo",
-            "pending": "Pendiente"
-        },
-        "contractLabels": {
-            "signed": "Firmado",
-            "pending": "Pendiente",
-            "na": "N/A"
-        },
-        "empty": {
-            "title": "Aún no hay clientes",
-            "description": "Comienza agregando tu primer cliente."
-        },
-        "loading": "Cargando clientes...",
-        "error": {
-            "title": "Algo salió mal",
-            "description": "No pudimos cargar tus clientes. Por favor, inténtalo de nuevo más tarde."
-        }
-    },
-    "analytics": {
-        "title": "Analíticas",
-        "subtitle": "Insights basados en datos para tus operaciones de contenido",
-        "comingSoon": {
-            "title": "Fase 2 — Próximamente",
-            "description": "Los dashboards avanzados de analítica están en desarrollo. Rastrea rendimiento, crecimiento de audiencia y ROI en todos tus pipelines de contenido.",
-            "features": [
-                "Métricas de Rendimiento",
-                "Insights de Audiencia",
-                "Seguimiento de ROI"
-            ],
-            "phase": "Planificado para Fase 2"
-        }
+    "results": {
+      "title": "Resultado del análisis",
+      "engagementScore": "Puntuación de engagement",
+      "highPotential": "Alto potencial",
+      "medium": "Medio",
+      "lowEngagement": "Bajo engagement",
+      "summary": "Resumen",
+      "clipSuggestions": "Sugerencias de clips",
+      "recent": "Análisis recientes",
+      "refresh": "Actualizar",
+      "none": "Todavía no hay análisis.",
+      "unknown": "Desconocido",
+      "tiktokScore": "Puntuación de TikTok",
+      "clips": "clips"
     }
+  },
+  "auth": {
+    "login": {
+      "title": "Iniciar sesión",
+      "subtitle": "Accede a tu espacio de trabajo de MyClipIQ",
+      "email": "Correo electrónico",
+      "password": "Contraseña",
+      "submit": "Iniciar sesión",
+      "submitting": "Iniciando sesión...",
+      "noAccount": "¿No tienes una cuenta?",
+      "signupLink": "Regístrate",
+      "emailPlaceholder": "tu@empresa.com",
+      "passwordPlaceholder": "••••••••"
+    },
+    "signup": {
+      "title": "Crear cuenta",
+      "subtitle": "Comienza tu recorrido de inteligencia de contenido con IA",
+      "fullName": "Nombre completo",
+      "email": "Correo electrónico",
+      "password": "Contraseña",
+      "submit": "Crear cuenta",
+      "submitting": "Creando cuenta...",
+      "haveAccount": "¿Ya tienes una cuenta?",
+      "loginLink": "Iniciar sesión",
+      "namePlaceholder": "Rod Rezende",
+      "emailPlaceholder": "tu@empresa.com",
+      "passwordPlaceholder": "Mínimo 6 caracteres",
+      "checkEmailTitle": "Revisa tu correo",
+      "sentTo": "Enviamos un enlace de confirmación a",
+      "instructions": "Haz clic en el enlace del correo para activar tu cuenta. No olvides revisar la carpeta de spam.",
+      "resent": "¡Correo de confirmación reenviado!",
+      "resend": "Reenviar confirmación",
+      "resending": "Enviando...",
+      "alreadyConfirmed": "¿Ya confirmaste?"
+    }
+  },
+  "customers": {
+    "title": "Clientes",
+    "subtitle": "Gestión de relaciones con clientes",
+    "searchPlaceholder": "Buscar clientes...",
+    "addCustomer": "Agregar Cliente",
+    "comingSoon": "Próximamente — formulario de creación de cliente en desarrollo",
+    "roles": {
+      "admin": "Admin",
+      "editor": "Editor",
+      "viewer": "Visualizador"
+    },
+    "table": {
+      "customer": "Cliente",
+      "projects": "Proyectos",
+      "revenue": "Ingresos",
+      "status": "Estado",
+      "contract": "Contrato",
+      "lastContact": "Último Contacto",
+      "actions": "Acciones"
+    },
+    "statusLabels": {
+      "active": "Activo",
+      "pending": "Pendiente"
+    },
+    "contractLabels": {
+      "signed": "Firmado",
+      "pending": "Pendiente",
+      "na": "N/A"
+    },
+    "empty": {
+      "title": "Aún no hay clientes",
+      "description": "Comienza agregando tu primer cliente."
+    },
+    "loading": "Cargando clientes...",
+    "error": {
+      "title": "Algo salió mal",
+      "description": "No pudimos cargar tus clientes. Por favor, inténtalo de nuevo más tarde."
+    }
+  },
+  "analytics": {
+    "title": "Analíticas",
+    "subtitle": "Insights basados en datos para tus operaciones de contenido",
+    "comingSoon": {
+      "title": "Fase 2 — Próximamente",
+      "description": "Los dashboards avanzados de analítica están en desarrollo. Rastrea rendimiento, crecimiento de audiencia y ROI en todos tus pipelines de contenido.",
+      "features": [
+        "Métricas de Rendimiento",
+        "Insights de Audiencia",
+        "Seguimiento de ROI"
+      ],
+      "phase": "Planificado para Fase 2"
+    }
+  },
+  "vendasAtivas": {
+    "title": "Ventas Activas",
+    "subtitle": "Pipeline de ventas y gestión de prospectos",
+    "searchPlaceholder": "Buscar prospectos...",
+    "showing": "Mostrando {count} de {total} prospectos",
+    "emptyColumn": "Ningún prospecto en esta etapa",
+    "view": {
+      "kanban": "Kanban",
+      "table": "Tabla"
+    },
+    "filter": {
+      "allStatuses": "Todos los estados"
+    },
+    "column": {
+      "prospecting": "Prospección",
+      "pipeline": "Pipeline Activo",
+      "progress": "En Progreso",
+      "closed": "Cerrado"
+    },
+    "status": {
+      "prospecting": "Prospecto",
+      "first_contact": "Primer Contacto",
+      "follow_up": "Seguimiento",
+      "proposal_sent": "Propuesta Enviada",
+      "negotiation": "Negociación",
+      "pending_contract": "Contrato Pendiente",
+      "contract_signed": "Contrato Firmado",
+      "onboarding": "Onboarding",
+      "in_production": "En Producción",
+      "pending_payment": "Pago Pendiente",
+      "closed_won": "Venta Cerrada",
+      "closed_lost": "Perdido"
+    },
+    "product": {
+      "social_media": "Gestión de Redes Sociales",
+      "content_creation": "Creación de Contenido",
+      "video_editing": "Edición de Video",
+      "visual_identity": "Identidad Visual",
+      "marketing_consulting": "Consultoría de Marketing",
+      "landing_page": "Landing Page",
+      "ads_campaign": "Campaña Ads",
+      "product_photography": "Fotografía de Producto",
+      "email_marketing": "Email Marketing",
+      "full_branding": "Branding Completo"
+    },
+    "table": {
+      "name": "Nombre",
+      "company": "Empresa",
+      "status": "Estado",
+      "lastContact": "Último Contacto",
+      "products": "Productos",
+      "assignedTo": "Responsable",
+      "revenue": "Ingresos"
+    },
+    "drawer": {
+      "contactInfo": "Información de Contacto",
+      "email": "Email",
+      "phone": "Teléfono",
+      "instagram": "Instagram",
+      "assignedTo": "Responsable",
+      "products": "Productos de Interés",
+      "revenue": "Ingresos",
+      "notes": "Notas Comerciales",
+      "alerts": "Alertas",
+      "calls": "Llamadas Comerciales",
+      "timeline": "Línea de Tiempo de Contacto",
+      "checklist": "Checklist Operacional"
+    }
+  }
 }
