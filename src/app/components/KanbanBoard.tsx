@@ -10,10 +10,11 @@ interface KanbanBoardProps {
 }
 
 const columnColor: Record<string, string> = {
-  prospecting: "border-l-purple-500",
-  pipeline: "border-l-amber-500",
-  progress: "border-l-green-500",
-  closed: "border-l-surface-500",
+  cadastro: "border-l-purple-500",
+  contato: "border-l-blue-500",
+  call_proposta: "border-l-amber-500",
+  negociacao: "border-l-orange-500",
+  fechamento: "border-l-green-500",
 };
 
 export default function KanbanBoard({ prospects, onSelect }: KanbanBoardProps) {
