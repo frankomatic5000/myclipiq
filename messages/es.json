@@ -248,36 +248,37 @@
       "allStatuses": "Todos los estados"
     },
     "column": {
-      "prospecting": "Prospección",
-      "pipeline": "Pipeline Activo",
-      "progress": "En Progreso",
-      "closed": "Cerrado"
+      "colCadastro": "Registro",
+      "colContato": "Contacto",
+      "colCallProposta": "Call / Propuesta",
+      "colNegociacao": "Negociación",
+      "colFechamento": "Cierre"
     },
     "status": {
-      "prospecting": "Prospecto",
-      "first_contact": "Primer Contacto",
-      "follow_up": "Seguimiento",
-      "proposal_sent": "Propuesta Enviada",
-      "negotiation": "Negociación",
-      "pending_contract": "Contrato Pendiente",
-      "contract_signed": "Contrato Firmado",
-      "onboarding": "Onboarding",
-      "in_production": "En Producción",
-      "pending_payment": "Pago Pendiente",
-      "closed_won": "Venta Cerrada",
-      "closed_lost": "Perdido"
+      "lead_cadastrado": "Lead registrado",
+      "primeiro_contato_enviado": "Primer contacto enviado",
+      "aguardando_resposta": "Esperando respuesta",
+      "respondeu": "Respondió",
+      "follow_up_enviado": "Seguimiento enviado",
+      "call_agendada": "Call agendada",
+      "call_realizada": "Call realizada",
+      "proposta_enviada": "Propuesta enviada",
+      "negociacao": "Negociación",
+      "venda_fechada": "Venta cerrada",
+      "venda_perdida": "Venta perdida",
+      "pediu_contato_futuro": "Pidió contacto futuro"
     },
     "product": {
-      "social_media": "Gestión de Redes Sociales",
-      "content_creation": "Creación de Contenido",
-      "video_editing": "Edición de Video",
-      "visual_identity": "Identidad Visual",
-      "marketing_consulting": "Consultoría de Marketing",
-      "landing_page": "Landing Page",
-      "ads_campaign": "Campaña Ads",
-      "product_photography": "Fotografía de Producto",
-      "email_marketing": "Email Marketing",
-      "full_branding": "Branding Completo"
+      "podcast_entrevista_imigrou": "Podcast / Entrevista Imigrou",
+      "gravacao_curso": "Grabación de curso",
+      "gravacao_mentoria": "Grabación de mentoría",
+      "conteudo_pronto_postar": "Contenido listo para publicar",
+      "gestao_redes_sociais": "Gestión de redes sociales",
+      "glowup_instagram": "GlowUp de Instagram",
+      "cobertura_evento": "Cobertura de evento",
+      "publicacao_pessoas_globais": "Publicación en Pessoas Globais",
+      "participacao_pernas_cruzadas": "Participación en Pernas Cruzadas",
+      "pacote_personalizado": "Paquete personalizado"
     },
     "table": {
       "name": "Nombre",

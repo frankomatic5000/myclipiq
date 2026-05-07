@@ -248,36 +248,37 @@
       "allStatuses": "All statuses"
     },
     "column": {
-      "prospecting": "Prospecting",
-      "pipeline": "Active Pipeline",
-      "progress": "In Progress",
-      "closed": "Closed"
+      "colCadastro": "Registration",
+      "colContato": "Contact",
+      "colCallProposta": "Call / Proposal",
+      "colNegociacao": "Negotiation",
+      "colFechamento": "Closing"
     },
     "status": {
-      "prospecting": "Prospect",
-      "first_contact": "First Contact",
-      "follow_up": "Follow-up",
-      "proposal_sent": "Proposal Sent",
-      "negotiation": "Negotiation",
-      "pending_contract": "Pending Contract",
-      "contract_signed": "Contract Signed",
-      "onboarding": "Onboarding",
-      "in_production": "In Production",
-      "pending_payment": "Pending Payment",
-      "closed_won": "Closed Won",
-      "closed_lost": "Closed Lost"
+      "lead_cadastrado": "Lead registered",
+      "primeiro_contato_enviado": "First contact sent",
+      "aguardando_resposta": "Awaiting response",
+      "respondeu": "Responded",
+      "follow_up_enviado": "Follow-up sent",
+      "call_agendada": "Call scheduled",
+      "call_realizada": "Call completed",
+      "proposta_enviada": "Proposal sent",
+      "negociacao": "Negotiation",
+      "venda_fechada": "Sale closed",
+      "venda_perdida": "Sale lost",
+      "pediu_contato_futuro": "Asked for future contact"
     },
     "product": {
-      "social_media": "Social Media Management",
-      "content_creation": "Content Creation",
-      "video_editing": "Video Editing",
-      "visual_identity": "Visual Identity",
-      "marketing_consulting": "Marketing Consulting",
-      "landing_page": "Landing Page",
-      "ads_campaign": "Ads Campaign",
-      "product_photography": "Product Photography",
-      "email_marketing": "Email Marketing",
-      "full_branding": "Full Branding"
+      "podcast_entrevista_imigrou": "Podcast / Imigrou Interview",
+      "gravacao_curso": "Course recording",
+      "gravacao_mentoria": "Mentorship recording",
+      "conteudo_pronto_postar": "Content ready to post",
+      "gestao_redes_sociais": "Social media management",
+      "glowup_instagram": "Instagram GlowUp",
+      "cobertura_evento": "Event coverage",
+      "publicacao_pessoas_globais": "Published on Pessoas Globais",
+      "participacao_pernas_cruzadas": "Pernas Cruzadas participation",
+      "pacote_personalizado": "Custom package"
     },
     "table": {
       "name": "Name",

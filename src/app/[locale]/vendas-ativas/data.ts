@@ -3,7 +3,7 @@ export type SalesStatus =
   | "primeiro_contato_enviado"
   | "aguardando_resposta"
   | "respondeu"
-  | "follow_up_enviado"
+  | "follow_up"
   | "call_agendada"
   | "call_realizada"
   | "proposta_enviada"
@@ -37,7 +37,7 @@ export interface ChecklistItem {
 
 export interface AlertItem {
   id: string;
-  type: "follow_up_enviado" | "deadline" | "payment";
+  type: "follow_up" | "deadline" | "payment";
   message: string;
   dueDate: string;
 }
@@ -66,7 +66,7 @@ export const STATUS_ORDER: SalesStatus[] = [
   "primeiro_contato_enviado",
   "aguardando_resposta",
   "respondeu",
-  "follow_up_enviado",
+  "follow_up",
   "call_agendada",
   "call_realizada",
   "proposta_enviada",
@@ -118,7 +118,7 @@ export const mockProspects: Prospect[] = [
       { id: "ch3", label: "Definir cronograma de entrega", done: false, category: "production" },
     ],
     alerts: [
-      { id: "a1", type: "follow_up_enviado", message: "Enviar proposta revisada até sexta", dueDate: "2026-05-09" },
+      { id: "a1", type: "follow_up", message: "Enviar proposta revisada até sexta", dueDate: "2026-05-09" },
     ],
   },
   {
@@ -145,7 +145,7 @@ export const mockProspects: Prospect[] = [
       { id: "ch2", label: "Agendar segunda ligação", done: false, category: "sales" },
     ],
     alerts: [
-      { id: "a1", type: "follow_up_enviado", message: "Ligar para Roberto na terça-feira", dueDate: "2026-05-12" },
+      { id: "a1", type: "follow_up", message: "Ligar para Roberto na terça-feira", dueDate: "2026-05-12" },
     ],
   },
   {
@@ -209,7 +209,7 @@ export const mockProspects: Prospect[] = [
       { id: "ch2", label: "Preparar mockup da landing page", done: false, category: "production" },
     ],
     alerts: [
-      { id: "a1", type: "follow_up_enviado", message: "Ligar para Carlos sobre proposta", dueDate: "2026-05-11" },
+      { id: "a1", type: "follow_up", message: "Ligar para Carlos sobre proposta", dueDate: "2026-05-11" },
     ],
   },
   {
@@ -241,7 +241,7 @@ export const mockProspects: Prospect[] = [
       { id: "ch2", label: "Reaproximar em 3 meses", done: false, category: "sales" },
     ],
     alerts: [
-      { id: "a1", type: "follow_up_enviado", message: "Reaproximar Juliana em agosto", dueDate: "2026-08-18" },
+      { id: "a1", type: "follow_up", message: "Reaproximar Juliana em agosto", dueDate: "2026-08-18" },
     ],
   },
   {
@@ -307,7 +307,7 @@ export const mockProspects: Prospect[] = [
       { id: "ch3", label: "Criar landing page", done: false, category: "production" },
     ],
     alerts: [
-      { id: "a1", type: "follow_up_enviado", message: "Lembrar Patricia para assinar contrato", dueDate: "2026-05-09" },
+      { id: "a1", type: "follow_up", message: "Lembrar Patricia para assinar contrato", dueDate: "2026-05-09" },
     ],
   },
   {
@@ -331,7 +331,7 @@ export const mockProspects: Prospect[] = [
       { id: "ch1", label: "Agendar ligação de apresentação", done: false, category: "sales" },
     ],
     alerts: [
-      { id: "a1", type: "follow_up_enviado", message: "Ligar para Thiago esta semana", dueDate: "2026-05-08" },
+      { id: "a1", type: "follow_up", message: "Ligar para Thiago esta semana", dueDate: "2026-05-08" },
     ],
   },
   {
@@ -372,7 +372,7 @@ export const mockProspects: Prospect[] = [
     instagram: "@ferreira.ecommerce",
     phone: "(11) 94444-6666",
     email: "lucas@ferreirashop.com.br",
-    status: "follow_up_enviado",
+    status: "follow_up",
     lastContact: "2026-05-04",
     productsInterested: ["cobertura_evento", "participacao_pernas_cruzadas", "gravacao_curso"],
     assignedTo: "Rod",
@@ -391,7 +391,7 @@ export const mockProspects: Prospect[] = [
       { id: "ch2", label: "Preparar estratégia de ads", done: false, category: "production" },
     ],
     alerts: [
-      { id: "a1", type: "follow_up_enviado", message: "Ligar para Lucas na sexta", dueDate: "2026-05-09" },
+      { id: "a1", type: "follow_up", message: "Ligar para Lucas na sexta", dueDate: "2026-05-09" },
     ],
   },
   {
@@ -466,7 +466,7 @@ export const columnGroups = [
   },
   {
     key: "contato",
-    statuses: ["primeiro_contato_enviado", "aguardando_resposta", "respondeu", "follow_up_enviado"],
+    statuses: ["primeiro_contato_enviado", "aguardando_resposta", "respondeu", "follow_up"],
     labelKey: "colContato",
   },
   {
