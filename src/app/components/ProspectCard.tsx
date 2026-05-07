@@ -13,7 +13,7 @@ const statusDotClass: Record<SalesStatus, string> = {
   primeiro_contato_enviado: "bg-blue-500",
   aguardando_resposta: "bg-blue-400",
   respondeu: "bg-blue-300",
-  follow_up: "bg-blue-200",
+  follow_up_enviado: "bg-blue-200",
   call_agendada: "bg-amber-500",
   call_realizada: "bg-amber-400",
   proposta_enviada: "bg-amber-300",

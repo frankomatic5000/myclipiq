@@ -3,7 +3,7 @@ export type SalesStatus =
   | "primeiro_contato_enviado"
   | "aguardando_resposta"
   | "respondeu"
-  | "follow_up"
+  | "follow_up_enviado"
   | "call_agendada"
   | "call_realizada"
   | "proposta_enviada"
@@ -66,7 +66,7 @@ export const STATUS_ORDER: SalesStatus[] = [
   "primeiro_contato_enviado",
   "aguardando_resposta",
   "respondeu",
-  "follow_up",
+  "follow_up_enviado",
   "call_agendada",
   "call_realizada",
   "proposta_enviada",
@@ -339,7 +339,7 @@ export const mockProspects: Prospect[] = [
     instagram: "@ferreira.ecommerce",
     phone: "(11) 94444-6666",
     email: "lucas@ferreirashop.com.br",
-    status: "follow_up",
+    status: "follow_up_enviado",
     lastContact: "2026-05-04",
     productsInterested: ["cobertura_evento", "participacao_pernas_cruzadas", "gravacao_curso"],
     assignedTo: "Rod",
@@ -489,7 +489,7 @@ export const columnGroups = [
   },
   {
     key: "contato",
-    statuses: ["primeiro_contato_enviado", "aguardando_resposta", "respondeu", "follow_up"],
+    statuses: ["primeiro_contato_enviado", "aguardando_resposta", "respondeu", "follow_up_enviado"],
     labelKey: "colContato",
   },
   {

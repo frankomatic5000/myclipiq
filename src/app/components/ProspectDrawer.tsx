@@ -15,7 +15,7 @@ const statusBadgeClass: Record<string, string> = {
   primeiro_contato_enviado: "bg-blue-500/10 text-blue-400 border-blue-500/20",
   aguardando_resposta: "bg-blue-400/10 text-blue-300 border-blue-400/20",
   respondeu: "bg-blue-300/10 text-blue-200 border-blue-300/20",
-  follow_up: "bg-blue-200/10 text-blue-100 border-blue-200/20",
+  follow_up_enviado: "bg-blue-200/10 text-blue-100 border-blue-200/20",
   call_agendada: "bg-amber-500/10 text-amber-400 border-amber-500/20",
   call_realizada: "bg-amber-400/10 text-amber-300 border-amber-400/20",
   proposta_enviada: "bg-amber-300/10 text-amber-200 border-amber-300/20",
