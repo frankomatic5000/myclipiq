@@ -180,5 +180,44 @@
       "resending": "Enviando...",
       "alreadyConfirmed": "Já confirmou?"
     }
+  },
+  "customers": {
+    "title": "Clientes",
+    "subtitle": "Gerenciamento de relacionamento com clientes",
+    "searchPlaceholder": "Buscar clientes...",
+    "addCustomer": "Adicionar Cliente",
+    "comingSoon": "Em breve — formulário de criação de cliente em desenvolvimento",
+    "roles": {
+      "admin": "Admin",
+      "editor": "Editor",
+      "viewer": "Visualizador"
+    },
+    "table": {
+      "customer": "Cliente",
+      "projects": "Projetos",
+      "revenue": "Receita",
+      "status": "Status",
+      "contract": "Contrato",
+      "lastContact": "Último Contato",
+      "actions": "Ações"
+    },
+    "statusLabels": {
+      "active": "Ativo",
+      "pending": "Pendente"
+    },
+    "contractLabels": {
+      "signed": "Assinado",
+      "pending": "Pendente",
+      "na": "N/A"
+    },
+    "empty": {
+      "title": "Nenhum cliente ainda",
+      "description": "Comece adicionando seu primeiro cliente."
+    },
+    "loading": "Carregando clientes...",
+    "error": {
+      "title": "Algo deu errado",
+      "description": "Não conseguimos carregar seus clientes. Tente novamente mais tarde."
+    }
   }
 }
