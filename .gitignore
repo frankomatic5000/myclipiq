@@ -34,3 +34,4 @@ supabase/.temp/
 # ByteRover local context cache
 .brv/
 *.tsbuildinfo
+.vercel

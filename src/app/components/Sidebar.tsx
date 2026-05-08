@@ -13,6 +13,7 @@ function useNavItems() {
     { href: "/dashboard", label: t("dashboard"), icon: DashboardIcon },
     { href: "/projects", label: t("projects"), icon: ProjectsIcon },
     { href: "/customers", label: t("customers"), icon: CustomersIcon },
+    { href: "/vendas-ativas", label: "Vendas Ativas", icon: VendasAtivasIcon },
     { href: "/ai-analysis", label: t("aiAnalysis"), icon: AIIcon, aiOnly: true },
     { href: "/team", label: t("team"), icon: TeamIcon, adminOnly: true },
     { href: "/analytics", label: t("analytics"), icon: AnalyticsIcon, adminOnly: true },
@@ -41,6 +42,16 @@ function CustomersIcon({ className }: { className?: string }) {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0a3 3 0 005.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2m0 0a3 3 0 015.356-1.857M12 14a3 3 0 100-6 3 3 0 000 6z" />
+    </svg>
+  );
+}
+
+function VendasAtivasIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 17l6-6 4 4 8-8" />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14 7h7v7" />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4v16m3-12.5A3.5 3.5 0 0012 6c-1.657 0-3 1.007-3 2.25S10.343 10.5 12 10.5s3 1.007 3 2.25S13.657 15 12 15a3.5 3.5 0 01-3-1.5" />
     </svg>
   );
 }

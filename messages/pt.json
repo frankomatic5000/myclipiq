@@ -180,5 +180,134 @@
       "resending": "Enviando...",
       "alreadyConfirmed": "Já confirmou?"
     }
+  },
+  "customers": {
+    "title": "Clientes",
+    "subtitle": "Gerenciamento de relacionamento com clientes",
+    "searchPlaceholder": "Buscar clientes...",
+    "addCustomer": "Adicionar Cliente",
+    "comingSoon": "Em breve — formulário de criação de cliente em desenvolvimento",
+    "roles": {
+      "admin": "Admin",
+      "editor": "Editor",
+      "viewer": "Visualizador"
+    },
+    "table": {
+      "customer": "Cliente",
+      "projects": "Projetos",
+      "revenue": "Receita",
+      "status": "Status",
+      "contract": "Contrato",
+      "lastContact": "Último Contato",
+      "actions": "Ações"
+    },
+    "statusLabels": {
+      "active": "Ativo",
+      "pending": "Pendente"
+    },
+    "contractLabels": {
+      "signed": "Assinado",
+      "pending": "Pendente",
+      "na": "N/A"
+    },
+    "empty": {
+      "title": "Nenhum cliente ainda",
+      "description": "Comece adicionando seu primeiro cliente."
+    },
+    "loading": "Carregando clientes...",
+    "error": {
+      "title": "Algo deu errado",
+      "description": "Não conseguimos carregar seus clientes. Tente novamente mais tarde."
+    }
+  },
+  "analytics": {
+    "title": "Análises",
+    "subtitle": "Insights baseados em dados para suas operações de conteúdo",
+    "comingSoon": {
+      "title": "Fase 2 — Em breve",
+      "description": "Dashboards avançados de análise estão em desenvolvimento. Acompanhe desempenho, crescimento de audiência e ROI em todos os seus pipelines de conteúdo.",
+      "features": [
+        "Métricas de Desempenho",
+        "Insights de Audiência",
+        "Rastreamento de ROI"
+      ],
+      "phase": "Previsto para Fase 2"
+    }
+  },
+  "vendasAtivas": {
+    "title": "Vendas Ativas",
+    "subtitle": "Pipeline de vendas e gestão de prospectos",
+    "searchPlaceholder": "Buscar prospectos...",
+    "showing": "Mostrando {count} de {total} prospectos",
+    "emptyColumn": "Nenhum prospecto nesta etapa",
+    "view": {
+      "kanban": "Kanban",
+      "table": "Tabela"
+    },
+    "filter": {
+      "allStatuses": "Todos os status"
+    },
+    "column": {
+      "colCadastro": "Cadastro",
+      "colContato": "Contato",
+      "colCallProposta": "Call / Proposta",
+      "colNegociacao": "Negociação",
+      "colFechamento": "Fechamento"
+    },
+    "status": {
+      "lead_cadastrado": "Lead cadastrado",
+      "primeiro_contato_enviado": "Primeiro contato enviado",
+      "aguardando_resposta": "Aguardando resposta",
+      "respondeu": "Respondeu",
+      "follow_up_enviado": "Follow-up enviado",
+      "call_agendada": "Call agendada",
+      "call_realizada": "Call realizada",
+      "proposta_enviada": "Proposta enviada",
+      "negociacao": "Negociação",
+      "venda_fechada": "Venda fechada",
+      "venda_perdida": "Venda perdida",
+      "pediu_contato_futuro": "Pediu contato futuro"
+    },
+    "product": {
+      "podcast_entrevista_imigrou": "Podcast / Entrevista Imigrou",
+      "gravacao_curso": "Gravação de curso",
+      "gravacao_mentoria": "Gravação de mentoria",
+      "conteudo_pronto_postar": "Conteúdo pronto para postar",
+      "gestao_redes_sociais": "Gestão de redes sociais",
+      "glowup_instagram": "GlowUp do Instagram",
+      "cobertura_evento": "Cobertura de evento",
+      "publicacao_pessoas_globais": "Publicação no Pessoas Globais",
+      "participacao_pernas_cruzadas": "Participação no Pernas Cruzadas",
+      "pacote_personalizado": "Pacote personalizado"
+    },
+    "table": {
+      "name": "Nome",
+      "company": "Empresa",
+      "status": "Status",
+      "lastContact": "Último Contato",
+      "products": "Produtos",
+      "assignedTo": "Responsável",
+      "revenue": "Receita"
+    },
+    "drawer": {
+      "contactInfo": "Informações de Contato",
+      "email": "Email",
+      "phone": "Telefone",
+      "instagram": "Instagram",
+      "assignedTo": "Responsável",
+      "products": "Produtos de Interesse",
+      "revenue": "Receita",
+      "notes": "Notas Comerciais",
+      "alerts": "Alertas",
+      "calls": "Ligações Comerciais",
+      "timeline": "Timeline de Contato",
+      "checklist": "Checklist Operacional"
+    },
+    "checklistCategory": {
+      "gravacao": "Gravação / Podcast / Curso / Mentoria",
+      "social": "Gestão de Redes Sociais / GlowUp",
+      "evento": "Cobertura de Evento",
+      "sales": "Vendas"
+    }
   }
 }

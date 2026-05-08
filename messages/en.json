@@ -180,5 +180,134 @@
       "resending": "Sending...",
       "alreadyConfirmed": "Already confirmed?"
     }
+  },
+  "customers": {
+    "title": "Customers",
+    "subtitle": "Client relationship management",
+    "searchPlaceholder": "Search customers...",
+    "addCustomer": "Add Customer",
+    "comingSoon": "Coming soon — customer creation form in development",
+    "roles": {
+      "admin": "Admin",
+      "editor": "Editor",
+      "viewer": "Viewer"
+    },
+    "table": {
+      "customer": "Customer",
+      "projects": "Projects",
+      "revenue": "Revenue",
+      "status": "Status",
+      "contract": "Contract",
+      "lastContact": "Last Contact",
+      "actions": "Actions"
+    },
+    "statusLabels": {
+      "active": "Active",
+      "pending": "Pending"
+    },
+    "contractLabels": {
+      "signed": "Signed",
+      "pending": "Pending",
+      "na": "N/A"
+    },
+    "empty": {
+      "title": "No customers yet",
+      "description": "Get started by adding your first customer."
+    },
+    "loading": "Loading customers...",
+    "error": {
+      "title": "Something went wrong",
+      "description": "We couldn't load your customers. Please try again later."
+    }
+  },
+  "analytics": {
+    "title": "Analytics",
+    "subtitle": "Data-driven insights for your content operations",
+    "comingSoon": {
+      "title": "Phase 2 — Coming Soon",
+      "description": "Advanced analytics dashboards are in development. Track performance, audience growth, and ROI across all your content pipelines.",
+      "features": [
+        "Performance Metrics",
+        "Audience Insights",
+        "ROI Tracking"
+      ],
+      "phase": "Planned for Phase 2"
+    }
+  },
+  "vendasAtivas": {
+    "title": "Active Sales",
+    "subtitle": "Sales pipeline and prospect management",
+    "searchPlaceholder": "Search prospects...",
+    "showing": "Showing {count} of {total} prospects",
+    "emptyColumn": "No prospects in this stage",
+    "view": {
+      "kanban": "Kanban",
+      "table": "Table"
+    },
+    "filter": {
+      "allStatuses": "All statuses"
+    },
+    "column": {
+      "colCadastro": "Registration",
+      "colContato": "Contact",
+      "colCallProposta": "Call / Proposal",
+      "colNegociacao": "Negotiation",
+      "colFechamento": "Closing"
+    },
+    "status": {
+      "lead_cadastrado": "Lead registered",
+      "primeiro_contato_enviado": "First contact sent",
+      "aguardando_resposta": "Awaiting response",
+      "respondeu": "Responded",
+      "follow_up_enviado": "Follow-up sent",
+      "call_agendada": "Call scheduled",
+      "call_realizada": "Call completed",
+      "proposta_enviada": "Proposal sent",
+      "negociacao": "Negotiation",
+      "venda_fechada": "Sale closed",
+      "venda_perdida": "Sale lost",
+      "pediu_contato_futuro": "Asked for future contact"
+    },
+    "product": {
+      "podcast_entrevista_imigrou": "Podcast / Imigrou Interview",
+      "gravacao_curso": "Course recording",
+      "gravacao_mentoria": "Mentorship recording",
+      "conteudo_pronto_postar": "Content ready to post",
+      "gestao_redes_sociais": "Social media management",
+      "glowup_instagram": "Instagram GlowUp",
+      "cobertura_evento": "Event coverage",
+      "publicacao_pessoas_globais": "Published on Pessoas Globais",
+      "participacao_pernas_cruzadas": "Pernas Cruzadas participation",
+      "pacote_personalizado": "Custom package"
+    },
+    "table": {
+      "name": "Name",
+      "company": "Company",
+      "status": "Status",
+      "lastContact": "Last Contact",
+      "products": "Products",
+      "assignedTo": "Assigned",
+      "revenue": "Revenue"
+    },
+    "drawer": {
+      "contactInfo": "Contact Info",
+      "email": "Email",
+      "phone": "Phone",
+      "instagram": "Instagram",
+      "assignedTo": "Assigned To",
+      "products": "Products of Interest",
+      "revenue": "Revenue",
+      "notes": "Commercial Notes",
+      "alerts": "Alerts",
+      "calls": "Commercial Calls",
+      "timeline": "Contact Timeline",
+      "checklist": "Operational Checklist"
+    },
+    "checklistCategory": {
+      "gravacao": "Recording / Podcast / Course / Mentorship",
+      "social": "Social Media Management / GlowUp",
+      "evento": "Event Coverage",
+      "sales": "Sales"
+    }
   }
 }
