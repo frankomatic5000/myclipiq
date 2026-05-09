@@ -1,8 +1,15 @@
 "use client";
 
+import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import Header from "../../components/Header";
 import { Link } from "@/lib/i18n/navigation";
+import {
+  getDashboardAlertsSnapshot,
+  type AlertBreakdownKey,
+  type DashboardAlertsSnapshot,
+  type UpsellOpportunity,
+} from "@/lib/supabase/dashboard-alerts";
 
 const quickStats = [
   { labelKey: "stats.projects", value: "12", subKey: "stats.projectsSub", icon: "projects", color: "brand" },
@@ -28,13 +35,210 @@ const statusOrder: Record<string, number> = {
   archived: 6,
 };
 
+const breakdownLabels: Record<AlertBreakdownKey, string> = {
+  contract: "Contratos",
+  image_auth: "Imagem",
+  upsell: "Upsell",
+  follow_up: "Follow-up",
+  payment: "Pagamentos",
+  project: "Projetos",
+};
+
+function formatDate(value: string | null): string {
+  if (!value) return "—";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "—";
+  return new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).format(date);
+}
+
+function DashboardAlertsSkeleton() {
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4" aria-label="Carregando alertas">
+      {Array.from({ length: 3 }).map((_, index) => (
+        <div key={index} className="bg-surface-900 rounded-xl border border-surface-700/50 p-5 animate-pulse">
+          <div className="h-4 w-32 rounded bg-surface-800 mb-4" />
+          <div className="h-8 w-16 rounded bg-surface-800 mb-3" />
+          <div className="h-3 w-44 rounded bg-surface-800" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function AlertsSummary({ snapshot }: { snapshot: DashboardAlertsSnapshot }) {
+  const breakdownEntries = Object.entries(snapshot.breakdown) as [AlertBreakdownKey, number][];
+  const activeBreakdown = breakdownEntries.filter(([, count]) => count > 0);
+  const previewAlerts = snapshot.alerts.slice(0, 4);
+
+  return (
+    <section className="space-y-4">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <h2 className="text-lg font-semibold text-surface-100">Alertas operacionais</h2>
+          <p className="text-sm text-surface-400">client_alerts e prospect_alerts sem resolved_at.</p>
+        </div>
+        <span className="rounded-full border border-red-500/20 bg-red-500/10 px-3 py-1 text-xs font-medium text-red-300">
+          {snapshot.urgentCount} urgentes
+        </span>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Link href="/customers" className="bg-surface-900 rounded-xl border border-surface-700/50 p-5 transition hover:border-brand-500/40 hover:bg-surface-800/70">
+          <p className="text-xs uppercase tracking-wider text-surface-400">Total unresolved</p>
+          <p className="mt-2 text-3xl font-bold text-surface-100">{snapshot.totalUnresolved}</p>
+          <p className="mt-1 text-xs text-surface-400">Clique para revisar clientes</p>
+        </Link>
+
+        <Link href="/vendas-ativas" className="bg-surface-900 rounded-xl border border-surface-700/50 p-5 transition hover:border-brand-500/40 hover:bg-surface-800/70">
+          <p className="text-xs uppercase tracking-wider text-surface-400">Breakdown</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {(activeBreakdown.length ? activeBreakdown : breakdownEntries.slice(0, 3)).map(([key, count]) => (
+              <span key={key} className="rounded-full border border-surface-700 bg-surface-950 px-2.5 py-1 text-xs text-surface-300">
+                {breakdownLabels[key]}: {count}
+              </span>
+            ))}
+          </div>
+        </Link>
+
+        <div className="bg-surface-900 rounded-xl border border-surface-700/50 p-5">
+          <p className="text-xs uppercase tracking-wider text-surface-400">Alertas urgentes</p>
+          <p className="mt-2 text-3xl font-bold text-red-300">{snapshot.urgentCount}</p>
+          <p className="mt-1 text-xs text-surface-400">due_date anterior a agora</p>
+        </div>
+      </div>
+
+      {previewAlerts.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {previewAlerts.map((alert) => (
+            <Link
+              key={`${alert.source}-${alert.id}`}
+              href={alert.href}
+              className="rounded-xl border border-surface-700/50 bg-surface-900 px-4 py-3 transition hover:border-brand-500/40 hover:bg-surface-800/70"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-sm font-medium text-surface-100">{alert.message}</p>
+                  <p className="mt-1 text-xs text-surface-400">{breakdownLabels[alert.group]} · {alert.source}</p>
+                </div>
+                <span className="shrink-0 rounded-full bg-surface-800 px-2 py-1 text-[11px] text-surface-300">
+                  {formatDate(alert.dueDate)}
+                </span>
+              </div>
+            </Link>
+          ))}
+        </div>
+      ) : (
+        <div className="rounded-xl border border-surface-700/50 bg-surface-900 px-4 py-5 text-sm text-surface-400">
+          Nenhum alerta operacional aberto.
+        </div>
+      )}
+    </section>
+  );
+}
+
+function UpsellCard({ opportunity }: { opportunity: UpsellOpportunity }) {
+  return (
+    <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="font-semibold text-surface-100">{opportunity.clientName}</p>
+          <p className="mt-1 text-sm text-surface-300">
+            {opportunity.daysSinceLastPost === null
+              ? "Sem data de ultimo post"
+              : `${opportunity.daysSinceLastPost} dias sem postar`}
+          </p>
+          <p className="mt-1 text-xs text-surface-400">
+            {formatDate(opportunity.lastPostAt)} · {opportunity.lastPostPlatform}
+          </p>
+        </div>
+        {opportunity.flagged ? (
+          <span className="rounded-full bg-amber-500/10 px-2 py-1 text-[11px] font-medium text-amber-300">
+            flagged
+          </span>
+        ) : null}
+      </div>
+      <p className="mt-3 text-sm text-amber-100/80">{opportunity.reason}</p>
+      <button
+        type="button"
+        className="mt-4 rounded-lg border border-amber-400/30 bg-amber-400/10 px-3 py-2 text-xs font-medium text-amber-200 transition hover:bg-amber-400/20"
+        aria-label={`Criar proposta para ${opportunity.clientName}`}
+      >
+        Criar Proposta
+      </button>
+    </div>
+  );
+}
+
+function UpsellOpportunities({ snapshot }: { snapshot: DashboardAlertsSnapshot }) {
+  return (
+    <section className="space-y-4">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <h2 className="text-lg font-semibold text-surface-100">Clientes inativos</h2>
+          <p className="text-sm text-surface-400">
+            Clientes sem post ha {snapshot.thresholdDays}+ dias ou com upsell_flag ativo.
+          </p>
+        </div>
+        <Link href="/customers" className="text-xs text-brand-400 hover:text-brand-300 transition">
+          Ver clientes →
+        </Link>
+      </div>
+
+      {snapshot.upsellOpportunities.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          {snapshot.upsellOpportunities.slice(0, 6).map((opportunity) => (
+            <UpsellCard key={opportunity.clientId} opportunity={opportunity} />
+          ))}
+        </div>
+      ) : (
+        <div className="rounded-xl border border-surface-700/50 bg-surface-900 px-4 py-5 text-sm text-surface-400">
+          Nenhuma oportunidade de upsell encontrada.
+        </div>
+      )}
+    </section>
+  );
+}
+
 export default function DashboardPage() {
   const t = useTranslations("dashboard");
   const tStatus = useTranslations("status");
+  const [alertsSnapshot, setAlertsSnapshot] = useState<DashboardAlertsSnapshot | null>(null);
+  const [alertsLoading, setAlertsLoading] = useState(true);
+  const [alertsError, setAlertsError] = useState<string | null>(null);
 
-  const sortedProjects = [...recentProjects].sort(
-    (a, b) => statusOrder[a.status] - statusOrder[b.status]
+  const sortedProjects = useMemo(
+    () => [...recentProjects].sort((a, b) => statusOrder[a.status] - statusOrder[b.status]),
+    []
   );
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadAlerts() {
+      setAlertsLoading(true);
+      setAlertsError(null);
+      try {
+        const snapshot = await getDashboardAlertsSnapshot();
+        if (active) setAlertsSnapshot(snapshot);
+      } catch (error) {
+        console.error("Failed to load dashboard alerts", error);
+        if (active) {
+          setAlertsError(error instanceof Error ? error.message : "Nao foi possivel carregar alertas.");
+        }
+      } finally {
+        if (active) setAlertsLoading(false);
+      }
+    }
+
+    void loadAlerts();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   return (
     <>
@@ -63,6 +267,19 @@ export default function DashboardPage() {
             </div>
           ))}
         </div>
+
+        {alertsLoading ? <DashboardAlertsSkeleton /> : null}
+        {alertsError ? (
+          <div className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-200" role="alert">
+            {alertsError}
+          </div>
+        ) : null}
+        {alertsSnapshot && !alertsLoading ? (
+          <>
+            <AlertsSummary snapshot={alertsSnapshot} />
+            <UpsellOpportunities snapshot={alertsSnapshot} />
+          </>
+        ) : null}
 
         {/* Two-column layout */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

@@ -1,4 +1,5 @@
 import { getSupabaseBrowser } from "@/lib/supabase/client";
+import { DEFAULT_UPSELL_THRESHOLD_DAYS, daysSince } from "@/lib/supabase/dashboard-alerts";
 
 export type ClientStatus = "active" | "paused" | "completed" | "churned";
 export type ContractStatus = "none" | "pending" | "sent" | "signed" | "expired";
@@ -198,12 +199,139 @@ export async function getClientById(id: string): Promise<Client | null> {
   return data ? mapClient(data as ClientRow) : null;
 }
 
+type ClientAlertType =
+  | "contract_expiring"
+  | "contract_expired"
+  | "image_auth_expiring"
+  | "image_auth_expired"
+  | "upsell_opportunity";
+
+type AlertCandidate = {
+  type: ClientAlertType;
+  message: string;
+  dueDate: string | null;
+};
+
+function isWithinWarningWindow(value: string | null, now: Date, days: number): boolean {
+  if (!value) return false;
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return false;
+  const diffMs = date.getTime() - now.getTime();
+  return diffMs >= 0 && diffMs <= days * 86_400_000;
+}
+
+function isExpired(value: string | null, now: Date): boolean {
+  if (!value) return false;
+  const date = new Date(value);
+  return !Number.isNaN(date.getTime()) && date < now;
+}
+
+async function createClientAlertIfMissing(
+  clientId: string,
+  candidate: AlertCandidate
+): Promise<void> {
+  const supabase = getSupabaseBrowser();
+  const { data, error } = await supabase
+    .from("client_alerts")
+    .select("id")
+    .eq("client_id", clientId)
+    .eq("type", candidate.type)
+    .is("resolved_at", null)
+    .limit(1);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  if ((data ?? []).length > 0) return;
+
+  const { error: insertError } = await supabase.from("client_alerts").insert({
+    client_id: clientId,
+    type: candidate.type,
+    message: candidate.message,
+    due_date: candidate.dueDate,
+  });
+
+  if (insertError) {
+    throw new Error(insertError.message);
+  }
+}
+
+async function createAlertsForUpdatedClient(clientId: string): Promise<void> {
+  const client = await getClientById(clientId);
+  if (!client) return;
+
+  const now = new Date();
+  const candidates: AlertCandidate[] = [];
+  const postAge = daysSince(client.lastPostAt, now);
+
+  if (postAge !== null && postAge >= DEFAULT_UPSELL_THRESHOLD_DAYS) {
+    const platform = client.lastPostPlatform ? ` on ${client.lastPostPlatform}` : "";
+    const reason = `Last post ${postAge} days ago${platform}`;
+    candidates.push({
+      type: "upsell_opportunity",
+      message: `${client.name || "Client"}: ${reason}`,
+      dueDate: client.lastPostAt,
+    });
+
+    const supabase = getSupabaseBrowser();
+    const { error } = await supabase
+      .from("clients")
+      .update({ upsell_flag: true, upsell_flag_reason: reason })
+      .eq("id", clientId);
+
+    if (error) {
+      throw new Error(error.message);
+    }
+  }
+
+  if (isExpired(client.contractExpiresAt, now)) {
+    candidates.push({
+      type: "contract_expired",
+      message: `${client.name || "Client"}: contract expired`,
+      dueDate: client.contractExpiresAt,
+    });
+  } else if (isWithinWarningWindow(client.contractExpiresAt, now, 7)) {
+    candidates.push({
+      type: "contract_expiring",
+      message: `${client.name || "Client"}: contract expires within 7 days`,
+      dueDate: client.contractExpiresAt,
+    });
+  }
+
+  if (isExpired(client.imageAuthExpiresAt, now)) {
+    candidates.push({
+      type: "image_auth_expired",
+      message: `${client.name || "Client"}: image authorization expired`,
+      dueDate: client.imageAuthExpiresAt,
+    });
+  } else if (isWithinWarningWindow(client.imageAuthExpiresAt, now, 7)) {
+    candidates.push({
+      type: "image_auth_expiring",
+      message: `${client.name || "Client"}: image authorization expires within 7 days`,
+      dueDate: client.imageAuthExpiresAt,
+    });
+  }
+
+  await Promise.all(candidates.map((candidate) => createClientAlertIfMissing(clientId, candidate)));
+}
+
 export async function updateClient(id: string, fields: ClientUpdateFields): Promise<void> {
   const supabase = getSupabaseBrowser();
   const { error } = await supabase.from("clients").update(fields).eq("id", id);
 
   if (error) {
     throw new Error(error.message);
+  }
+
+  const alertTriggerFields: Array<keyof ClientUpdateFields> = [
+    "last_post_at",
+    "contract_expires_at",
+    "image_auth_expires_at",
+  ];
+
+  if (alertTriggerFields.some((field) => Object.prototype.hasOwnProperty.call(fields, field))) {
+    await createAlertsForUpdatedClient(id);
   }
 }
 
