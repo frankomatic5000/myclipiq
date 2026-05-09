@@ -222,7 +222,13 @@ export default function VendasAtivasClient() {
         {content}
       </div>
 
-      {selected && <ProspectDrawer prospect={selected} onClose={() => setSelected(null)} />}
+      {selected && (
+        <ProspectDrawer
+          prospect={selected}
+          onClose={() => setSelected(null)}
+          onConverted={loadProspects}
+        />
+      )}
     </div>
   );
 }

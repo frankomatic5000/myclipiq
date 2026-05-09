@@ -15,7 +15,7 @@ export type SalesStatus =
 export interface TimelineEvent {
   id: string;
   date: string;
-  type: "message" | "call" | "email" | "status_change" | "note";
+  type: "message" | "call" | "email" | "status_change" | "note" | "conversion";
   description: string;
   author: string;
 }
@@ -59,6 +59,8 @@ export interface Prospect {
   calls: CallRecord[];
   checklist: ChecklistItem[];
   alerts: AlertItem[];
+  convertedToClientId: string | null;
+  convertedAt: string | null;
 }
 
 export const STATUS_ORDER: SalesStatus[] = [

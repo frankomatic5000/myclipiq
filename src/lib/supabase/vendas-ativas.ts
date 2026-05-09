@@ -58,6 +58,21 @@ type CreateCallRecordInput = {
   followUpSuggestedAt?: string | null;
 };
 
+type CreateProjectInput = {
+  serviceType: string;
+  name: string;
+};
+
+type ConvertProspectToClientInput = {
+  prospectId: string;
+  project?: CreateProjectInput | null;
+};
+
+type ConvertProspectToClientResult = {
+  clientId: string;
+  projectId: string | null;
+};
+
 const SALES_STATUSES = new Set<SalesStatus>([
   "lead_cadastrado",
   "primeiro_contato_enviado",
@@ -79,6 +94,7 @@ const TIMELINE_TYPES = new Set<TimelineEvent["type"]>([
   "email",
   "status_change",
   "note",
+  "conversion",
 ]);
 
 function isSalesStatus(value: string | null): value is SalesStatus {
@@ -167,6 +183,8 @@ function mapProspect(
     calls,
     checklist: generateChecklist(productsInterested),
     alerts: [],
+    convertedToClientId: row.converted_to_client_id,
+    convertedAt: row.converted_at,
   };
 }
 
@@ -254,6 +272,138 @@ export async function getProspects(): Promise<Prospect[]> {
       return mapProspect(row, timeline, calls);
     })
   );
+}
+
+
+async function createConversionProject(
+  prospectId: string,
+  clientId: string,
+  project: CreateProjectInput
+): Promise<string> {
+  const supabase = getSupabaseBrowser();
+  const baseProject = {
+    customer_id: prospectId,
+    name: project.name.trim(),
+    service_type: project.serviceType,
+    status: "intake",
+  };
+
+  const { data, error } = await supabase
+    .from("projects")
+    .insert({ ...baseProject, client_id: clientId })
+    .select("id")
+    .single();
+
+  if (!error) {
+    return (data as { id: string }).id;
+  }
+
+  const shouldRetryWithoutClientId =
+    error.code === "PGRST204" ||
+    error.message.toLowerCase().includes("client_id");
+
+  if (!shouldRetryWithoutClientId) {
+    throw new Error(error.message);
+  }
+
+  const { data: retryData, error: retryError } = await supabase
+    .from("projects")
+    .insert(baseProject)
+    .select("id")
+    .single();
+
+  if (retryError) {
+    throw new Error(retryError.message);
+  }
+
+  return (retryData as { id: string }).id;
+}
+
+export async function convertProspectToClient(
+  input: ConvertProspectToClientInput
+): Promise<ConvertProspectToClientResult> {
+  const authorId = await requireAuthenticatedUserId();
+  const supabase = getSupabaseBrowser();
+
+  const { data: prospectData, error: prospectError } = await supabase
+    .from("prospects")
+    .select("*")
+    .eq("id", input.prospectId)
+    .single();
+
+  if (prospectError) {
+    throw new Error(prospectError.message);
+  }
+
+  const prospect = prospectData as ProspectRow;
+
+  if (prospect.status !== "venda_fechada") {
+    throw new Error("Somente prospects com venda fechada podem ser convertidos.");
+  }
+
+  if (prospect.converted_to_client_id) {
+    return { clientId: prospect.converted_to_client_id, projectId: null };
+  }
+
+  const now = new Date().toISOString();
+  const { data: clientData, error: clientError } = await supabase
+    .from("clients")
+    .insert({
+      name: prospect.name ?? "Cliente sem nome",
+      company: prospect.company,
+      instagram: prospect.instagram,
+      phone: prospect.phone,
+      email: prospect.email,
+      content_type: null,
+      status: "active",
+      contract_status: "none",
+      image_auth_status: "not_requested",
+      created_at: now,
+    })
+    .select("id")
+    .single();
+
+  if (clientError) {
+    throw new Error(clientError.message);
+  }
+
+  const clientId = (clientData as { id: string }).id;
+
+  const { error: updateError } = await supabase
+    .from("prospects")
+    .update({
+      converted_to_client_id: clientId,
+      converted_at: now,
+      updated_at: now,
+    })
+    .eq("id", input.prospectId)
+    .is("converted_to_client_id", null);
+
+  if (updateError) {
+    throw new Error(updateError.message);
+  }
+
+  const { error: timelineError } = await supabase
+    .from("prospect_timeline_events")
+    .insert({
+      prospect_id: input.prospectId,
+      type: "conversion",
+      description: "Convertido em cliente",
+      author_id: authorId,
+      metadata: { client_id: clientId },
+    });
+
+  if (timelineError) {
+    throw new Error(timelineError.message);
+  }
+
+  let projectId: string | null = null;
+
+  if (input.project?.serviceType && input.project.name.trim()) {
+    projectId = await createConversionProject(input.prospectId, clientId, input.project);
+  }
+
+  return { clientId, projectId };
 }
 
 export async function updateProspectStatus(
