@@ -1,210 +1,376 @@
-# MyClipIQ v2 — User Experience Flows
+# MyClipIQ v2 — User Experience Flows (Operational MVP)
 
-## 1. Onboarding
+> **Last updated**: 2026-05-09
+> **Scope**: Sprint 1 — operational workflows
+> **Phase 2 flows**: marked with [Phase 2]
 
-### New User (Editor in Brazil)
-```
-1. Receives WhatsApp invite link from Karine
-2. Clicks link → Opens MyClipIQ
-3. Signs up with email + password
-4. Completes profile (name, role=editor, timezone)
-5. Sees dashboard with assigned projects
-```
+---
 
-### New Customer
-```
-1. Karine creates customer in CRM
-2. Customer receives WhatsApp with review link
-3. Clicks link → Views watermarked preview
-4. Approves or rejects with notes
-```
+## 1. Vendas Ativas — Sales Pipeline
 
-## 2. Upload Video (Karine)
-
+### Kanban View
 ```
-Google Drive
+Dashboard → Vendas Ativas
     │
-    ├── Upload raw video to "MyClipIQ/Intake" folder
+    ├── Kanban (default desktop)
+    │   ├── Cadastro → Contato → Call/Proposta → Negociação → Fechamento
+    │   ├── Drag card between columns (or click to change status)
+    │   ├── Card shows: name, company, status dot, products, revenue, alerts
+    │   └── Click card → Prospect Drawer
     │
-    ▼
-Webhook → MyClipIQ
+    ├── Table View (default mobile <768px)
+    │   ├── Sort by: name, status, last contact, revenue
+    │   ├── Filter: status, product, assigned to, lead source
+    │   ├── Search: name, company, Instagram, phone, email
+    │   └── Click row → Prospect Drawer
     │
-    ├── Download video
-    ├── Upload to R2 (temporary)
-    ├── Create project record
-    ├── Extract metadata (duration, resolution)
-    │
-    ▼
-Notify Editor (WhatsApp)
-    "New project: Customer Name - Project Name"
-    Link to download from R2
+    └── Top Bar: Pipeline Summary
+        ├── Total pipeline value
+        ├── Deals due today
+        ├── Stalled >7 days
+        └── New leads this week
 ```
 
-### UI Flow
+### Prospect Detail Drawer
 ```
-Dashboard → "New Project" Button
+Click Prospect Card/Row
     │
-    ├── Select Customer (dropdown)
-    ├── Upload Video (drag & drop)
-    ├── Auto-extract: filename → project name
-    ├── Edit project name (optional)
-    │
-    ▼
-Processing State
-    ├── Uploading to R2 (progress bar)
-    ├── Extracting metadata
-    ├── Creating project
-    │
-    ▼
-Success → Project card appears in dashboard
+    ├── Header: Name, Company, Status badge, Revenue
+    ├── Contact: Instagram, Phone, Email (click to call/WhatsApp)
+    ├── Products Interested (tags)
+    ├── Alerts (due dates, follow-ups)
+    ├── Notes (free text, editable)
+    ├── Calls (list + "Add Call" button)
+    │   └── Add Call: date, duration, outcome, notes
+    │       └── Auto-suggest follow-up in 3 days
+    ├── Timeline (auto-logged + manual)
+    │   └── Status change → auto entry: "Moved to Negociação by Karine"
+    └── Checklist (service-specific, editable per prospect)
 ```
 
-## 3. AI Analysis
-
-### Trigger
+### New Prospect Flow
 ```
-Editor uploads edited video
+Vendas Ativas → "Novo Lead" Button
     │
-    ▼
-Auto-trigger AI analysis
+    ├── Quick Add (modal)
+    │   ├── Name* (required)
+    │   ├── Instagram (auto-suggests from handle)
+    │   ├── Phone
+    │   ├── Email
+    │   ├── Company
+    │   ├── Products interested (multi-select)
+    │   ├── Lead source (dropdown)
+    │   ├── Assigned to (dropdown: Karine, Mônica, etc.)
+    │   └── Revenue estimate
     │
-    ├── FFmpeg extract audio
-    ├── Whisper transcription
-    ├── GPT-4o-mini analysis
-    │
-    ▼
-Results stored in ai_analyses
-```
-
-### Results Page
-```
-Project → "AI Analysis" Tab
-    │
-    ├── Transcription (scrollable, time-stamped)
-    ├── Hook Suggestions (3-5 variants)
-    │   ├── Variant 1: "Don't skip this..." (score: 92)
-    │   ├── Variant 2: "The secret is..." (score: 88)
-    │   └── Variant 3: "Wait for it..." (score: 85)
-    ├── Caption Optimization
-    │   ├── Short: "..."
-    │   ├── Medium: "..."
-    │   └── Long: "..."
-    ├── Hashtag Recommendations
-    │   ├── Primary: #creator #business
-    │   ├── Secondary: #growth #tips
-    │   └── Trending: #viral2026
-    ├── Viral Score: 87/100
-    ├── Predicted Views: 50K-100K
-    └── Optimal Posting: Tuesday, 8PM BRT
-    │
-    ▼
-Editor picks suggestions
-    ├── Select hook variant
-    ├── Select caption length
-    ├── Select hashtags
-    │
-    ▼
-Save → Send for Karine review
+    └── Save → Appears in "Cadastro" column
+        └── Auto timeline entry: "Lead created by Karine"
 ```
 
-## 4. Results Page (Karine Review)
+---
 
-```
-Dashboard → Project Card → "Review" Button
-    │
-    ├── Video Player (watermarked preview)
-    ├── Selected AI suggestions (read-only)
-    ├── Editor notes
-    │
-    ├── [✅ Approve] [❌ Reject]
-    │
-    └── Reject → Text area for notes
-    │
-    ▼
-Approve → Send to Customer
-Reject → Back to Editor
-```
+## 2. Prospects vs Clients
 
-## 5. Project History
-
+### Prospect Lifecycle → Conversion
 ```
-Dashboard → "Projects" Tab
+Prospect in pipeline
     │
-    ├── Filter: All | Intake | Editing | Analysis | Review | Approved | Posted | Archived
-    ├── Sort: Date | Customer | Status
+    ├── Status = "Venda Fechada"
+    │   └── Trigger: "Convert to Client" button
     │
-    ├── Project Card
-    │   ├── Thumbnail
-    │   ├── Customer Name
-    │   ├── Project Name
-    │   ├── Status Badge (color-coded)
-    │   ├── Last Updated
-    │   └── Actions: View | Edit | Archive
-    │
-    ▼
-Click Card → Project Detail
-    ├── Tabs: Overview | Video | Analysis | Reviews | Settings
-    ├── Status Timeline
-    │   ├── Intake → Editing → Analysis → Review → Approved
-    │   └── Current stage highlighted
-    ├── Team Members
-    ├── Activity Log
-    └── Archive (30 days after posted)
+    └── Conversion Dialog
+        ├── Confirm client name, email, Instagram
+        ├── Select service type (what was sold)
+        ├── Set package type
+        ├── Contract status: "Sent" or "Signed"
+        ├── Image authorization: "Pending" or "Signed"
+        └── Create Client + Create First Project
+            │
+            └── Auto: Prospect.converted_to_client_id = client.id
+            └── Auto timeline: "Converted to client by Karine"
 ```
 
-## 6. Customer Approval (External)
+### Clients List
+```
+Dashboard → Clientes
+    │
+    ├── Table view (default)
+    │   ├── Name, Company, Status, Contract, Image Auth, Last Post
+    │   ├── Filter: status, content type, package, contract status
+    │   └── Search: name, Instagram, email
+    │
+    ├── Click row → Client Drawer
+    │   ├── Contact info
+    │   ├── Contract details + status history
+    │   ├── Image authorization + expiry
+    │   ├── Active projects list
+    │   ├── Posts history
+    │   └── Upsell flag + reason
+    │
+    └── "Novo Cliente" Button
+        └── Direct add (skip prospect pipeline for referrals/known contacts)
+```
 
+---
+
+## 3. Projects by Service Type
+
+### Project Creation
 ```
-WhatsApp Message
-    "Your video is ready for review: [Link]"
+Clientes → Select Client → "Novo Projeto"
     │
-    ▼
-Click Link → Review Page (no login required)
-    ├── Watermarked video player
-    ├── Hook + Caption preview
-    ├── [✅ Approve] [❌ Request Changes]
+    ├── Service Type (dropdown)
+    │   ├── Podcast / Entrevista Imigrou
+    │   ├── Gravação de Curso
+    │   ├── Gravação de Mentoria
+    │   ├── Gestão de Redes Sociais
+    │   ├── GlowUp do Instagram
+    │   ├── Cobertura de Evento
+    │   └── Pacote Personalizado
     │
-    ▼
-Approve → Karine notified → Ready to post
-Request Changes → Notes → Back to Editor
+    ├── Auto-load checklist for service type
+    │   └── Example: "Gravação de Curso"
+    │       ├── [ ] Confirmar data com cliente
+    │       ├── [ ] Enviar briefing de conteúdo
+    │       ├── [ ] Preparar equipamento
+    │       ├── [ ] Gravar aula 1
+    │       ├── [ ] Gravar aula 2
+    │       ├── [ ] Editar
+    │       ├── [ ] Revisão com cliente
+    │       └── [ ] Entregar
+    │
+    ├── Assign to editor
+    ├── Due date
+    └── Save → Appears in client project list
 ```
 
-## 7. Archive Flow
+### Project Detail
+```
+Projects → Select Project
+    │
+    ├── Overview
+    │   ├── Service type badge
+    │   ├── Status timeline
+    │   ├── Checklist (editable, mark done)
+    │   └── Team members
+    │
+    ├── Clips [Phase 2]
+    │   └── Video upload, AI analysis, watermarked preview
+    │
+    ├── Posts
+    │   └── Linked posts from publishing calendar
+    │
+    └── Settings
+        └── Archive, delete, reassign
+```
 
+---
+
+## 4. Contract & Image Authorization
+
+### Contract Tracking
 ```
-30 Days After Posted
+Cliente → Contract Section
     │
-    ├── pg_cron triggers archive job
-    ├── Download from R2
-    ├── Upload to Google Drive
-    ├── Delete from R2
-    ├── Update project status to "archived"
-    │
-    ▼
-Project moves to "Archived" filter
+    ├── Status: None → Pending → Sent → Signed → Expired
+    ├── "Enviar Contrato" button → upload PDF
+    ├── Signed date
+    ├── Expiry date (auto 1 year)
+    └── Alert: "Contrato expira em 30 dias" (dashboard + email)
 ```
+
+### Image Authorization
+```
+Cliente → Image Auth Section
+    │
+    ├── Status: Not Requested → Pending → Signed → Expired
+    ├── "Solicitar Autorização" button
+    ├── Signed date
+    ├── Expiry date
+    └── Alert: "Autorização de imagem expira em 30 dias"
+
+Block Rule: If image_auth_status ≠ 'signed'
+  → Cannot create new projects for this client
+  → Warning: "Autorização de imagem pendente. Solicitar antes de iniciar projeto."
+```
+
+---
+
+## 5. Publishing Calendar & Clip Inventory
+
+### Calendar View
+```
+Dashboard → Calendário
+    │
+    ├── Month View (default)
+    │   ├── Posts shown as cards on date
+    │   ├── Color by platform (Instagram=purple, TikTok=black, etc.)
+    │   ├── Click date → "Nova Publicação"
+    │   └── Click post → Edit drawer
+    │
+    ├── Week View
+    │   └── Horizontal timeline
+    │
+    └── Filter: client, platform, status
+```
+
+### New Post
+```
+Calendário → "Nova Publicação" or Projeto → "Criar Post"
+    │
+    ├── Client (dropdown)
+    ├── Project (optional — links to source project)
+    ├── Platform: Instagram / TikTok / YouTube / LinkedIn
+    ├── Content type: Reel / Story / Carousel / Video
+    ├── Caption
+    ├── Hashtags (tag input)
+    ├── Scheduled date/time
+    ├── Clip/Video (upload or select from project) [Phase 2: R2 upload]
+    └── Status: Draft → Scheduled → Posted → Archived
+```
+
+### Clip Inventory
+```
+Cliente → Clips
+    │
+    ├── All clips for this client
+    ├── Status: Draft → Scheduled → Posted → Archived
+    ├── Linked to project + post
+    └── Thumbnail + duration
+```
+
+---
+
+## 6. Last-Post Upsell Trigger
+
+### Dashboard Alert
+```
+Dashboard → Alertas
+    │
+    └── "Clientes Inativos"
+        ├── Client X — last post 45 days ago
+        ├── Client Y — last post 32 days ago
+        └── "Criar Proposta" button
+            │
+            └── Creates new prospect in Vendas Ativas
+                ├── Name: Client X (Upsell)
+                ├── Source: "upsell_trigger"
+                ├── Products: same as current + new options
+                └── Revenue: suggest based on history
+```
+
+### Settings
+```
+Configurações → Upsell
+    ├── Threshold days: default 30
+    ├── Platforms to check: [x] Instagram [x] TikTok [ ] YouTube
+    └── Auto-flag or manual review
+```
+
+---
+
+## 7. Spreadsheet Import
+
+### Import Flow
+```
+Vendas Ativas or Clientes → "Importar" Button
+    │
+    ├── Upload CSV/Excel
+    ├── Preview first 5 rows
+    ├── Column Mapping (drag/drop or dropdown)
+    │   ├── CSV: "Nome" → Map to: "Name"
+    │   ├── CSV: "Instagram" → Map to: "Instagram"
+    │   ├── CSV: "Telefone" → Map to: "Phone"
+    │   ├── CSV: "Email" → Map to: "Email"
+    │   ├── CSV: "Status" → Map to: "Status"
+    │   └── Unmapped columns → skip or custom field
+    │
+    ├── Validation
+    │   ├── Duplicates by email/Instagram/phone (highlight)
+    │   ├── Invalid emails (highlight)
+    │   └── Required fields missing (highlight)
+    │
+    ├── Review & Fix
+    │   └── Edit individual rows before import
+    │
+    └── Import → Progress bar → Results
+        ├── Imported: 47 rows
+        ├── Duplicates skipped: 3
+        ├── Errors: 2 (show details)
+        └── Undo (within 5 minutes)
+```
+
+---
+
+## 8. Onboarding & Auth
+
+### New Team Member
+```
+Admin → Team → "Adicionar Membro"
+    │
+    ├── Email
+    ├── Name
+    ├── Role: Admin / Editor / Viewer
+    ├── Language preference: PT / EN / ES
+    └── Send invite → Email with magic link
+        └── First login → set password → dashboard
+```
+
+### Role-Based Default Views
+
+| Role | Default Landing | Actions |
+|------|-----------------|---------|
+| **Admin** | Dashboard (stats + alerts) | All |
+| **Editor** | Assigned Projects | Edit, upload, checklist |
+| **Viewer** | Review Queue | Approve/reject [Phase 2] |
+| **Sales** | Vendas Ativas | Prospects, calls, deals |
+
+---
+
+## Phase 2 Flows (Not Sprint 1)
+
+### Video Intake [Phase 2]
+```
+Google Drive → Webhook → MyClipIQ → R2 → Project
+```
+
+### AI Analysis [Phase 2]
+```
+Video Upload → FFmpeg → Whisper → GPT-4o-mini → Hooks/Captions/Hashtags/Viral Score
+```
+
+### Customer Approval [Phase 2]
+```
+WhatsApp → Watermarked Preview → Approve/Reject
+```
+
+### Archive [Phase 2]
+```
+30 days → Google Drive → Delete from R2
+```
+
+---
+
+## Mobile-First Rules
+
+1. **Vendas Ativas**: Default to table view on mobile; Kanban requires horizontal scroll
+2. **Drawer**: Full-width on mobile, 50% width on desktop
+3. **Quick Actions**: FAB (floating action button) for: new prospect, new call, new post
+4. **Swipe**: Table rows swipe to call/WhatsApp/email
+5. **Touch targets**: All buttons ≥ 44px
+
+---
 
 ## Key UI Decisions
 
-### Mobile-First
-- All flows work on mobile
-- WhatsApp is primary notification channel
-- Upload works from phone gallery
+### Domain Language (Portuguese-first)
+| UI Label | English Equivalent |
+|----------|-------------------|
+| Venda Ativa | Sales Opportunity |
+| Lead cadastrado | New Lead |
+| Call agendada | Meeting Scheduled |
+| Gravação de curso | Course Recording |
+| GlowUp do Instagram | Instagram Package |
+| Cobertura de evento | Event Coverage |
 
-### Role-Based Views
-| Role | Default View | Actions |
-|------|-------------|---------|
-| Admin | Dashboard + CRM | All |
-| Editor | Assigned Projects | Download, Edit, Upload, Pick AI |
-| Viewer | Review Queue | Approve/Reject |
-
-### Status Colors
-| Status | Color |
-|--------|-------|
-| Intake | Gray |
-| Editing | Blue |
-| Analysis | Purple |
-| Review | Yellow |
-| Approved | Green |
-| Posted | Teal |
-| Archived | Slate |
+Always use domain language. Never generic CRM terms.

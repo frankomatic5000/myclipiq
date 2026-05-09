@@ -2,7 +2,7 @@
 interface TimelineEvent {
   id: string;
   date: string;
-  type: "message" | "call" | "email" | "status_change" | "note";
+  type: "message" | "call" | "email" | "status_change" | "note" | "conversion";
   description: string;
   author: string;
 }
@@ -15,6 +15,7 @@ const typeIcon: Record<string, string> = {
   email: "✉️",
   status_change: "🔄",
   note: "📝",
+  conversion: "✅",
 };
 export default function Timeline({ events }: TimelineProps) {
   

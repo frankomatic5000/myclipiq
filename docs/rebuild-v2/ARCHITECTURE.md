@@ -1,6 +1,60 @@
 # MyClipIQ v2 — Architecture
 
-## Overview
+> **Last updated**: 2026-05-09
+> **Sprint 1**: Operational Backbone (CRM + Sales + Publishing)
+> **Phase 2**: AI Clip Analysis + Video Pipeline
+
+---
+
+## Sprint 1 Architecture (Operational MVP)
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                         KARINE / MÔNICA                            │
+│                    (Admin / Sales / Operations)                     │
+└─────────────────────┬───────────────────────────────────────────────┘
+                      │
+                      ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                        MyClipIQ (Next.js 15)                        │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────────┐  │
+│  │ Vendas Ativas│  │   Clientes   │  │   Calendário            │  │
+│  │  (Kanban)    │  │  (Contracts) │  │   (Posts)               │  │
+│  │  (Table)     │  │  (Image Auth)│  │   (Clip Inventory)      │  │
+│  │  (Drawer)    │  │  (Upsell)    │  │   (Upsell Alerts)       │  │
+│  └──────────────┘  └──────────────┘  └──────────────────────────┘  │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────────┐  │
+│  │   Projetos   │  │   Importar   │  │   Dashboard             │  │
+│  │ (Checklists) │  │ (Sheets/CSV) │  │   (Stats + Alerts)      │  │
+│  └──────────────┘  └──────────────┘  └──────────────────────────┘  │
+└─────────────────────┬───────────────────────────────────────────────┘
+                      │
+                      ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                      Supabase (PostgreSQL)                           │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌────────┐  │
+│  │ prospects│ │ clients  │ │ projects │ │  posts   ││import_ │  │
+│  │ timeline │ │ contracts│ │checklists│ │  clips   ││ logs   │  │
+│  │  calls   │ │image_auth│ │          │ │          ││        │  │
+│  │  alerts  │ │ alerts   │ │          │ │          ││        │  │
+│  └──────────┘ └──────────┘ └──────────┘ └──────────┘ └────────┘  │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐                            │
+│  │ profiles │ │team_membs│ │notifications                          │
+│  └──────────┘ └──────────┘ └──────────┘                            │
+└─────────────────────────────────────────────────────────────────────┘
+                      │
+                      ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                         Vercel Edge                                 │
+│  ┌─────────────────────────────────────────────────────────────────┐ │
+│  │  API Routes: /api/prospects, /api/clients, /api/posts, etc.   │ │
+│  └─────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Phase 2 Architecture (AI + Video Pipeline)
 
 ```
 ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
@@ -48,6 +102,8 @@
          └─────────────┘
 ```
 
+---
+
 ## Tech Stack (v2)
 
 | Layer | Technology | Notes |
@@ -55,58 +111,108 @@
 | **Frontend** | Next.js 15 + Tailwind CSS + shadcn/ui | App Router, server components |
 | **Backend** | Next.js API Routes + Edge Functions | Serverless, no dedicated backend |
 | **Database** | Supabase (PostgreSQL) | Auth + data + jobs |
-| **Storage** | Cloudflare R2 (temp) + Google Drive (archive) | R2: 30-day lifecycle |
-| **AI** | OpenAI Whisper + GPT-4o-mini | Audio → text → analysis |
+| **Storage** | Cloudflare R2 (temp) + Google Drive (archive) | **Phase 2 only** |
+| **AI** | OpenAI Whisper + GPT-4o-mini | **Phase 2 only** — Audio → text → analysis |
 | **Auth** | Supabase Auth | Row Level Security (RLS) |
 | **Hosting** | Vercel | Edge functions, ISR |
-| **Notifications** | Twilio (WhatsApp) | Editor ↔ Creator |
+| **Notifications** | Twilio (WhatsApp) | **Phase 2** — Editor ↔ Creator |
 | **i18n** | next-intl | EN, PT, ES |
 | **Testing** | Jest + React Testing Library | Unit + integration |
 
-## Data Flow
+---
 
-### 1. Intake
-1. Karine uploads to Google Drive
-2. Google Drive webhook → MyClipIQ
-3. Download → Upload to R2 (temporary)
-4. Create project record in Supabase
-5. Notify editor via WhatsApp
+## Sprint 1 Data Flow
 
-### 2. Editing
-1. Editor downloads from R2
-2. Edits in local tool (Adobe, CapCut, etc.)
-3. Uploads back to R2
-4. Creates edited_video record
-5. Triggers AI analysis
+### 1. Prospect Pipeline
+```
+Vendas Ativas → Kanban/Table
+    │
+    ├── New Prospect → prospects table
+    ├── Status Change → prospect_timeline_events (auto-log)
+    ├── Add Call → prospect_call_records
+    ├── Set Alert → prospect_alerts
+    └── Convert to Client → clients table + projects table
+```
 
-### 3. Analysis
-1. FFmpeg extracts audio from edited video
-2. OpenAI Whisper transcribes
-3. GPT-4o-mini analyzes:
-   - Hook suggestions (3-5 variants)
-   - Caption optimization
-   - Hashtag recommendations
-   - Viral score prediction
-   - Optimal posting time
-4. Store results in ai_analyses
-5. Notify Karine
+### 2. Client Management
+```
+Clientes → Table/Drawer
+    │
+    ├── Contract tracking: status, sent_at, signed_at, expires_at
+    ├── Image authorization: status, signed_at, expires_at
+    ├── Block rule: image_auth_status ≠ 'signed' → warn on new project
+    ├── Active projects list
+    ├── Posts history
+    └── Upsell flag: last_post_at > threshold days
+```
 
-### 4. Review
-1. Editor picks AI suggestions
-2. Karine reviews in app
-3. Customer reviews watermarked preview
-4. Approve / Reject with notes
+### 3. Project + Checklist
+```
+Projetos → Service Type → Auto-load Checklist
+    │
+    ├── Podcast / Entrevista → [ ] Confirm date, [ ] Prepare questions, ...
+    ├── Gravação de Curso → [ ] Briefing, [ ] Gravar aula 1, ...
+    ├── Gestão Redes Sociais → [ ] Plano mensal, [ ] Criar posts, ...
+    └── Status: intake → editing → review → approved → posted → archived
+```
 
-### 5. Posting
-1. TikTok API upload (inbox)
-2. Editor publishes from TikTok app
-3. Mark as posted in Supabase
+### 4. Publishing Calendar
+```
+Calendário → Month/Week View
+    │
+    ├── Click Date → New Post → posts table
+    ├── Platform: Instagram / TikTok / YouTube / LinkedIn
+    ├── Status: draft → scheduled → posted → archived
+    └── Auto-update: client.last_post_at when post.status = 'posted'
+```
 
-### 6. Archive
-1. 30 days after posting
-2. Move from R2 to Google Drive
-3. Delete from R2
-4. Mark as archived
+### 5. Upsell Trigger
+```
+Daily check (or manual)
+    │
+    ├── Scan clients: last_post_at > threshold (default 30 days)
+    ├── Set: client.upsell_flag = true
+    ├── Set: client.upsell_flag_reason = "Last post 45 days ago"
+    ├── Create: client_alerts (type = 'upsell_opportunity')
+    └── Dashboard: "Clientes Inativos" section
+```
+
+### 6. Spreadsheet Import
+```
+Importar → Upload CSV/Excel
+    │
+    ├── Preview first 5 rows
+    ├── Column mapping (auto + manual)
+    ├── Validation (duplicates, invalid emails, missing required)
+    ├── Execute import → prospects or clients table
+    └── Audit log: import_logs table
+```
+
+---
+
+## Phase 2 Data Flow (Frozen for Sprint 1)
+
+### Video Intake [Phase 2]
+```
+Google Drive → Webhook → MyClipIQ → R2 → Project
+```
+
+### AI Analysis [Phase 2]
+```
+Video Upload → FFmpeg → Whisper → GPT-4o-mini → Hooks/Captions/Hashtags/Viral Score
+```
+
+### Customer Approval [Phase 2]
+```
+WhatsApp → Watermarked Preview → Approve/Reject
+```
+
+### Archive [Phase 2]
+```
+30 days → Google Drive → Delete from R2
+```
+
+---
 
 ## Key Decisions
 
@@ -114,13 +220,7 @@
 - Team is small (2 people)
 - Less infra to manage
 - Vercel handles scaling
-- Edge functions for webhooks
-
-### Why R2 (not S3)?
-- No egress fees
-- S3-compatible API
-- Good for temporary storage
-- Cheaper than S3 for this use case
+- Edge functions for webhooks (Phase 2)
 
 ### Why Supabase (not PlanetScale/Neon)?
 - Built-in auth
@@ -129,21 +229,31 @@
 - Good free tier
 - pg_cron for background jobs
 
-### Why GPT-4o-mini (not Claude/Gemini)?
-- Fast enough for this use case
-- Cost-effective
-- Good at structured output
-- Whisper + GPT same provider
+### Why Field-Based Contracts (not separate tables)?
+- Sprint 1 simplicity
+- Karine needs to see contract status at a glance
+- No complex contract versioning needed yet
+- Phase 2: split to separate tables if versioning required
+
+### Why Separate prospect_alerts and client_alerts?
+- Different lifecycles: sales vs operational
+- Different owners: Mônica (sales) vs Karine (operations)
+- Different UIs: pipeline drawer vs client dashboard
+
+---
 
 ## Background Job Strategy
 
-| Job Type | Trigger | Handler | Retry |
-|----------|---------|---------|-------|
-| Video download | Webhook | Edge function | 3x |
-| AI analysis | Upload complete | API route + pg_cron | 3x |
-| WhatsApp notification | Status change | Twilio API | 2x |
-| Archive | 30-day cron | pg_cron + API | 3x |
-| Google Drive sync | Manual or cron | API route | 3x |
+| Job Type | Trigger | Handler | Retry | Phase |
+|----------|---------|---------|-------|-------|
+| **Upsell check** | Daily cron | API route | 2x | Sprint 1 |
+| **Contract expiry alert** | Daily cron | API route | 2x | Sprint 1 |
+| **Image auth expiry alert** | Daily cron | API route | 2x | Sprint 1 |
+| Video download | Webhook | Edge function | 3x | Phase 2 |
+| AI analysis | Upload complete | API route + pg_cron | 3x | Phase 2 |
+| WhatsApp notification | Status change | Twilio API | 2x | Phase 2 |
+| Archive | 30-day cron | pg_cron + API | 3x | Phase 2 |
+| Google Drive sync | Manual or cron | API route | 3x | Phase 2 |
 
 ### Durable Jobs Pattern (from legacy)
 - Uses Supabase `background_jobs` table
@@ -151,47 +261,27 @@
 - Exponential backoff
 - Idempotent execution
 
-## AI Analysis Flow
-
-```
-Video Upload
-    │
-    ▼
-FFmpeg extract audio
-    │
-    ▼
-OpenAI Whisper transcribe
-    │
-    ▼
-GPT-4o-mini analyze
-    ├── Hook suggestions
-    ├── Caption optimization
-    ├── Hashtag recommendations
-    ├── Viral score
-    └── Optimal posting time
-    │
-    ▼
-Store in ai_analyses
-    │
-    ▼
-Notify stakeholders
-```
+---
 
 ## Security Model
 
 - **Auth**: Supabase Auth with email/password + OAuth (Google)
 - **RLS**: Every table has row-level policies
-- **Roles**: viewer → editor → admin
+- **Roles**: viewer → editor → admin → sales
 - **API keys**: Never exposed client-side
-- **R2**: Presigned URLs, 15-min expiry
-- **Webhooks**: Signed with secret
+- **R2**: Presigned URLs, 15-min expiry (Phase 2)
+- **Webhooks**: Signed with secret (Phase 2)
+
+---
 
 ## Performance Targets
 
 | Metric | Target |
 |--------|--------|
 | Page load | < 2s |
-| Video upload | < 30s for 100MB |
-| AI analysis | < 2 min |
 | API response | < 200ms |
 | First contentful paint | < 1.5s |
+| Kanban render (50 prospects) | < 1s |
+| Import (100 rows) | < 5s |
+| Video upload | < 30s for 100MB | (Phase 2)
+| AI analysis | < 2 min | (Phase 2)
