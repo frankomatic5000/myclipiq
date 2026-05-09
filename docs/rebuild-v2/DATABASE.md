@@ -40,6 +40,7 @@ CREATE TABLE prospects (
     'cold_outreach',
     'website',
     'whatsapp',
+    'upsell_trigger',
     'other'
   )),
   products_interested TEXT[] DEFAULT '{}',
@@ -49,7 +50,9 @@ CREATE TABLE prospects (
   last_contact_at TIMESTAMPTZ,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW(),
-  converted_to_client_id UUID REFERENCES clients(id) ON DELETE SET NULL,
+  -- converted_to_client_id added in 010_clients_table.sql via ALTER
+  -- (clients table must exist first)
+  converted_to_client_id UUID,
   converted_at TIMESTAMPTZ
 );
 ```
@@ -86,19 +89,22 @@ CREATE TABLE prospect_call_records (
 );
 ```
 
-### 4. `prospect_alerts`
+### 4. `prospect_alerts` (sales pipeline alerts only)
 
 ```sql
 CREATE TABLE prospect_alerts (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   prospect_id UUID REFERENCES prospects(id) ON DELETE CASCADE,
-  type TEXT NOT NULL CHECK (type IN ('follow_up', 'deadline', 'payment', 'contract_expiry')),
+  type TEXT NOT NULL CHECK (type IN ('follow_up', 'deadline', 'payment')),
   message TEXT NOT NULL,
   due_date TIMESTAMPTZ,
   resolved_at TIMESTAMPTZ,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 ```
+
+> **Contract alerts are client-level**, not prospect-level. See `client_alerts` below.
+> **Rule**: prospect_alerts = sales pipeline only. client_alerts = operational/contract alerts.
 
 ### 5. `clients` — Active Customers (evolution of `customers`)
 
@@ -199,7 +205,35 @@ CREATE TABLE posts (
 );
 ```
 
-### 8. `import_logs` — Spreadsheet Import Audit
+### 8. `client_alerts` — Operational alerts (contract, image auth, upsell)
+
+```sql
+CREATE TABLE client_alerts (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  client_id UUID REFERENCES clients(id) ON DELETE CASCADE,
+  type TEXT NOT NULL CHECK (type IN (
+    'contract_expiring',
+    'contract_expired',
+    'image_auth_expiring',
+    'image_auth_expired',
+    'upsell_opportunity',
+    'payment_overdue',
+    'project_overdue'
+  )),
+  message TEXT NOT NULL,
+  due_date TIMESTAMPTZ,
+  resolved_at TIMESTAMPTZ,
+  metadata JSONB DEFAULT '{}',
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+```
+
+> **Why separate from prospect_alerts?**
+> - prospect_alerts = sales pipeline (follow_up, deadline, payment)
+> - client_alerts = operational/retention (contracts, image auth, upsell, project)
+> - Different lifecycles, different owners, different UIs
+
+### 9. `import_logs` — Spreadsheet Import Audit
 
 ```sql
 CREATE TABLE import_logs (
@@ -267,6 +301,11 @@ CREATE INDEX idx_posts_status ON posts(status);
 -- Timeline + call lookups
 CREATE INDEX idx_prospect_timeline_prospect ON prospect_timeline_events(prospect_id, created_at DESC);
 CREATE INDEX idx_prospect_calls_prospect ON prospect_call_records(prospect_id, date DESC);
+
+-- Client alert lookups
+CREATE INDEX idx_client_alerts_client ON client_alerts(client_id);
+CREATE INDEX idx_client_alerts_type ON client_alerts(type);
+CREATE INDEX idx_client_alerts_unresolved ON client_alerts(client_id) WHERE resolved_at IS NULL;
 ```
 
 ---
@@ -308,25 +347,45 @@ CREATE POLICY "Team can view prospect alerts" ON prospect_alerts FOR SELECT TO a
 );
 CREATE POLICY "Team can create prospect alerts" ON prospect_alerts FOR INSERT TO authenticated WITH CHECK (true);
 CREATE POLICY "Team can resolve prospect alerts" ON prospect_alerts FOR UPDATE TO authenticated USING (true) WITH CHECK (true);
+
+-- Client alerts: same model
+CREATE POLICY "Team can view client alerts" ON client_alerts FOR SELECT TO authenticated USING (
+  EXISTS (SELECT 1 FROM clients WHERE clients.id = client_alerts.client_id)
+);
+CREATE POLICY "Team can create client alerts" ON client_alerts FOR INSERT TO authenticated WITH CHECK (true);
+CREATE POLICY "Team can resolve client alerts" ON client_alerts FOR UPDATE TO authenticated USING (true) WITH CHECK (true);
 ```
 
 ---
 
-## Migration Order (Sprint 1)
+## Migration Order (Sprint 1) — FIXED
 
 ```
-008_prospects_table.sql
-009_prospect_events_calls_alerts.sql
-010_clients_table.sql          -- replaces customers evolution
-011_projects_service_checklist.sql  -- ALTER existing
-012_posts_table.sql
-013_import_logs.sql
-014_operational_rls.sql
-015_operational_indexes.sql
+008_clients_table.sql          -- MUST be first (prospects references clients)
+009_prospects_table.sql        -- FK to clients added after clients exists
+010_prospect_events_calls.sql
+011_client_alerts.sql
+012_projects_service_checklist.sql  -- ALTER existing projects table
+013_posts_table.sql
+014_import_logs.sql
+015_operational_rls.sql
+016_operational_indexes.sql
+017_prospect_client_fk.sql     -- ADD FK: prospects.converted_to_client_id → clients.id
 ```
+
+## Sprint 1 — Contracts & Image Auth: Field-Based Approach
+
+| Concern | Decision |
+|---------|----------|
+| **Separate tables vs fields?** | **Fields on `clients` table for Sprint 1** |
+| **Why not separate tables?** | Simplicity. Karine needs to see contract status at a glance. No complex contract versioning needed yet. |
+| **When to split?** | Phase 2+ if contract history/versions needed |
+| **Current fields** | `contract_status`, `contract_sent_at`, `contract_signed_at`, `contract_expires_at`, `contract_url` |
+| **Current image auth fields** | `image_auth_status`, `image_auth_signed_at`, `image_auth_expires_at`, `image_auth_url` |
+| **Alerts** | `client_alerts` table with type = 'contract_expiring' / 'image_auth_expiring' |
 
 > **Risk**: `clients` table may conflict with existing `customers` data. Migration must handle:
-> 1. Create `clients` table
-> 2. Copy data from `customers` with field mapping
-> 3. Update foreign keys in `projects` (customer_id → client_id)
+> 1. Create `clients` table (no FK conflicts, additive)
+> 2. Copy data from `customers` with field mapping (nullable new fields)
+> 3. `projects.customer_id` → keep as-is for now (rename in Phase 2)
 > 4. **HIGH RISK** — requires Rod approval before execution
