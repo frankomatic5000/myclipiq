@@ -1,0 +1,13 @@
+{
+  "task_id": "",
+  "agent": "",
+  "session_id": "",
+  "status": "pass|fail|blocked",
+  "scope_completed": [],
+  "commands_run": [],
+  "files_changed": [],
+  "risks": [],
+  "blockers": [],
+  "recommendation": "",
+  "needs_human_approval": true
+}
