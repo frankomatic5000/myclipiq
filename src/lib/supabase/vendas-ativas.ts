@@ -276,21 +276,25 @@ export async function getProspects(): Promise<Prospect[]> {
 
 
 async function createConversionProject(
-  prospectId: string,
   clientId: string,
+  ownerId: string,
   project: CreateProjectInput
 ): Promise<string> {
   const supabase = getSupabaseBrowser();
-  const baseProject = {
-    customer_id: prospectId,
+  const fallbackProject = {
     name: project.name.trim(),
     service_type: project.serviceType,
     status: "intake",
   };
+  const baseProject = {
+    ...fallbackProject,
+    client_id: clientId,
+    owner_id: ownerId,
+  };
 
   const { data, error } = await supabase
     .from("projects")
-    .insert({ ...baseProject, client_id: clientId })
+    .insert(baseProject)
     .select("id")
     .single();
 
@@ -298,17 +302,18 @@ async function createConversionProject(
     return (data as { id: string }).id;
   }
 
-  const shouldRetryWithoutClientId =
+  const shouldRetryWithLegacyProjectShape =
     error.code === "PGRST204" ||
-    error.message.toLowerCase().includes("client_id");
+    error.message.toLowerCase().includes("client_id") ||
+    error.message.toLowerCase().includes("owner_id");
 
-  if (!shouldRetryWithoutClientId) {
+  if (!shouldRetryWithLegacyProjectShape) {
     throw new Error(error.message);
   }
 
   const { data: retryData, error: retryError } = await supabase
     .from("projects")
-    .insert(baseProject)
+    .insert(fallbackProject)
     .select("id")
     .single();
 
@@ -358,6 +363,7 @@ export async function convertProspectToClient(
       status: "active",
       contract_status: "none",
       image_auth_status: "not_requested",
+      owner_id: authorId,
       created_at: now,
     })
     .select("id")
@@ -400,7 +406,7 @@ export async function convertProspectToClient(
   let projectId: string | null = null;
 
   if (input.project?.serviceType && input.project.name.trim()) {
-    projectId = await createConversionProject(input.prospectId, clientId, input.project);
+    projectId = await createConversionProject(clientId, authorId, input.project);
   }
 
   return { clientId, projectId };
